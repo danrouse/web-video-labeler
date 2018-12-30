@@ -1,0 +1,19 @@
+{
+  "manifest_version": 2,
+  "name": "Chrome Video Labeler",
+  "version": "0.1.0",
+  "description": "Annotate video frames for generating classifier training data",
+  "content_scripts": [{
+    "matches": ["*://*.youtube.com/*"],
+    "js": ["chromeInjectScript.js"],
+    "all_frames": true
+  }],
+  "permissions": ["management"],
+  "background": {
+    "scripts": ["chromeExtensionLiveReload.js"]
+  },
+  "web_accessible_resources": [
+    "dist/bundle.js",
+    "dist/bundle.js.map"
+  ]
+}

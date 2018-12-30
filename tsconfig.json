@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "outDir": "dist",
+    "sourceMap": false,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "target": "esnext",
+    "experimentalDecorators": true,
+    "jsx": "react",
+    "moduleResolution": "node"
+  },
+  "files": [
+    "src/interfaces.d.ts",
+    "src/main.ts"
+  ]
+}
