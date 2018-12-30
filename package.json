@@ -8,7 +8,7 @@
     "clean": "rimraf dist/*",
     "rollup": "rollup -c",
     "tsc": "tsc -p tsconfig.json",
-    "watch": "concurrently \"npm run rollup -- --watch\" \"npm run tsc -- -w\"",
+    "start": "concurrently \"npm run rollup -- --watch\" \"npm run tsc -- -w\"",
     "build": "npm run clean && npm run tsc && npm run rollup"
   },
   "author": "Dan Rouse <dan@rouse.house>",
