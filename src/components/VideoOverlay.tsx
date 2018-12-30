@@ -1,4 +1,5 @@
 import * as React from 'react';
+import throttle from '../util/throttle';
 
 // TODO: Fullscreen video support
 // TODO: Better tracking while video resizes?
@@ -23,12 +24,9 @@ export default class VideoOverlay extends React.Component<Props, State> {
 
   componentWillMount() {
     this.updateRect();
-    const obs = new MutationObserver((mutations) => {
-      // TODO: I think this causes a lot of jank
-      if (!mutations.some(({ attributeName }) => attributeName === 'style')) return;
-      this.updateRect();
-    });
-    obs.observe(this.props.elem, { attributes: true });
+    const obs = new MutationObserver(() => this.updateRect());
+    obs.observe(this.props.elem, { attributes: true, attributeFilter: ['style', 'width', 'height'] });
+    window.addEventListener('fullscreenchange', () => this.updateRect(this.props.elem));
   }
 
   componentWillReceiveProps(nextProps: Props) {
@@ -37,7 +35,7 @@ export default class VideoOverlay extends React.Component<Props, State> {
     }
   }
 
-  updateRect = (elem = this.props.elem) => {
+  updateRect = throttle((elem = this.props.elem) => {
     const { videoWidth, videoHeight } = elem;
     const { x, y, width: w, height: h } = elem.getBoundingClientRect() as DOMRect;
     const widthScale = w / videoWidth;
@@ -49,6 +47,7 @@ export default class VideoOverlay extends React.Component<Props, State> {
     if (scale !== this.state.videoScale) {
       this.props.onScaleChange(scale);
     }
+
     this.setState({
       videoRect: {
         x: x + window.scrollX,
@@ -58,20 +57,21 @@ export default class VideoOverlay extends React.Component<Props, State> {
       },
       videoScale: scale
     });
-  };
+  }, 100, true);
 
   render() {
     if (!this.state.videoRect) return null;
-    const { videoRect: { width: w, height: h, x, y } } = this.state;
+    const { videoRect: { width, height, x, y } } = this.state;
     return (
       <div
         style={{
+          pointerEvents: 'none',
           position: 'absolute',
-          width: w,
-          height: h,
-          left: x,
-          top: y,
           zIndex: 1100,
+          width,
+          height,
+          left: x,
+          top: y
         }}
       >
         {this.props.children}
