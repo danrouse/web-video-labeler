@@ -22,7 +22,7 @@ export default class KeyBindProvider extends React.Component<Props> {
       evt.preventDefault();
       this.props.keybinds[evt.key]();
     }
-  };
+  }
 
   render() {
     return null;

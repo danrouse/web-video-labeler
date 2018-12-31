@@ -1,5 +1,6 @@
 import resolve from 'rollup-plugin-node-resolve';
 import cjs from 'rollup-plugin-commonjs';
+import css from 'rollup-plugin-css-only';
 import replace from 'rollup-plugin-replace';
 import alias from 'rollup-plugin-alias';
 import hasha from 'hasha';
@@ -21,6 +22,7 @@ export default {
       jszip: path.join(__dirname, './node_modules/jszip/dist/jszip.js')
     }),
     resolve({ web: true }),
+    css({ output: 'dist/bundle.css' }),
     cjs({
       namedExports: {
         'node_modules/react/index.js': ['Children', 'Component', 'PropTypes', 'createElement'],

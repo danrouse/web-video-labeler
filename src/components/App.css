@@ -1,0 +1,36 @@
+.__app, .__app *, .__app *:before, .__app *:after {
+  box-sizing: border-box;
+}
+
+.__app button {
+  border: 1px outset #ccc;
+  background-color: #ccc;
+  border-radius: 2px;
+  margin: 2px;
+  padding: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #222;
+  text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.2);
+  height: 2.2em;
+}
+  .__app button:hover {
+    border-color: #aaa;
+    background-color: #aaa;
+  }
+  .__app button:active {
+    border-style: inset;
+    outline: none;
+  }
+  .__app button i {
+    font-size: 16px;
+    vertical-align: middle;
+  }
+  .__app button i + span {
+    margin: 0 2px 0 4px;
+  }
+.__app button.icon {
+  width: 2.2em;
+}

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import ModalDialog from './ModalDialog';
+import './SettingsPanel.css';
 
 interface Props {
   settings: UserSettings;
@@ -19,11 +20,12 @@ export default class SettingsPanel extends React.Component<Props> {
 
   render() {
     return (
-      <ModalDialog onClose={this.props.onClose}>
+      <ModalDialog onClose={this.props.onClose} className="SettingsPanel">
         <h1>Web Video Labeler Settings</h1>
         <fieldset>
+          <legend>Playback</legend>
           <label>
-            frame skip
+            Frame Skip
             <input
               type="number"
               step="1"
@@ -34,11 +36,11 @@ export default class SettingsPanel extends React.Component<Props> {
             />
           </label>
           <label>
-            frame rate (todo: automatable?)
+            Frame Rate
             <input
               type="number"
-              step="1"
-              min="1"
+              step={1}
+              min={1}
               value={this.props.settings.skipLengthFrameRate}
               name="skipLengthFrameRate"
               onChange={this.handleNumber}
@@ -46,8 +48,9 @@ export default class SettingsPanel extends React.Component<Props> {
           </label>
         </fieldset>
         <fieldset>
+          <legend>Downloading</legend>
           <label>
-            save images with no labels?
+            Save images with no labels?
             <input
               type="checkbox"
               name="saveImagesWithLabels"
@@ -56,7 +59,7 @@ export default class SettingsPanel extends React.Component<Props> {
             />
           </label>
           <label>
-            save cropped images?
+            Save cropped images?
             <input
               type="checkbox"
               name="saveCroppedImages"

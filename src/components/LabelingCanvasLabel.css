@@ -1,0 +1,86 @@
+.LabelingCanvasLabel {
+  border-width: 1px;
+  border-style: solid;
+  position: absolute;
+  z-index: 1101;
+}
+  .LabelingCanvasLabel--isActive {
+    z-index: 1102;
+  }
+
+.LabelingCanvasLabel__resizeArea {
+  position: absolute;
+  left: -8;
+  right: -8;
+  top: -8;
+  bottom: -8;
+}
+
+.LabelingCanvasLabel__moveArea {
+  position: absolute;
+  left: 8;
+  right: 8;
+  top: 8;
+  bottom: 8;
+  cursor: move;
+}
+  .LabelingCanvasLabel:not(.LabelingCanvasLabel--isActive) .LabelingCanvasLabel__moveArea:hover {
+    background-color: rgba(255,255,255,0.15);
+  }
+
+.LabelingCanvasLabel__title {
+  position: absolute;
+  top: -14;
+  left: 0;
+  cursor: text;
+  padding: 2;
+  font-size: 10;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  text-shadow: 1px 1px 2px rgba(255,255,255,0.4);
+  font-weight: bold;
+  pointer-events: all;
+  margin: -1px -1px 0 -1px;
+  max-width: calc(100% + 2px);
+}
+
+.LabelingCanvasLabel__classSelector {
+  pointer-events: all;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  overflow-y: auto;
+  bottom: 0;
+  padding-bottom: 16;
+}
+
+  .LabelingCanvasLabel__classSelector > button {
+    display: block;
+    width: 100%;
+    border: 0;
+    border-radius: 0;
+    padding: 1px 4px;
+    margin: 1;
+    cursor: pointer;
+    font-size: 12;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: auto;
+  }
+
+  .LabelingCanvasLabel__classSelector > form {
+    width: 100%;
+    position: fixed;
+    bottom: 0
+  }
+  .LabelingCanvasLabel__classSelector > form > input {
+    width: calc(100% - 2px);
+    padding: 2;
+    font-size: 13;
+    border: 0;
+    border-radius: 0;
+    margin: 1;
+    background-color: rgba(255,255,255,0.8);
+  }

@@ -1,0 +1,12 @@
+.SettingsPanel fieldset {
+  border-radius: 3px;
+  border: 1px solid #ddd;
+  display: flex;
+  margin-bottom: 8px;
+}
+
+.SettingsPanel legend {
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  background-color: white;
+}

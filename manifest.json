@@ -8,12 +8,14 @@
     "js": ["injectScript.js"],
     "all_frames": true
   }],
-  "permissions": ["management"],
+  "permissions": ["management", "downloads"],
+  "externally_connectable": { "ids": ["*"], "matches": ["*://*.youtube.com/*"] },
   "background": {
     "scripts": ["liveReload.js"]
   },
   "web_accessible_resources": [
     "dist/bundle.js",
-    "dist/bundle.js.map"
+    "dist/bundle.js.map",
+    "dist/bundle.css"
   ]
 }

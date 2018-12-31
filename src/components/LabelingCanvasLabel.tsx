@@ -1,5 +1,6 @@
 import * as React from 'react';
 import hashStringToColor from '../util/hashStringToColor';
+import './LabelingCanvasLabel.css';
 
 type LabelChangeHandler = (index: number, label?: Label) => void;
 
@@ -26,7 +27,6 @@ interface State {
   mouseDownX: number;
   mouseDownY: number;
   isActive?: boolean;
-  isHovered?: boolean;
   anchors: Anchors;
 
   isInputExpanded?: boolean;
@@ -178,121 +178,52 @@ export default class LabelingCanvasLabel extends React.Component<Props, State> {
   }
 
   render() {
-    const { workingRect: rectFromState, isActive, isHovered } = this.state;
+    const { workingRect: rectFromState, isActive } = this.state;
     const { scale, label: { rect: rectFromProps, str } } = this.props;
     const rect = rectFromState || rectFromProps;
-    const borderWidth = 1;
-    const border = `${borderWidth}px solid ${hashStringToColor(str)}`;
     return (
       <div
+        className={`LabelingCanvasLabel ${isActive ? 'LabelingCanvasLabel--isActive' : ''}`}
         style={{
-          border,
-          position: 'absolute',
+          borderColor: hashStringToColor(str),
           transform: `translateX(${rect.x * scale}px) translateY(${rect.y * scale}px)`,
           width: rect.width * scale,
           height: rect.height * scale,
-          zIndex: isActive ? 1102 : 1101,
+
         }}
         ref={ref => ref && (this.ref = ref)}
         onContextMenu={this.removeLabel}
       >
         <div
-          style={{
-            position: 'absolute',
-            left: -8 * scale,
-            right: -8 * scale,
-            top: -8 * scale,
-            bottom: -8 * scale,
-            cursor: this.state.resizeCursor,
-          }}
+          className="LabelingCanvasLabel__resizeArea"
+          style={{ cursor: this.state.resizeCursor }}
           onMouseMove={this.setResizeCursor}
           onMouseDown={this.startResizing}
         />
         <div
-          style={{
-            position: 'absolute',
-            left: 8 * scale,
-            right: 8 * scale,
-            top: 8 * scale,
-            bottom: 8 * scale,
-            cursor: 'move',
-            backgroundColor: isHovered && !isActive ? 'rgba(255,255,255,0.15)' : 'transparent',
-          }}
-          onMouseEnter={() => this.setState({ isHovered: true })}
-          onMouseLeave={() => this.setState({ isHovered: false })}
+          className="LabelingCanvasLabel__moveArea"
           onMouseDown={this.startMoving}
         />
         <div
-          style={{
-            position: 'absolute',
-            top: -14,
-            left: 0,
-            cursor: 'text',
-            padding: borderWidth + 1,
-            fontSize: 10,
-            margin: `-${borderWidth}px -${borderWidth}px 0 -${borderWidth}px`,
-            maxWidth: `calc(100% + ${2 * borderWidth}px)`,
-            textOverflow: 'ellipsis',
-            overflow: 'hidden',
-            whiteSpace: 'nowrap',
-            textShadow: '1px 1px 2px rgba(255,255,255,0.4)',
-            fontWeight: 'bold',
-            pointerEvents: 'all',
-            backgroundColor: hashStringToColor(str),
-          }}
+          className="LabelingCanvasLabel__title"
+          style={{ backgroundColor: hashStringToColor(str) }}
           onClick={() => this.setState({ isInputExpanded: !this.state.isInputExpanded })}
         >
           {str}
         </div>
         {this.state.isInputExpanded &&
-          <div
-            style={{
-              pointerEvents: 'all',
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              overflowY: 'auto',
-              bottom: 0,
-              paddingBottom: 16,
-            }}
-          >
+          <div className="LabelingCanvasLabel__classSelector">
             {this.props.classes.map(labelClass => (
               <button
                 name={labelClass}
                 onClick={this.handleClassButtonClick}
-                style={{
-                  display: 'block',
-                  width: '100%',
-                  border: 0,
-                  borderRadius: 0,
-                  padding: '1px 4px',
-                  margin: 1,
-                  backgroundColor: hashStringToColor(labelClass),
-                  cursor: 'pointer',
-                  fontSize: 12,
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  height: 'auto',
-                }}
+                style={{ backgroundColor: hashStringToColor(labelClass) }}
               >
                 {labelClass}
               </button>
             ))}
-            <form onSubmit={this.handleSubmitClassName} style={{ width: '100%', position: 'fixed', bottom: 0 }}>
-              <input
-                type="text"
-                placeholder="new class"
-                style={{
-                  width: 'calc(100% - 2px)',
-                  padding: 2,
-                  fontSize: 13,
-                  border: 0,
-                  borderRadius: 0,
-                  margin: 1,
-                  backgroundColor: 'rgba(255,255,255,0.8)',
-                }}
-              />
+            <form onSubmit={this.handleSubmitClassName}>
+              <input type="text" placeholder="new class" />
             </form>
           </div>
         }

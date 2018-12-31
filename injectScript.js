@@ -5,3 +5,9 @@ const script = document.createElement('script');
 script.setAttribute('type', 'text/javascript');
 script.setAttribute('src', SCRIPT_URL);
 document.body.appendChild(script);
+
+const STYLE_URL = chrome.extension.getURL('dist/bundle.css');
+const style = document.createElement('link');
+style.setAttribute('rel', 'stylesheet');
+style.setAttribute('href', STYLE_URL);
+document.head.appendChild(style);
