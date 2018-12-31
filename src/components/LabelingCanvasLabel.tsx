@@ -1,4 +1,5 @@
 import * as React from 'react';
+import LabelClassSelector from './LabelClassSelector';
 import hashStringToColor from '../util/hashStringToColor';
 import './LabelingCanvasLabel.css';
 
@@ -56,20 +57,8 @@ export default class LabelingCanvasLabel extends React.Component<Props, State> {
     this.props.onChange(this.props.index);
   }
 
-  handleClassButtonClick = (evt: React.FormEvent<HTMLButtonElement>) => {
-    this.props.onChange(this.props.index, {
-      ...this.props.label,
-      str: evt.currentTarget.name,
-    });
-    this.setState({ isInputExpanded: false });
-  }
-
-  handleSubmitClassName = (evt: React.FormEvent<HTMLFormElement>) => {
-    evt.preventDefault();
-    this.props.onChange(this.props.index, {
-      ...this.props.label,
-      str: (evt.currentTarget[0] as HTMLInputElement).value,
-    });
+  updateLabelClass = (str: string) => {
+    this.props.onChange(this.props.index, { ...this.props.label, str });
     this.setState({ isInputExpanded: false });
   }
 
@@ -212,20 +201,12 @@ export default class LabelingCanvasLabel extends React.Component<Props, State> {
           {str}
         </div>
         {this.state.isInputExpanded &&
-          <div className="LabelingCanvasLabel__classSelector">
-            {this.props.classes.map(labelClass => (
-              <button
-                name={labelClass}
-                onClick={this.handleClassButtonClick}
-                style={{ backgroundColor: hashStringToColor(labelClass) }}
-              >
-                {labelClass}
-              </button>
-            ))}
-            <form onSubmit={this.handleSubmitClassName}>
-              <input type="text" placeholder="new class" />
-            </form>
-          </div>
+          <LabelClassSelector
+            className="LabelingCanvasLabel__LabelClassSelector"
+            classes={this.props.classes}
+            onClick={this.updateLabelClass}
+            onAddClass={this.updateLabelClass}
+          />
         }
       </div>
     );

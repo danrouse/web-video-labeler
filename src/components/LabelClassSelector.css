@@ -1,0 +1,28 @@
+.LabelClassSelector {
+}
+
+  .LabelClassSelector > button {
+    display: block;
+    width: 100%;
+    border: 0;
+    border-radius: 0;
+    padding: 1px 4px;
+    margin: 1px;
+    cursor: pointer;
+    font-size: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: auto;
+    text-transform: none;
+    text-align: left;
+  }
+
+  .LabelClassSelector > form {
+  }
+  .LabelClassSelector > form > input {
+    padding: 2px;
+    font-size: 13px;
+    border: 0;
+    border-radius: 0;
+    margin: 1px;
+  }
