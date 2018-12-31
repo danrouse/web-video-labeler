@@ -1,5 +1,6 @@
 import * as React from 'react';
 import ModalDialog from './ModalDialog';
+import LabelClassSelector from './LabelClassSelector';
 
 interface Props {
   labelClasses: string[];
@@ -7,13 +8,10 @@ interface Props {
 }
 
 export default function LabelClassPanel({ labelClasses, onClose }: Props) {
+
   return (
     <ModalDialog onClose={onClose}>
-      <ul style={{ padding: 0, margin: 0 }}>
-        {labelClasses.map((str, index) => (
-          <li>{index} - {str}</li>
-        ))}
-      </ul>
+      <LabelClassSelector classes={labelClasses} showIndex />
     </ModalDialog>
   );
 }
