@@ -2,182 +2,237 @@ import * as React from 'react';
 import VideoOverlay from './VideoOverlay';
 import LabelingCanvas from './LabelingCanvas';
 import LocalStorageSync from './LocalStorageSync';
-import DownloadManager from './DownloadManager';
-import PlaybackManager from './PlaybackManager';
-import { videoFrameToDataURL, downloadFiles, imageDataURLToBlob } from '../util/dataURL';
+import Toolbar from './Toolbar';
+import SettingsPanel from './SettingsPanel';
+import HelpPanel from './HelpPanel';
+import LabelClassPanel from './LabelClassPanel';
+import { downloadVideoFrame } from '../util/dataURL';
 import { getVideoID, getYouTubeVideoElem, toggleYouTubeUI } from '../util/youtube';
 
 interface State {
   labels: Label[];
   labeledImages: LabeledImage[];
+  labelClasses: string[];
   isLabeling: boolean;
-  wasPlayingBeforeLabeling: boolean;
+  isSettingsPanelVisible: boolean;
+  isHelpPanelVisible: boolean;
+  isLabelClassPanelVisible: boolean;
+  settings: UserSettings;
+
   videoScale: number;
-  skipLength: number;
-  isLocalStorageFull?: boolean;
-  saveFullImages: boolean;
-  saveCroppedImages: boolean;
+  isLocalStorageFull: boolean;
+  wasPlayingBeforeLabeling: boolean;
 }
 
 const defaultState: State = {
   labels: [],
   labeledImages: [],
-  isLabeling: true,
-  wasPlayingBeforeLabeling: false,
+  labelClasses: ['foo', 'bar'],
+  isLabeling: false,
+  isSettingsPanelVisible: false,
+  isHelpPanelVisible: false,
+  isLabelClassPanelVisible: false,
+  settings: {
+    skipLength: 10,
+    skipLengthFrameRate: 24,
+    saveCroppedImages: false,
+    saveImagesWithoutLabels: false,
+  },
+
   videoScale: 1,
-  skipLength: 0.5,
-  saveFullImages: true,
-  saveCroppedImages: false,
+  wasPlayingBeforeLabeling: false,
+  isLocalStorageFull: false,
 };
 
 export default class App extends React.Component<{}, State> {
   state = defaultState;
 
-  static CSS = `
-  .__app_ui {
-    position: fixed;
-    z-index: 1101;
-    bottom: 0;
-    left: 0;
-    padding: 1em;
-    margin: 1em;
-    font-size: 16px;
-    border-radius: 2px;
-    background-color: rgba(255,255,255,0.8);
-    box-shadow: 0 0 2px rgba(0,0,0,0.3);
-    text-shadow: 1px 1px 0 rgba(0,0,0,0.2);
-  }
-  `;
-
   componentWillMount() {
-    getYouTubeVideoElem().addEventListener('play', () => {
-      if (this.state.isLabeling) {
-        this.setState({
-          isLabeling: false
-        });
-      }
-    });
+    getYouTubeVideoElem().addEventListener('play', () =>
+      this.state.isLabeling && this.setState({ isLabeling: false }));
   }
 
-  // Local storage
-  handleStateLoaded = (state: State) => {
-    // don't load isLabeling state
-    this.setState({
-      ...state,
-      isLabeling: false
-    });
-  };
-  handleStorageFull = () => this.setState({ isLocalStorageFull: true });
-
-  // Downloading
-  toggleSaveFullImages = (evt: React.FormEvent<HTMLInputElement>) =>
-    this.setState({ saveFullImages: evt.currentTarget.checked });
-  toggleSaveCroppedImages = (evt: React.FormEvent<HTMLInputElement>) =>
-    this.setState({ saveCroppedImages: evt.currentTarget.checked });
   downloadLabeledImages = async () => {
-    const files = [];
-    const labelCounts: { [str: string]: number } = {};
-    for (let labeledImage of this.state.labeledImages) {
-      if (this.state.saveFullImages) {
-        files.push({
-          path: `data/${labeledImage.filename}.jpg`,
-          data: await imageDataURLToBlob(labeledImage.imageDataURL)
-        });
-      }
-      if (this.state.saveCroppedImages) {
-        for (let label of labeledImage.labels) {
-          if (!labelCounts[label.str]) labelCounts[label.str] = 0;
-          files.push({
-            path: `data/${label.str}-${labelCounts[label.str]++}.jpg`,
-            data: await imageDataURLToBlob(labeledImage.imageDataURL, label.rect),
-          });
-        }
-      }
-      // TODO: Add the actual labels
-    }
-    await downloadFiles(files, `data.zip`);
-  };
-  clearLabeledImages = () => {
-    if (confirm('are you sure? will delete all cached images + labels')) {
-      this.setState({ labeledImages: [] });
-      return true;
-    }
-  };
+    // TODO
+    // await downloadFiles(files, `data.zip`);
+  }
 
-  // Video manager
+  clearLabeledImages = () => confirm('are you sure? will delete all cached images + labels') &&
+    this.setState({ labeledImages: [] })
+  resetSettings = () => confirm('are you sure you want to reset all settings?') && this.setState({
+    ...defaultState,
+    labels: this.state.labels,
+    labeledImages: this.state.labeledImages,
+    isSettingsPanelVisible: this.state.isSettingsPanelVisible,
+  })
+  clearLabels = () => this.setState({ labels: [] });
+  clearLabelClasses = () => this.setState({ labelClasses: [] });
+
+  handleLoadState = (state: State) => this.setState(state);
+  handleStorageFull = () => this.setState({ isLocalStorageFull: true });
   handleVideoScaleChange = (videoScale: number) => this.setState({ videoScale });
+  handleLabelsChange = (labels: Label[], callback?: () => void) => {
+    const labelClasses = new Set(this.state.labelClasses);
+    labels.forEach(({ str }) => labelClasses.add(str));
+    this.setState({ labels, labelClasses: Array.from(labelClasses) }, callback);
+  }
+  handleSettingChange = (settings: Partial<UserSettings>) => this.setState({
+    settings: {
+      ...this.state.settings,
+      ...settings,
+    },
+  })
+  toggleSettingsPanel = () => this.setState({ isSettingsPanelVisible: !this.state.isSettingsPanelVisible });
+  toggleHelpPanel = () => this.setState({ isHelpPanelVisible: !this.state.isHelpPanelVisible });
+  toggleLabelClassPanel = () => this.setState({ isLabelClassPanelVisible: !this.state.isLabelClassPanelVisible });
 
-  // Playback manager
   startLabeling = () => {
     const wasPlayingBeforeLabeling = !getYouTubeVideoElem().paused;
     getYouTubeVideoElem().pause();
     toggleYouTubeUI(false);
-    this.setState({ isLabeling: true, wasPlayingBeforeLabeling });
-  };
+    this.setState({ wasPlayingBeforeLabeling, isLabeling: true });
+  }
   stopLabeling = () => {
     if (this.state.wasPlayingBeforeLabeling) {
       getYouTubeVideoElem().play();
     }
     this.setState({ isLabeling: false }, () => toggleYouTubeUI(true));
-  };
-  skip = () => getYouTubeVideoElem().currentTime += this.state.skipLength;
-  prev = () => getYouTubeVideoElem().currentTime -= -this.state.skipLength;
-  next = () => {
-    const labeledImage: LabeledImage = {
-      imageDataURL: videoFrameToDataURL(getYouTubeVideoElem()),
+  }
+  skip = () => getYouTubeVideoElem().currentTime += this.state.settings.skipLength / this.state.settings.skipLengthFrameRate;
+  prev = () => getYouTubeVideoElem().currentTime -= -this.state.settings.skipLength / this.state.settings.skipLengthFrameRate;
+  downloadFrame = (): LabeledImage => {
+    const video = getYouTubeVideoElem();
+    const time = video.currentTime;
+    const frame = Math.floor(time * this.state.settings.skipLengthFrameRate);
+    const filename = `_annotate_${getVideoID()}_${frame}.jpg`;
+    downloadVideoFrame(video, filename);
+    if (this.state.settings.saveCroppedImages) {
+      const labelCounts: { [str: string]: number } = {};
+      this.state.labels.forEach((label) => {
+        if (!labelCounts[label.str]) labelCounts[label.str] = 0;
+        labelCounts[label.str] += 1;
+        const croppedFilename = `_annotate_${getVideoID()}_${frame}_${label.str}-${labelCounts[label.str]}.jpg`;
+        downloadVideoFrame(video, croppedFilename, label.rect);
+      });
+    }
+    return {
+      filename,
+      frame,
+      time,
       labels: this.state.labels,
-      filename: `_annotate_${getVideoID()}_${Math.round(getYouTubeVideoElem().currentTime * 100)}`,
+      url: window.location.href,
+      width: video.videoWidth,
+      height: video.videoHeight,
     };
-    this.setState({
-      labeledImages: this.state.labeledImages.concat([labeledImage])
-    });
-    this.skip();
-  };
-  clearLabels = () => this.setState({ labels: [] });
+  }
 
-  // Labeler
-  handleLabelsChange = (labels: Label[], callback?: () => void) => this.setState({ labels }, callback);
+  next = () => {
+    if (this.state.settings.saveImagesWithoutLabels || this.state.labels.length > 0) {
+      const labeledImage = this.downloadFrame();
+      this.setState({ labeledImages: this.state.labeledImages.concat([labeledImage]) });
+    }
+    this.skip();
+  }
 
   render() {
     return (
-      <div>
+      <div className="__app">
+        <style type="text/css">
+        {`
+        .__app, .__app *, .__app *:before, .__app *:after {
+          box-sizing: border-box;
+        }
+
+        .__app button {
+          border: 1px outset #ccc;
+          background-color: #ccc;
+          border-radius: 2px;
+          margin: 2px;
+          padding: 4px;
+          cursor: pointer;
+          font-size: 13px;
+          font-weight: bold;
+          text-transform: uppercase;
+          color: #222;
+          text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.2);
+          height: 2.2em;
+        }
+          .__app button:hover {
+            border-color: #aaa;
+            background-color: #aaa;
+          }
+          .__app button:active {
+            border-style: inset;
+            outline: none;
+          }
+          .__app button i {
+            font-size: 16px;
+            vertical-align: middle;
+          }
+          .__app button i + span {
+            margin: 0 2px 0 4px;
+          }
+        .__app button.icon {
+          width: 2.2em;
+        }
+        .__app fieldset {
+          border-radius: 3px;
+          border: 1px solid #ddd;
+          display: flex;
+        }
+        `}
+        </style>
         <LocalStorageSync
           data={this.state}
+          exclude={['isLabeling']}
           localStorageKey="__chrome-youtube-labeler-data"
-          onLoad={this.handleStateLoaded}
+          onLoad={this.handleLoadState}
           onStorageFull={this.handleStorageFull}
         />
-        <style type="text/css">{App.CSS}</style>
-        <div className="__app_ui">
-          {this.state.labeledImages.length > 0 &&
-            <DownloadManager
-              isLocalStorageFull={this.state.isLocalStorageFull}
-              numLabeledImages={this.state.labeledImages.length}
-              saveFullImages={this.state.saveFullImages}
-              saveCroppedImages={this.state.saveCroppedImages}
-              onSaveFullImagesChange={this.toggleSaveFullImages}
-              onSaveCroppedImagesChange={this.toggleSaveCroppedImages}
-              onDownloadDataClick={this.downloadLabeledImages}
-              onEraseDataClick={this.clearLabeledImages}
-            />
-          }
-        </div>
-        <VideoOverlay elem={getYouTubeVideoElem()} onScaleChange={this.handleVideoScaleChange}>
-          <PlaybackManager
-            isLabeling={this.state.isLabeling}
-            onStart={this.startLabeling}
-            onStop={this.stopLabeling}
-            onSkip={this.skip}
-            onNext={this.next}
-            onPrev={this.prev}
-            onClear={this.clearLabels}
+        <Toolbar
+          numLabels={this.state.labeledImages.reduce((acc, cur) => acc + cur.labels.length, 0)}
+          numLabeledImages={this.state.labeledImages.length}
+          numLabelClasses={this.state.labelClasses.length}
+          isLabeling={this.state.isLabeling}
+          isLocalStorageFull={this.state.isLocalStorageFull}
+
+          startLabeling={this.startLabeling}
+          stopLabeling={this.stopLabeling}
+          clearLabels={this.clearLabels}
+          prev={this.prev}
+          skip={this.skip}
+          next={this.next}
+          downloadLabeledImages={this.downloadLabeledImages}
+          clearLabeledImages={this.clearLabeledImages}
+          toggleSettingsPanel={this.toggleSettingsPanel}
+          toggleHelpPanel={this.toggleHelpPanel}
+          toggleLabelClassPanel={this.toggleLabelClassPanel}
+        />
+        {this.state.isSettingsPanelVisible &&
+          <SettingsPanel
+            settings={this.state.settings}
+            onChange={this.handleSettingChange}
+            onClose={this.toggleSettingsPanel}
+            onReset={this.resetSettings}
           />
+        }
+        {this.state.isHelpPanelVisible &&
+          <HelpPanel onClose={this.toggleHelpPanel} />
+        }
+        {this.state.isLabelClassPanelVisible &&
+          <LabelClassPanel
+            labelClasses={this.state.labelClasses}
+            onClose={this.toggleLabelClassPanel}
+          />
+        }
+        <VideoOverlay elem={getYouTubeVideoElem()} onScaleChange={this.handleVideoScaleChange}>
           {this.state.isLabeling &&
             <LabelingCanvas
-              gridSize={24}
               labels={this.state.labels}
+              classes={this.state.labelClasses}
               scale={this.state.videoScale}
               onLabelsChange={this.handleLabelsChange}
+              previousLabelName={this.state.labels.length > 0 ? this.state.labels[this.state.labels.length - 1].str : undefined}
             />
           }
         </VideoOverlay>

@@ -11,9 +11,12 @@ declare interface Label {
 }
 
 declare interface LabeledImage {
-  // images are stored as data URLs so they can be
-  // serialized and stored in local storage
-  imageDataURL: string;
+  url: string;
+  time: number;
+  frame: number;
+  width: number;
+  height: number;
+
   filename: string;
   labels: Label[];
 }
@@ -21,4 +24,11 @@ declare interface LabeledImage {
 declare interface ArchiveFile {
   path: string;
   data: Blob;
+}
+
+declare interface UserSettings {
+  skipLength: number;
+  skipLengthFrameRate: number;
+  saveCroppedImages: boolean;
+  saveImagesWithoutLabels: boolean;
 }

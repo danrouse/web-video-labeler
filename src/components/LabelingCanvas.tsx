@@ -8,6 +8,8 @@ interface Props {
   gridSize: number;
   labels: Label[];
   onLabelsChange: LabelsChangeHandler;
+  classes: string[];
+  previousLabelName: string;
 }
 
 interface State {
@@ -17,6 +19,7 @@ interface State {
 export default class LabelingCanvas extends React.Component<Props, State> {
   static defaultProps = {
     gridSize: 16,
+    previousLabelName: 'new label',
   };
   state: State = {};
 
@@ -34,24 +37,24 @@ export default class LabelingCanvas extends React.Component<Props, State> {
     // create a 0x0 rect at mouse and start resizing
     const { offsetX, offsetY } = this.getOffsets();
     const newLabel: Label = {
-      str: 'new label',
+      str: this.props.previousLabelName,
       rect: {
         x: (evt.clientX - offsetX) / this.props.scale,
         y: (evt.clientY - offsetY) / this.props.scale,
-        width: 10,
-        height: 10
-      }
+        width: 0,
+        height: 0,
+      },
     };
     this.props.onLabelsChange(
       this.props.labels.concat([newLabel]),
       // send the event to child after parent creates it, to initialize drawing
-      () => this.setState({ initializeLabelMouseEvent: evt })
+      () => this.setState({ initializeLabelMouseEvent: evt }),
     );
 
     evt.persist();
     evt.preventDefault();
     evt.stopPropagation();
-  };
+  }
 
   handleLabelChange = (index: number, label?: Label) => {
     const { labels, onLabelsChange } = this.props;
@@ -60,13 +63,13 @@ export default class LabelingCanvas extends React.Component<Props, State> {
       nextLabels = [
         ...labels.slice(0, index),
         label,
-        ...labels.slice((index || 0) + 1)
+        ...labels.slice((index || 0) + 1),
       ];
     } else {
       nextLabels = labels.filter((_, i) => i !== index);
     }
     onLabelsChange(nextLabels);
-  };
+  }
 
   render() {
     const { gridSize, scale, labels } = this.props;
@@ -77,23 +80,24 @@ export default class LabelingCanvas extends React.Component<Props, State> {
           backgroundSize: `${gridSize * scale}px ${gridSize * scale}px`,
           backgroundPosition: `${gridSize * -0.5 * scale}px ${gridSize * -0.5 * scale}px`,
           backgroundImage: `
-            linear-gradient(to right, rgba(127,127,127,0.5) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(127,127,127,0.5) 1px, transparent 1px)
+            linear-gradient(to right, rgba(127,127,127,0.2) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(127,127,127,0.2) 1px, transparent 1px)
           `,
           position: 'absolute',
+          pointerEvents: 'all',
           top: 0, bottom: 0, left: 0, right: 0,
           width: '100%',
           height: '100%',
-          cursor: 'crosshair'
+          cursor: 'crosshair',
         }}
-        ref={(ref) => this.ref = ref}
+        ref={ref => this.ref = ref}
       >
         {labels.map((label, index) => (
           <LabelingCanvasLabel
             index={index}
             label={label}
             scale={scale}
-            autocompleteSuggestions={Array.from(new Set(labels.map(l => l.str)))}
+            classes={this.props.classes}
             onChange={this.handleLabelChange}
             initializeWithMouseEvent={index === labels.length - 1 ? this.state.initializeLabelMouseEvent : undefined}
           />

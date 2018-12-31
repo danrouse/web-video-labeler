@@ -5,8 +5,8 @@ export default function throttle(fn: Function, delay: number, runInitially: bool
       clearTimeout(timer);
     } else if (runInitially) {
       timer = true;
-      fn(...args);  
+      fn(...args);
     }
     timer = setTimeout(() => fn(...args), delay);
-  }
+  };
 }

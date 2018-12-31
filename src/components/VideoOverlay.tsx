@@ -35,29 +35,31 @@ export default class VideoOverlay extends React.Component<Props, State> {
     }
   }
 
-  updateRect = throttle((elem = this.props.elem) => {
-    const { videoWidth, videoHeight } = elem;
-    const { x, y, width: w, height: h } = elem.getBoundingClientRect() as DOMRect;
-    const widthScale = w / videoWidth;
-    const heightScale = h / videoHeight;
-    let scale = widthScale;
-    if (widthScale !== heightScale) {
-      scale += (heightScale - widthScale) / 2;
-    }
-    if (scale !== this.state.videoScale) {
-      this.props.onScaleChange(scale);
-    }
+  updateRect = throttle(
+    (elem = this.props.elem) => {
+      const { videoWidth, videoHeight } = elem;
+      const { x, y, width: w, height: h } = elem.getBoundingClientRect() as DOMRect;
+      const widthScale = w / videoWidth;
+      const heightScale = h / videoHeight;
+      let scale = widthScale;
+      if (widthScale !== heightScale) {
+        scale += (heightScale - widthScale) / 2;
+      }
+      if (scale !== this.state.videoScale) {
+        this.props.onScaleChange(scale);
+      }
 
-    this.setState({
-      videoRect: {
-        x: x + window.scrollX,
-        y: y + window.scrollY,
-        width: w,
-        height: h
-      },
-      videoScale: scale
-    });
-  }, 100, true);
+      this.setState({
+        videoRect: {
+          x: x + window.scrollX,
+          y: y + window.scrollY,
+          width: w,
+          height: h,
+        },
+        videoScale: scale,
+      });
+    },
+    100, true);
 
   render() {
     if (!this.state.videoRect) return null;
@@ -65,13 +67,13 @@ export default class VideoOverlay extends React.Component<Props, State> {
     return (
       <div
         style={{
-          pointerEvents: 'none',
-          position: 'absolute',
-          zIndex: 1100,
           width,
           height,
           left: x,
-          top: y
+          top: y,
+          pointerEvents: 'none',
+          position: 'absolute',
+          zIndex: 1100,
         }}
       >
         {this.props.children}

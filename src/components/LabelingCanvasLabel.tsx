@@ -1,5 +1,4 @@
 import * as React from 'react';
-import AutocompleteInput from './AutocompleteInput';
 import hashStringToColor from '../util/hashStringToColor';
 
 type LabelChangeHandler = (index: number, label?: Label) => void;
@@ -8,7 +7,7 @@ interface Props {
   index: number;
   label: Label;
   scale: number;
-  autocompleteSuggestions?: string[];
+  classes: string[];
   onChange: LabelChangeHandler;
   initializeWithMouseEvent?: React.MouseEvent;
 }
@@ -18,7 +17,7 @@ interface Anchors {
   right: boolean;
   top: boolean;
   bottom: boolean;
-};
+}
 
 interface State {
   resizeCursor: string;
@@ -29,7 +28,9 @@ interface State {
   isActive?: boolean;
   isHovered?: boolean;
   anchors: Anchors;
-};
+
+  isInputExpanded?: boolean;
+}
 
 export default class LabelingCanvasLabel extends React.Component<Props, State> {
   ref?: HTMLElement;
@@ -38,7 +39,7 @@ export default class LabelingCanvasLabel extends React.Component<Props, State> {
     resizeCursor: '',
     mouseDownX: 0,
     mouseDownY: 0,
-    anchors: { left: false, right: false, top: false, bottom: false }
+    anchors: { left: false, right: false, top: false, bottom: false },
   };
 
   componentWillReceiveProps({ initializeWithMouseEvent }: Props) {
@@ -53,15 +54,24 @@ export default class LabelingCanvasLabel extends React.Component<Props, State> {
     evt.preventDefault();
     evt.stopPropagation();
     this.props.onChange(this.props.index);
-  };
+  }
 
-  handleLabelStrChange = (evt: React.SyntheticEvent<HTMLElement>, str = (evt.currentTarget as HTMLInputElement).value) => {
-    this.props.onChange(this.props.index, { ...this.props.label, str });
-  };
+  handleClassButtonClick = (evt: React.FormEvent<HTMLButtonElement>) => {
+    this.props.onChange(this.props.index, {
+      ...this.props.label,
+      str: evt.currentTarget.name,
+    });
+    this.setState({ isInputExpanded: false });
+  }
 
-  cancelEvent = (evt: React.SyntheticEvent) => {
-    evt.stopPropagation();
-  };
+  handleSubmitClassName = (evt: React.FormEvent<HTMLFormElement>) => {
+    evt.preventDefault();
+    this.props.onChange(this.props.index, {
+      ...this.props.label,
+      str: (evt.currentTarget[0] as HTMLInputElement).value,
+    });
+    this.setState({ isInputExpanded: false });
+  }
 
   getAnchors(evt: React.MouseEvent) {
     if (!this.ref) return { left: false, right: false, top: false, bottom: false };
@@ -82,7 +92,7 @@ export default class LabelingCanvasLabel extends React.Component<Props, State> {
     if (anchors.right) cursor += 'e';
     if (cursor) cursor += '-resize';
     this.setState({ resizeCursor: cursor });
-  };
+  }
 
   beginMoveOrResize = (evt: React.MouseEvent, mousemoveHandler: (evt: MouseEvent) => void) => {
     if (!this.ref || !(this.ref.parentElement instanceof HTMLElement)) return;
@@ -92,7 +102,7 @@ export default class LabelingCanvasLabel extends React.Component<Props, State> {
       mouseDownY: evt.clientY,
       isActive: true,
       containerRect: { x, y, width, height },
-      anchors: this.getAnchors(evt)
+      anchors: this.getAnchors(evt),
     });
     const cleanup = () => {
       window.removeEventListener('mousemove', mousemoveHandler);
@@ -107,27 +117,27 @@ export default class LabelingCanvasLabel extends React.Component<Props, State> {
     window.addEventListener('mouseup', cleanup);
     evt.preventDefault();
     evt.stopPropagation();
-  };
+  }
 
   move = (evt: MouseEvent) => {
     const { mouseDownX, mouseDownY, containerRect } = this.state;
     if (!containerRect) return;
-    let { x, y, width, height } = this.props.label.rect;
+    let { x, y, width, height } = this.props.label.rect; // tslint:disable-line prefer-const
     x += this.scale(evt.clientX - mouseDownX);
     y += this.scale(evt.clientY - mouseDownY);
     // constrain to container (all sides)
     x = Math.max(Math.min(x, this.scale(containerRect.width) - width), 0);
     y = Math.max(Math.min(y, this.scale(containerRect.height) - height), 0);
     this.setState({ workingRect: { x, y, width, height } });
-  };
+  }
 
   resize = (evt: MouseEvent) => {
     const { anchors, containerRect } = this.state;
     if (!containerRect) return;
     let { x, y, width, height } = this.props.label.rect;
     // constrain to container (top left)
-    let x2 = Math.max(this.scale(evt.clientX - containerRect.x), 0);
-    let y2 = Math.max(this.scale(evt.clientY - containerRect.y), 0);
+    const x2 = Math.max(this.scale(evt.clientX - containerRect.x), 0);
+    const y2 = Math.max(this.scale(evt.clientY - containerRect.y), 0);
     // apply based on where the resize is anchored
     if (anchors.left) {
       width += x - x2;
@@ -155,33 +165,35 @@ export default class LabelingCanvasLabel extends React.Component<Props, State> {
     height = Math.min(height, this.scale(containerRect.height) - y);
 
     this.setState({ workingRect: { x, y, width, height } });
-  };
+  }
 
   startMoving = (evt: React.MouseEvent) => {
     if (evt.button !== 0) return;
     this.beginMoveOrResize(evt, this.move);
-  };
+  }
 
   startResizing = (evt: React.MouseEvent) => {
     if (evt.button !== 0) return;
     this.beginMoveOrResize(evt, this.resize);
-  };
+  }
 
   render() {
     const { workingRect: rectFromState, isActive, isHovered } = this.state;
     const { scale, label: { rect: rectFromProps, str } } = this.props;
     const rect = rectFromState || rectFromProps;
+    const borderWidth = 1;
+    const border = `${borderWidth}px solid ${hashStringToColor(str)}`;
     return (
       <div
         style={{
+          border,
           position: 'absolute',
           transform: `translateX(${rect.x * scale}px) translateY(${rect.y * scale}px)`,
           width: rect.width * scale,
           height: rect.height * scale,
-          border: `2px solid ${hashStringToColor(str)}`,
-          zIndex: isActive ? 1111 : undefined,
+          zIndex: isActive ? 1102 : 1101,
         }}
-        ref={(ref) => ref && (this.ref = ref)}
+        ref={ref => ref && (this.ref = ref)}
         onContextMenu={this.removeLabel}
       >
         <div
@@ -204,39 +216,86 @@ export default class LabelingCanvasLabel extends React.Component<Props, State> {
             top: 8 * scale,
             bottom: 8 * scale,
             cursor: 'move',
-            backgroundColor: isHovered && !isActive ? 'rgba(255,255,255,0.25)' : 'transparent'
+            backgroundColor: isHovered && !isActive ? 'rgba(255,255,255,0.15)' : 'transparent',
           }}
           onMouseEnter={() => this.setState({ isHovered: true })}
           onMouseLeave={() => this.setState({ isHovered: false })}
           onMouseDown={this.startMoving}
         />
-        <AutocompleteInput
-          type="text"
-          value={str}
+        <div
           style={{
             position: 'absolute',
-            top: 0,
+            top: -14,
             left: 0,
-            width: '100%',
-            height: '100%',
-            pointerEvents: 'none',
-            overflow: 'hidden'
-          }}
-          inputStyle={{
-            padding: 3,
+            cursor: 'text',
+            padding: borderWidth + 1,
             fontSize: 10,
-            border: 0,
-            maxWidth: '100%',
-            maxHeight: '100%',
+            margin: `-${borderWidth}px -${borderWidth}px 0 -${borderWidth}px`,
+            maxWidth: `calc(100% + ${2 * borderWidth}px)`,
+            textOverflow: 'ellipsis',
+            overflow: 'hidden',
+            whiteSpace: 'nowrap',
             textShadow: '1px 1px 2px rgba(255,255,255,0.4)',
-            backgroundColor: hashStringToColor(str),
             fontWeight: 'bold',
-            pointerEvents: 'all'
+            pointerEvents: 'all',
+            backgroundColor: hashStringToColor(str),
           }}
-          suggestions={this.props.autocompleteSuggestions}
-          onChange={this.handleLabelStrChange}
-          onMouseDown={this.cancelEvent}
-        />
+          onClick={() => this.setState({ isInputExpanded: !this.state.isInputExpanded })}
+        >
+          {str}
+        </div>
+        {this.state.isInputExpanded &&
+          <div
+            style={{
+              pointerEvents: 'all',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              overflowY: 'auto',
+              bottom: 0,
+              paddingBottom: 16,
+            }}
+          >
+            {this.props.classes.map(labelClass => (
+              <button
+                name={labelClass}
+                onClick={this.handleClassButtonClick}
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  border: 0,
+                  borderRadius: 0,
+                  padding: '1px 4px',
+                  margin: 1,
+                  backgroundColor: hashStringToColor(labelClass),
+                  cursor: 'pointer',
+                  fontSize: 12,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  height: 'auto',
+                }}
+              >
+                {labelClass}
+              </button>
+            ))}
+            <form onSubmit={this.handleSubmitClassName} style={{ width: '100%', position: 'fixed', bottom: 0 }}>
+              <input
+                type="text"
+                placeholder="new class"
+                style={{
+                  width: 'calc(100% - 2px)',
+                  padding: 2,
+                  fontSize: 13,
+                  border: 0,
+                  borderRadius: 0,
+                  margin: 1,
+                  backgroundColor: 'rgba(255,255,255,0.8)',
+                }}
+              />
+            </form>
+          </div>
+        }
       </div>
     );
   }

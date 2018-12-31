@@ -8,6 +8,7 @@ interface Props<T> {
   data: T;
   onLoad: LocalStorageLoadHandler<T>;
   onStorageFull: LocalStorageQuotaExceededHandler;
+  exclude: string[];
 }
 
 interface State {
@@ -18,6 +19,10 @@ interface State {
 export default class LocalStorageSync<T> extends React.Component<Props<T>, State> {
   state: State = {};
 
+  static defaultProps = {
+    exclude: [],
+  };
+
   load() {
     const data = localStorage.getItem(this.props.localStorageKey);
     if (data) {
@@ -26,6 +31,7 @@ export default class LocalStorageSync<T> extends React.Component<Props<T>, State
         loadedData = JSON.parse(data);
       } catch (e) {}
       if (loadedData) {
+        for (const key of this.props.exclude) delete (loadedData as any)[key];
         this.props.onLoad(loadedData);
       }
     }
@@ -35,6 +41,8 @@ export default class LocalStorageSync<T> extends React.Component<Props<T>, State
   save = () => {
     if (!this.state.loaded) return;
     try {
+      const copy = { ...this.props.data as any };
+      for (const key of this.props.exclude) delete (copy as any)[key];
       localStorage.setItem(this.props.localStorageKey, JSON.stringify(this.props.data));
       this.setState({ hasReportedFailure: false });
     } catch (exc) {
@@ -47,7 +55,7 @@ export default class LocalStorageSync<T> extends React.Component<Props<T>, State
         throw exc;
       }
     }
-  };
+  }
 
   componentWillMount() {
     this.load();

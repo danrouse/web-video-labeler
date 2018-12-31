@@ -2,24 +2,32 @@ import * as JSZip_ from 'jszip';
 // TypeScript definitions don't match with the export format of the
 // (overloaded) version of JSZip included in the rollup bundle.
 // JSZip is aliased in rollup because of module bundling issues.
-const JSZip: JSZip_ = (JSZip_ as any).default;
+const JSZip: JSZip_ = (JSZip_ as any).default; // tslint:disable-line variable-name
 
 function downloadDataURL(data: string, filename: string) {
   const elem = document.createElement('a');
   elem.href = data;
   elem.download = filename;
+  document.body.appendChild(elem);
   elem.click();
+  document.body.removeChild(elem);
 }
 
-let _videoFrameToDataURLCanvas: HTMLCanvasElement | undefined;
-export function videoFrameToDataURL(video: HTMLVideoElement) {
-  _videoFrameToDataURLCanvas = _videoFrameToDataURLCanvas || document.createElement('canvas');
-  const canvas = _videoFrameToDataURLCanvas;
+let videoFrameToDataURLSharedCanvas: HTMLCanvasElement | undefined;
+export function videoFrameToDataURL(video: HTMLVideoElement, rect?: Rect) {
+  videoFrameToDataURLSharedCanvas = videoFrameToDataURLSharedCanvas || document.createElement('canvas');
+  const canvas = videoFrameToDataURLSharedCanvas;
   const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
-  ctx.drawImage(video, 0, 0);
+  const width = rect ? rect.width : video.videoWidth;
+  const height = rect ? rect.height : video.videoHeight;
+  canvas.width = width;
+  canvas.height = height;
+  ctx.drawImage(video, rect ? rect.x : 0, rect ? rect.y : 0, width, height, 0, 0, width, height);
   return canvas.toDataURL('image/jpeg');
+}
+
+export function downloadVideoFrame(video: HTMLVideoElement, filename: string, rect?: Rect) {
+  downloadDataURL(videoFrameToDataURL(video, rect), filename);
 }
 
 async function filesToZIPDataURL(files: ArchiveFile[]) {
@@ -33,11 +41,11 @@ export async function downloadFiles(files: ArchiveFile[], filename: string = 'da
   downloadDataURL(await filesToZIPDataURL(files), filename);
 }
 
-let _imageDataURLToBlobCanvas: HTMLCanvasElement | undefined;
+let imageDataURLToBlobSharedCanvas: HTMLCanvasElement | undefined;
 export function imageDataURLToBlob(dataURL: string, rect?: Rect): Promise<Blob> {
   return new Promise((resolve) => {
-    _imageDataURLToBlobCanvas = _imageDataURLToBlobCanvas || document.createElement('canvas');
-    const canvas = _imageDataURLToBlobCanvas;
+    imageDataURLToBlobSharedCanvas = imageDataURLToBlobSharedCanvas || document.createElement('canvas');
+    const canvas = imageDataURLToBlobSharedCanvas;
     const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
     const image = new Image();
     image.onload = () => {
