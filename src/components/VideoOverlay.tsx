@@ -1,9 +1,6 @@
 import * as React from 'react';
 import throttle from '../util/throttle';
 
-// TODO: Fullscreen video support
-// TODO: Better tracking while video resizes?
-
 type VideoScaleChangeHandler = (scale: number) => void;
 
 interface Props {

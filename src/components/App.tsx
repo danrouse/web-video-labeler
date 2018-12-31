@@ -29,7 +29,7 @@ interface State {
 const defaultState: State = {
   labels: [],
   labeledImages: [],
-  labelClasses: ['foo', 'bar'],
+  labelClasses: [],
   isLabeling: false,
   isSettingsPanelVisible: false,
   isHelpPanelVisible: false,
@@ -62,12 +62,8 @@ export default class App extends React.Component<{}, State> {
 
   clearLabeledImages = () => confirm('are you sure? will delete all cached images + labels') &&
     this.setState({ labeledImages: [] })
-  resetSettings = () => confirm('are you sure you want to reset all settings?') && this.setState({
-    ...defaultState,
-    labels: this.state.labels,
-    labeledImages: this.state.labeledImages,
-    isSettingsPanelVisible: this.state.isSettingsPanelVisible,
-  })
+  resetSettings = () => confirm('are you sure you want to reset all settings?') &&
+    this.setState({ settings: defaultState.settings })
   clearLabels = () => this.setState({ labels: [] });
   clearLabelClasses = () => this.setState({ labelClasses: [] });
 

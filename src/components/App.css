@@ -1,3 +1,7 @@
+.__app {
+  font-size: 16px;
+}
+
 .__app, .__app *, .__app *:before, .__app *:after {
   box-sizing: border-box;
 }
