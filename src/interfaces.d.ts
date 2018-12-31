@@ -23,7 +23,7 @@ declare interface LabeledImage {
 
 declare interface ArchiveFile {
   path: string;
-  data: Blob;
+  data: Blob | string;
 }
 
 declare interface UserSettings {
@@ -31,4 +31,9 @@ declare interface UserSettings {
   skipLengthFrameRate: number;
   saveCroppedImages: boolean;
   saveImagesWithoutLabels: boolean;
+
+  darknetWidth: number;
+  darknetHeight: number;
+  darknetExecutablePath: string;
+  darknetConfigURL: string;
 }

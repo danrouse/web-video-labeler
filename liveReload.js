@@ -19,3 +19,16 @@ async function watchChanges(url, lastHash = '') {
 
 const hashFileURL = chrome.runtime.getURL('.rollup-hash');
 watchChanges(hashFileURL);
+
+const getDownloadedPath = async (filename) =>
+  new Promise(resolve =>
+    chrome.downloads.search(
+      { filenameRegex: filename + '$', limit: 1 },
+      ([{ filename }]) => resolve(filename)),
+    );
+
+chrome.runtime.onMessageExternal.addListener(function (message, sender, respond) {
+  if (message.type !== 'FETCH_DOWNLOAD_PATHS') return;
+  Promise.all(message.filenames.map(getDownloadedPath)).then(paths => respond(paths));
+  return true;
+});

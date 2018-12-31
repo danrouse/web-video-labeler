@@ -1,4 +1,5 @@
 import * as React from 'react';
+import './Toolbar.css';
 
 interface Props {
   numLabels: number;
@@ -23,30 +24,6 @@ interface Props {
 export default function Toolbar(props: Props) {
   return (
     <div className="__app_toolbar">
-      <style type="text/css">
-      {`
-      .__app_toolbar {
-        position: fixed;
-        z-index: 1110;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        padding: 1em;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 16px;
-        border-radius: 2px;
-        background-color: rgba(240,240,240,0.8);
-        box-shadow: 0 0 2px rgba(0,0,0,0.3);
-        text-shadow: 1px 1px 0 rgba(0,0,0,0.2);
-      }
-      .__app_toolbar p {
-        margin: 0 6px;
-        font-size: 12px;
-      }
-      `}
-      </style>
       {!props.isLabeling ?
         <div style={{ flex: 1, maxWidth: '50%' }}>
           <button onClick={props.startLabeling}>

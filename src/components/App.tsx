@@ -6,8 +6,10 @@ import Toolbar from './Toolbar';
 import SettingsPanel from './SettingsPanel';
 import HelpPanel from './HelpPanel';
 import LabelClassPanel from './LabelClassPanel';
-import { downloadVideoFrame } from '../util/dataURL';
+import { downloadVideoFrame, downloadZIPFile } from '../util/dataURL';
 import { getVideoID, getYouTubeVideoElem, toggleYouTubeUI } from '../util/youtube';
+import { labeledImagesToDarknet } from '../util/dataFormats';
+import './App.css';
 
 interface State {
   labels: Label[];
@@ -37,6 +39,11 @@ const defaultState: State = {
     skipLengthFrameRate: 24,
     saveCroppedImages: false,
     saveImagesWithoutLabels: false,
+
+    darknetWidth: 416,
+    darknetHeight: 416,
+    darknetExecutablePath: 'darknet',
+    darknetConfigURL: 'https://raw.githubusercontent.com/AlexeyAB/darknet/master/cfg/yolov3-tiny_obj.cfg',
   },
 
   videoScale: 1,
@@ -50,11 +57,6 @@ export default class App extends React.Component<{}, State> {
   componentWillMount() {
     getYouTubeVideoElem().addEventListener('play', () =>
       this.state.isLabeling && this.setState({ isLabeling: false }));
-  }
-
-  downloadLabeledImages = async () => {
-    // TODO
-    // await downloadFiles(files, `data.zip`);
   }
 
   clearLabeledImages = () => confirm('are you sure? will delete all cached images + labels') &&
@@ -100,6 +102,14 @@ export default class App extends React.Component<{}, State> {
   }
   skip = () => getYouTubeVideoElem().currentTime += this.state.settings.skipLength / this.state.settings.skipLengthFrameRate;
   prev = () => getYouTubeVideoElem().currentTime -= -this.state.settings.skipLength / this.state.settings.skipLengthFrameRate;
+  next = () => {
+    if (this.state.settings.saveImagesWithoutLabels || this.state.labels.length > 0) {
+      const labeledImage = this.downloadFrame();
+      this.setState({ labeledImages: this.state.labeledImages.concat([labeledImage]) });
+    }
+    this.skip();
+  }
+
   downloadFrame = (): LabeledImage => {
     const video = getYouTubeVideoElem();
     const time = video.currentTime;
@@ -126,62 +136,21 @@ export default class App extends React.Component<{}, State> {
     };
   }
 
-  next = () => {
-    if (this.state.settings.saveImagesWithoutLabels || this.state.labels.length > 0) {
-      const labeledImage = this.downloadFrame();
-      this.setState({ labeledImages: this.state.labeledImages.concat([labeledImage]) });
-    }
-    this.skip();
+  downloadLabeledImages = async () => {
+    const data = await labeledImagesToDarknet(
+      this.state.labeledImages,
+      this.state.labelClasses,
+      this.state.settings.darknetConfigURL,
+      this.state.settings.darknetExecutablePath,
+      this.state.settings.darknetWidth,
+      this.state.settings.darknetHeight,
+    );
+    await downloadZIPFile(data, 'data.zip');
   }
 
   render() {
     return (
       <div className="__app">
-        <style type="text/css">
-        {`
-        .__app, .__app *, .__app *:before, .__app *:after {
-          box-sizing: border-box;
-        }
-
-        .__app button {
-          border: 1px outset #ccc;
-          background-color: #ccc;
-          border-radius: 2px;
-          margin: 2px;
-          padding: 4px;
-          cursor: pointer;
-          font-size: 13px;
-          font-weight: bold;
-          text-transform: uppercase;
-          color: #222;
-          text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.2);
-          height: 2.2em;
-        }
-          .__app button:hover {
-            border-color: #aaa;
-            background-color: #aaa;
-          }
-          .__app button:active {
-            border-style: inset;
-            outline: none;
-          }
-          .__app button i {
-            font-size: 16px;
-            vertical-align: middle;
-          }
-          .__app button i + span {
-            margin: 0 2px 0 4px;
-          }
-        .__app button.icon {
-          width: 2.2em;
-        }
-        .__app fieldset {
-          border-radius: 3px;
-          border: 1px solid #ddd;
-          display: flex;
-        }
-        `}
-        </style>
         <LocalStorageSync
           data={this.state}
           exclude={['isLabeling']}

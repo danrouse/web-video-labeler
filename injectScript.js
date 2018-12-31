@@ -1,3 +1,4 @@
+document.body.dataset.__chrome_runtime_id = chrome.runtime.id;
 // Inject main script to run inside the context of the page
 // in order to access the page's Javascript scope
 const SCRIPT_URL = chrome.extension.getURL('dist/bundle.js');

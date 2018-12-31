@@ -68,6 +68,40 @@ export default class SettingsPanel extends React.Component<Props> {
             />
           </label>
         </fieldset>
+        <fieldset>
+          <legend>Darknet Output</legend>
+          <p>These settings are used to pre-populate darknet config and training scripts</p>
+          <label>
+            Width
+            <input
+              name="darknetWidth"
+              type="number"
+              min={1}
+              step={1}
+              value={this.props.settings.darknetWidth}
+              onChange={this.handleNumber}
+            />
+          </label>
+          <label>
+            Height
+            <input
+              name="darknetHeight"
+              type="number"
+              min={1}
+              step={1}
+              value={this.props.settings.darknetHeight}
+              onChange={this.handleNumber}
+            />
+          </label>
+          <label>
+            Executable path
+            <input type="text" value={this.props.settings.darknetExecutablePath} />
+          </label>
+          <label>
+            Config URL
+            <input type="text" value={this.props.settings.darknetConfigURL} />
+          </label>
+        </fieldset>
         <button onClick={this.props.onReset}>
           <i className="fas fa-trash" title="Reset Settings" />
           <span>Reset Settings</span>
