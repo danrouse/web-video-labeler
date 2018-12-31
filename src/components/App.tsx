@@ -6,9 +6,9 @@ import Toolbar from './Toolbar';
 import SettingsPanel from './SettingsPanel';
 import HelpPanel from './HelpPanel';
 import LabelClassPanel from './LabelClassPanel';
-import { downloadVideoFrame, downloadZIPFile } from '../util/dataURL';
+import { downloadVideoFrame, downloadZIPFile } from '../util/download';
 import { getVideoID, getYouTubeVideoElem, toggleYouTubeUI } from '../util/youtube';
-import { labeledImagesToDarknet } from '../util/dataFormats';
+import { labeledImagesToDarknet } from '../util/darknet';
 import './App.css';
 
 interface State {
@@ -44,6 +44,7 @@ const defaultState: State = {
     darknetHeight: 416,
     darknetExecutablePath: 'darknet',
     darknetConfigURL: 'https://raw.githubusercontent.com/AlexeyAB/darknet/master/cfg/yolov3-tiny_obj.cfg',
+    darknetTrainTestRatio: 0.8,
   },
 
   videoScale: 1,
@@ -140,10 +141,13 @@ export default class App extends React.Component<{}, State> {
     const data = await labeledImagesToDarknet(
       this.state.labeledImages,
       this.state.labelClasses,
-      this.state.settings.darknetConfigURL,
-      this.state.settings.darknetExecutablePath,
-      this.state.settings.darknetWidth,
-      this.state.settings.darknetHeight,
+      {
+        configURL: this.state.settings.darknetConfigURL,
+        executablePath: this.state.settings.darknetExecutablePath,
+        width: this.state.settings.darknetWidth,
+        height: this.state.settings.darknetHeight,
+        trainTestRatio: this.state.settings.darknetTrainTestRatio,
+      }
     );
     await downloadZIPFile(data, 'data.zip');
   }

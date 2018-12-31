@@ -37,4 +37,5 @@ declare interface UserSettings {
   darknetHeight: number;
   darknetExecutablePath: string;
   darknetConfigURL: string;
+  darknetTrainTestRatio: number;
 }
