@@ -10,7 +10,8 @@ export default {
   input: 'dist/main.js',
   output: {
     file: 'dist/bundle.js',
-    format: 'cjs'
+    format: 'cjs',
+    sourcemap: true
   },
   plugins: [
     replace({
