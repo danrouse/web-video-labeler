@@ -28,7 +28,7 @@ function videoFrameToDataURL(video: HTMLVideoElement, rect?: Rect) {
 
 async function filesToZIPFileDataURL(files: ArchiveFile[]) {
   const zip = new JSZip();
-  files.forEach(({ path, data }) => zip.file(path, data));
+  files.forEach(({ path, data, ...otherOptions }) => zip.file(path, data, otherOptions));
   const b64 = await zip.generateAsync({ type: 'base64', compression: 'DEFLATE' });
   return `data:application/octet-stream;base64,${b64}`;
 }

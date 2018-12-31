@@ -24,6 +24,7 @@ declare interface LabeledImage {
 declare interface ArchiveFile {
   path: string;
   data: Blob | string;
+  unixPermissions?: string | number;
 }
 
 declare interface UserSettings {
