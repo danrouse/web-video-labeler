@@ -76,7 +76,7 @@ export default class App extends React.Component<{}, State> {
   handleVideoScaleChange = (videoScale: number) => this.setState({ videoScale });
   handleLabelsChange = (labels: Label[], callback?: () => void) => {
     const labelClasses = new Set(this.state.labelClasses);
-    labels.forEach(({ str }) => labelClasses.add(str));
+    labels.forEach(({ str }) => str !== 'new label' && labelClasses.add(str));
     this.setState({ labels, labelClasses: Array.from(labelClasses) }, callback);
   }
   handleSettingChange = (settings: Partial<UserSettings>) => this.setState({
