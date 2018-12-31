@@ -33,10 +33,11 @@ export async function labeledImagesToDarknet(
     config.trainTestRatio
   );
   const imagePaths: string[] = await getDownloadedPaths(imageFilenames);
-  const trainScript = ['#!/bin/sh'].concat([
-    ...imagePaths.map(p => `mv "${p}" data/`),
+  const trainScript = [
+    '#!/bin/sh',
+    `mv ${imagePaths.map(p => `"${p}"`).join(' ')} data/`,
     `${config.executablePath} detector train ${FILENAME_DATA_CONFIG} ${FILENAME_DARKNET_CONFIG}`,
-  ]);
+  ];
 
   return [{
     path: FILENAME_TRAIN,
