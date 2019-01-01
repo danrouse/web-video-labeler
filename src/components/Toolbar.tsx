@@ -26,27 +26,27 @@ export default function Toolbar(props: Props) {
     <div className="__app_toolbar">
       {!props.isLabeling ?
         <div style={{ flex: 1, maxWidth: '50%' }}>
-          <button onClick={props.startLabeling}>
-            <i className="fas fa-power-off" title="Begin Annotating Labels" />
+          <button onClick={props.startLabeling} title="Begin Annotating Labels">
+            <i className="fas fa-power-off" />
             <span>Label</span>
           </button>
         </div>
         :
         <div style={{ flex: 1, maxWidth: '50%' }}>
-          <button className="icon" onClick={props.stopLabeling}>
-            <i className="fas fa-stop" title="Stop" />
+          <button className="icon" onClick={props.stopLabeling} title="Stop">
+            <i className="fas fa-stop" />
           </button>
-          <button className="icon" onClick={props.clearLabels}>
-            <i className="fas fa-eraser" title="Clear Labels" />
+          <button className="icon" onClick={props.clearLabels} title="Clear Labels">
+            <i className="fas fa-eraser" />
           </button>
-          <button className="icon" onClick={props.prev} disabled={props.isSeeking}>
-            <i className="fas fa-step-backward" title="Skip Back" />
+          <button className="icon" onClick={props.prev} disabled={props.isSeeking} title="Skip Back">
+            <i className="fas fa-step-backward" />
           </button>
-          <button className="icon" onClick={props.skip} disabled={props.isSeeking}>
-            <i className="fas fa-step-forward" title="Skip Ahead" />
+          <button className="icon" onClick={props.skip} disabled={props.isSeeking} title="Skip Ahead">
+            <i className="fas fa-step-forward" />
           </button>
-          <button onClick={props.next} disabled={props.isSeeking}>
-            <i className="fas fa-check" title="Continue" />
+          <button onClick={props.next} disabled={props.isSeeking} title="Continue">
+            <i className="fas fa-check" />
             <span>Continue</span>
           </button>
         </div>
@@ -56,24 +56,24 @@ export default function Toolbar(props: Props) {
       }
       {props.numLabeledImages > 0 &&
         <div style={{ margin: '0 12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <button onClick={props.downloadLabeledImages}>
-            <i className="fas fa-save" title="Download" />
+          <button onClick={props.downloadLabeledImages} title="Download">
+            <i className="fas fa-save" />
             <span>{props.numLabeledImages}</span>
           </button>
-          <button className="icon" onClick={props.clearLabeledImages}>
-            <i className="fas fa-trash" title="Clear Saved Data" />
+          <button className="icon" onClick={props.clearLabeledImages} title="Clear Saved Data">
+            <i className="fas fa-trash" />
           </button>
         </div>
       }
-      <button onClick={props.toggleLabelClassPanel}>
-        <i className="fas fa-tags" title="Classes" />
+      <button onClick={props.toggleLabelClassPanel} title="Classes">
+        <i className="fas fa-tags" />
         <span>{props.numLabelClasses}</span>
       </button>
-      <button className="icon" onClick={props.toggleHelpPanel}>
-        <i className="fas fa-question" title="Help" />
+      <button className="icon" onClick={props.toggleHelpPanel} title="Help">
+        <i className="fas fa-question" />
       </button>
-      <button className="icon" onClick={props.toggleSettingsPanel}>
-        <i className="fas fa-cog" title="Settings" />
+      <button className="icon" onClick={props.toggleSettingsPanel} title="Settings">
+        <i className="fas fa-cog" />
       </button>
     </div>
   );
