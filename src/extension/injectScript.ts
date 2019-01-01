@@ -1,13 +1,14 @@
+// Attach runtime ID to DOM to allow message passing
 document.body.dataset.__chrome_runtime_id = chrome.runtime.id;
-// Inject main script to run inside the context of the page
-// in order to access the page's Javascript scope
-const SCRIPT_URL = chrome.extension.getURL('dist/bundle.js');
+
+// Inject compiled script and style into the page context
+const SCRIPT_URL = chrome.extension.getURL('bundle.js');
 const script = document.createElement('script');
 script.setAttribute('type', 'text/javascript');
 script.setAttribute('src', SCRIPT_URL);
 document.body.appendChild(script);
 
-const STYLE_URL = chrome.extension.getURL('dist/bundle.css');
+const STYLE_URL = chrome.extension.getURL('bundle.css');
 const style = document.createElement('link');
 style.setAttribute('rel', 'stylesheet');
 style.setAttribute('href', STYLE_URL);

@@ -7,6 +7,8 @@ function djb2(str: string) {
 }
 
 export default function hashStringToColor(str: string) {
+  // use bounded HSL (instead of original RGB) to generate a more restricted,
+  // more pleasant set of colors - for relatively high-constrast backgrounds
   const hash = djb2(str);
   const h = hash & 0x0000FF;
   const s = (hash & 0x00FF00) >> 8;

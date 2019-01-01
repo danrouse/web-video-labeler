@@ -1,4 +1,8 @@
-export default function throttle(fn: Function, delay: number, runInitially: boolean = false): (...args: any) => void {
+export default function throttle(
+  fn: Function,
+  delay: number,
+  runInitially: boolean = false,
+): (...args: any) => void {
   let timer: any;
   return function (...args: any) {
     if (timer) {

@@ -1,3 +1,5 @@
+// These functions are called from the web context to allow calls to unsafe
+// browser runtime APIs. Messages are handled by the background process.
 export type Message = {
   type: 'FETCH_DOWNLOAD_PATHS';
   filenames: string[];

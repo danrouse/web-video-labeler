@@ -102,8 +102,9 @@ export default class App extends React.Component<{}, State> {
     }
     this.setState({ isLabeling: false }, () => toggleYouTubeUI(true));
   }
-  skip = () => getYouTubeVideoElem().currentTime += this.state.settings.skipLength / this.state.settings.skipLengthFrameRate;
-  prev = () => getYouTubeVideoElem().currentTime -= -this.state.settings.skipLength / this.state.settings.skipLengthFrameRate;
+  seek = (dt: number) => getYouTubeVideoElem().currentTime += dt;
+  skip = () => this.seek(this.state.settings.skipLength / this.state.settings.skipLengthFrameRate);
+  prev = () => this.seek(-this.state.settings.skipLength / this.state.settings.skipLengthFrameRate);
   next = () => {
     if (this.state.settings.saveImagesWithoutLabels || this.state.labels.length > 0) {
       const labeledImage = this.downloadFrame();
@@ -216,7 +217,11 @@ export default class App extends React.Component<{}, State> {
               classes={this.state.labelClasses}
               scale={this.state.videoScale}
               onLabelsChange={this.handleLabelsChange}
-              previousLabelName={this.state.labels.length > 0 ? this.state.labels[this.state.labels.length - 1].str : undefined}
+              previousLabelName={
+                this.state.labels.length > 0
+                  ? this.state.labels[this.state.labels.length - 1].str
+                  : this.state.labelClasses[this.state.labelClasses.length - 1]
+              }
             />
           }
         </VideoOverlay>

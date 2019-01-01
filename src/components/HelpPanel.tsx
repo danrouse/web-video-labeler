@@ -16,8 +16,12 @@ export default function HelpPanel({ onClose }: Props) {
 
       <h2>About</h2>
       <p>
-        Web Video Labeler is an open source browser extension written by <a href="https://github.com/danrouse" target="_blank">danrouse</a>.
-        Source code is available on <a href="" target="_blank"><i className="fab fa-github" /> GitHub <i className="fas fa-external-link-alt" /></a>.
+        Web Video Labeler is an open source browser extension written by&nbsp;
+        <a href="https://github.com/danrouse" target="_blank">danrouse</a>.
+        Source code is available on&nbsp;
+        <a href="" target="_blank">
+          <i className="fab fa-github" /> GitHub <i className="fas fa-external-link-alt" />
+        </a>.
       </p>
     </ModalDialog>
   );

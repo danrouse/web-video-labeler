@@ -1,3 +1,5 @@
+// This script runs in the background and responds to messages,
+// allowing the web context to selectively access unsafe browser runtime APIs.
 import { Message } from './messaging';
 
 const getDownloadedPath = async (filename: string) =>

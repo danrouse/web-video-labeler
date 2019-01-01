@@ -7,7 +7,7 @@
     "rules": {
         "max-line-length": {
             "options": {
-                "limit": 180
+                "limit": 120
             }
         },
         "function-name": false
