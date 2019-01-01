@@ -8,19 +8,20 @@ interface DarknetOutputConfig {
   trainTestRatio: number;
 }
 
+// paths to output files within zip file
+const FILENAME_TRAIN = 'train_filenames.txt';
+const FILENAME_TEST = 'test_filenames.txt';
+const FILENAME_NAMES = 'class_names.txt';
+const FILENAME_BACKUP = 'checkpoint';
+const FILENAME_DATA_CONFIG = 'darknet.cfg';
+const FILENAME_DARKNET_CONFIG = 'yolo-obj.cfg';
+const FILENAME_TRAIN_SCRIPT = 'train.sh';
+
 export async function labeledImagesToDarknet(
   labeledImages: LabeledImage[],
   labelClasses: string[],
   config: DarknetOutputConfig,
 ): Promise<ArchiveFile[]> {
-  const FILENAME_TRAIN = 'train_filenames.txt';
-  const FILENAME_TEST = 'test_filenames.txt';
-  const FILENAME_NAMES = 'class_names.txt';
-  const FILENAME_BACKUP = 'checkpoint';
-  const FILENAME_DATA_CONFIG = 'darknet.cfg';
-  const FILENAME_DARKNET_CONFIG = 'yolo-obj.cfg';
-  const FILENAME_TRAIN_SCRIPT = 'train.sh';
-
   const dataConfig = [
     `classes = ${labelClasses.length}`,
     `train = ${FILENAME_TRAIN}`,

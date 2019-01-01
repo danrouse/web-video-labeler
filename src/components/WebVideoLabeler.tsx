@@ -8,7 +8,7 @@ import HelpPanel from './HelpPanel';
 import LabelClassPanel from './LabelClassPanel';
 import { downloadVideoFrame, downloadZIPFile } from '../util/download';
 import { getVideoID, getYouTubeVideoElem, toggleYouTubeUI } from '../util/youtube';
-import { labeledImagesToDarknet } from '../util/darknet';
+import { labeledImagesToDarknet } from '../formats/darknet';
 import './WebVideoLabeler.css';
 
 interface State {
