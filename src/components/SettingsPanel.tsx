@@ -26,7 +26,7 @@ function SettingsInput<T>(props: SettingsInputProps<T>) {
 
 export default class SettingsPanel extends React.Component<Props> {
   handleNumber = (evt: React.FormEvent<HTMLInputElement>) => this.props.onChange({
-    [evt.currentTarget.name as any]: parseInt(evt.currentTarget.value, 10),
+    [evt.currentTarget.name as any]: parseFloat(evt.currentTarget.value),
   } as Pick<UserSettings, keyof UserSettings>)
 
   handleCheckbox = (evt: React.FormEvent<HTMLInputElement>) => this.props.onChange({
@@ -122,15 +122,30 @@ export default class SettingsPanel extends React.Component<Props> {
           </label>
           <label>
             Executable path
-            <SettingsInput name="darknetExecutablePath" type="text" value={this.props.settings.darknetExecutablePath} />
+            <SettingsInput
+              name="darknetExecutablePath"
+              type="text"
+              value={this.props.settings.darknetExecutablePath}
+            />
           </label>
           <label>
             Config URL
-            <SettingsInput name="darknetConfigURL" type="text" value={this.props.settings.darknetConfigURL} />
+            <SettingsInput
+              name="darknetConfigURL"
+              type="text"
+              value={this.props.settings.darknetConfigURL}
+            />
           </label>
           <label>
             Train/test split
-            <SettingsInput name="darknetTrainTestRatio" type="number" min={0} max={1} value={this.props.settings.darknetTrainTestRatio} />
+            <SettingsInput
+              name="darknetTrainTestRatio"
+              type="number"
+              min={0}
+              max={1}
+              step={0.01}
+              value={this.props.settings.darknetTrainTestRatio}
+            />
           </label>
         </fieldset>
         <button onClick={this.props.onReset}>

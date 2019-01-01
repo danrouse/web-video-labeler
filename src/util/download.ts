@@ -24,8 +24,8 @@ function videoFrameToDataURL(video: HTMLVideoElement, rect?: Rect, scale: number
     x: 0,
     y: 0,
   };
-  canvas.width = width;
-  canvas.height = height;
+  canvas.width = width * scale;
+  canvas.height = height * scale;
   ctx.drawImage(video, x, y, width, height, 0, 0, width * scale, height * scale);
   return canvas.toDataURL('image/jpeg');
 }

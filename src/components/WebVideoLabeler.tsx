@@ -115,8 +115,9 @@ export default class App extends React.Component<{}, State> {
     const video = getYouTubeVideoElem();
     const time = video.currentTime;
     const frame = Math.floor(time * this.state.settings.skipLengthFrameRate);
+    const scale = this.state.settings.savedImageScale;
     const filename = `_annotate_${getVideoID()}_${frame}.jpg`;
-    downloadVideoFrame(video, filename, undefined, this.state.settings.savedImageScale);
+    downloadVideoFrame(video, filename, undefined, scale);
     if (this.state.settings.saveCroppedImages) {
       const labelCounts: { [str: string]: number } = {};
       this.state.labels.forEach((label) => {
@@ -130,7 +131,15 @@ export default class App extends React.Component<{}, State> {
       filename,
       frame,
       time,
-      labels: this.state.labels,
+      labels: this.state.labels.map(label => ({
+        ...label,
+        rect: {
+          width: label.rect.width * scale,
+          height: label.rect.height * scale,
+          x: label.rect.x * scale,
+          y: label.rect.y * scale,
+        },
+      })),
       url: window.location.href,
       width: video.videoWidth,
       height: video.videoHeight,
