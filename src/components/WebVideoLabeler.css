@@ -20,11 +20,14 @@
   text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.2);
   height: 2.2em;
 }
-  .__app button:hover {
+  .__app button:disabled {
+    color: #888;
+  }
+  .__app button:hover:not(:disabled) {
     border-color: #aaa;
     background-color: #aaa;
   }
-  .__app button:active {
+  .__app button:active:not(:disabled) {
     border-style: inset;
     outline: none;
   }

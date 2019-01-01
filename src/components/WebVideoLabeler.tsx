@@ -21,9 +21,10 @@ interface State {
   isLabelClassPanelVisible: boolean;
   settings: UserSettings;
 
-  videoScale: number;
+  isSeeking: boolean;
   isLocalStorageFull: boolean;
   wasPlayingBeforeLabeling: boolean;
+  videoScale: number;
 }
 
 const defaultState: State = {
@@ -40,7 +41,6 @@ const defaultState: State = {
     saveCroppedImages: false,
     saveImagesWithoutLabels: false,
     savedImageScale: 1,
-
     darknetWidth: 416,
     darknetHeight: 416,
     darknetExecutablePath: 'darknet',
@@ -48,17 +48,20 @@ const defaultState: State = {
     darknetTrainTestRatio: 0.8,
   },
 
-  videoScale: 1,
-  wasPlayingBeforeLabeling: false,
+  isSeeking: false,
   isLocalStorageFull: false,
+  wasPlayingBeforeLabeling: false,
+  videoScale: 1,
 };
 
 export default class App extends React.Component<{}, State> {
   state = defaultState;
 
   componentWillMount() {
-    getYouTubeVideoElem().addEventListener('play', () =>
-      this.state.isLabeling && this.setState({ isLabeling: false }));
+    const video = getYouTubeVideoElem();
+    video.addEventListener('play', () => this.setState({ isLabeling: false }));
+    video.addEventListener('seeking', () => this.setState({ isSeeking: true }));
+    video.addEventListener('seeked', () => this.setState({ isSeeking: false }));
   }
 
   clearLabeledImages = () => confirm('are you sure? will delete all cached images + labels') &&
@@ -160,10 +163,10 @@ export default class App extends React.Component<{}, State> {
           onStorageFull={this.handleStorageFull}
         />
         <Toolbar
-          numLabels={this.state.labeledImages.reduce((acc, cur) => acc + cur.labels.length, 0)}
           numLabeledImages={this.state.labeledImages.length}
           numLabelClasses={this.state.labelClasses.length}
           isLabeling={this.state.isLabeling}
+          isSeeking={this.state.isSeeking}
           isLocalStorageFull={this.state.isLocalStorageFull}
 
           startLabeling={this.startLabeling}

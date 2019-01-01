@@ -2,10 +2,10 @@ import * as React from 'react';
 import './Toolbar.css';
 
 interface Props {
-  numLabels: number;
   numLabeledImages: number;
   numLabelClasses: number;
   isLabeling: boolean;
+  isSeeking: boolean;
   isLocalStorageFull: boolean;
 
   startLabeling: () => void;
@@ -39,13 +39,13 @@ export default function Toolbar(props: Props) {
           <button className="icon" onClick={props.clearLabels}>
             <i className="fas fa-eraser" title="Clear Labels" />
           </button>
-          <button className="icon" onClick={props.prev}>
+          <button className="icon" onClick={props.prev} disabled={props.isSeeking}>
             <i className="fas fa-step-backward" title="Skip Back" />
           </button>
-          <button className="icon" onClick={props.skip}>
+          <button className="icon" onClick={props.skip} disabled={props.isSeeking}>
             <i className="fas fa-step-forward" title="Skip Ahead" />
           </button>
-          <button onClick={props.next}>
+          <button onClick={props.next} disabled={props.isSeeking}>
             <i className="fas fa-check" title="Continue" />
             <span>Continue</span>
           </button>
@@ -55,21 +55,10 @@ export default function Toolbar(props: Props) {
         <p>local storage full</p>
       }
       {props.numLabeledImages > 0 &&
-        <div style={{ margin: '0 6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <p>
-            {props.numLabeledImages > 0 &&
-              <span>
-                {props.numLabeledImages} image{props.numLabeledImages === 1 ? '' : 's'}
-              </span>
-            }
-            {props.numLabels > 0 &&
-              <span>
-                , {props.numLabels} label{props.numLabels === 1 ? '' : 's'}
-              </span>
-            }
-          </p>
-          <button className="icon" onClick={props.downloadLabeledImages}>
+        <div style={{ margin: '0 12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <button onClick={props.downloadLabeledImages}>
             <i className="fas fa-save" title="Download" />
+            <span>{props.numLabeledImages}</span>
           </button>
           <button className="icon" onClick={props.clearLabeledImages}>
             <i className="fas fa-trash" title="Clear Saved Data" />
