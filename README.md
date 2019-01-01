@@ -1,12 +1,17 @@
 Label videos on the web for training image classifiers. Web Video Labeler is a browser extension to step through videos and generate label annotations in formats ready for training.
 
+TODO: GIF screencast of app in use
+
 ## Compatibility
 - Browsers: **Chrome** or **Firefox** _(TODO: Publish to app stores)_
-- Websites: **YouTube** _(TODO: Support arbitrary web video)_
-- Output: **Darknet/YOLO** _(TODO: Tensorflow support)_
+- Websites: **YouTube**
+- Output: **Darknet (YOLO)**
 
 
 ## Installation
+
+To use the compiled extension, download the CRX from the [Releases page](#TODO) and drag-and-drop it onto your browser.
+
 To use the extension from source,
 1. `npm install && npm run build`
 2. Load the unpacked extension _(
@@ -17,4 +22,13 @@ To use the extension from source,
 
 
 ## Usage
+
 `TODO` ;)
+
+
+## Planned Features
+
+- Support for videos on arbitrary websites, not just YouTube
+- Tensorflow TFRecord output format
+- Combining multiple output datasets
+- Set arbitrary class indexes
