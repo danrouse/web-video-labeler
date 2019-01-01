@@ -1,5 +1,7 @@
-import { bindSendMessage } from './messaging';
-bindSendMessage(document);
+// Expose message sending to injected script
+document._sendMessage = (message: any) =>
+  new Promise(resolve =>
+    chrome.runtime.sendMessage(chrome.runtime.id, message, resolve));
 
 // Inject compiled script and style into the page context
 const SCRIPT_URL = chrome.extension.getURL('bundle.js');

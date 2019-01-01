@@ -11,11 +11,6 @@ declare global {
     _sendMessage: <T>(message: Message) => Promise<T>;
   }
 }
-export function bindSendMessage(host: Document) {
-  host._sendMessage = (message: Message) =>
-    new Promise(resolve =>
-      chrome.runtime.sendMessage(chrome.runtime.id, message, resolve));
-}
 
 export function fetchDownloadPaths(filenames: string[]) {
   return document._sendMessage<string[]>({ filenames, type: 'FETCH_DOWNLOAD_PATHS' });
