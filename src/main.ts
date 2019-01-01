@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import App from './components/App';
+import WebVideoLabeler from './components/WebVideoLabeler';
 import { getYouTubeVideoElem } from './util/youtube';
 
 function initializeReactApp() {
@@ -22,7 +22,7 @@ function initializeReactApp() {
 
   const uiContainer = document.createElement('div');
   document.body.appendChild(uiContainer);
-  ReactDOM.render(React.createElement(App), uiContainer);
+  ReactDOM.render(React.createElement(WebVideoLabeler), uiContainer);
 }
 
 initializeReactApp();
