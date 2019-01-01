@@ -8,9 +8,10 @@
     "rollup": "rollup -c",
     "tsc": "tsc -p tsconfig.json",
     "copy-static": "cpx \"src/**/*.{css,json}\" dist",
-    "crx": "crx pack dist -o dist/web-video-labeler.crx --zip-output dist/web-video-labeler.zip && mv dist/web-video-labeler.zip dist/web-video-labeler.xpi",
+    "crx": "crx pack dist -o dist/web-video-labeler.crx",
+    "xpi": "web-ext sign -s dist -a dist -i *.crx -i key.pem",
     "lint": "tslint -p tsconfig.json",
-    "build": "npm-run-all --serial clean tsc copy-static rollup crx",
+    "build": "npm-run-all --serial clean tsc copy-static rollup crx xpi",
     "start": "npm-run-all --parallel \"tsc -- -w\" \"copy-static -- -w\" \"rollup -- -w\""
   },
   "author": "Dan Rouse <dan@rouse.house>",
@@ -33,7 +34,8 @@
     "rollup-plugin-replace": "^2.1.0",
     "tslint": "^5.12.0",
     "tslint-config-airbnb": "^5.11.1",
-    "typescript": "^3.0.3"
+    "typescript": "^3.0.3",
+    "web-ext": "^2.9.3"
   },
   "dependencies": {
     "jszip": "^3.1.5",
