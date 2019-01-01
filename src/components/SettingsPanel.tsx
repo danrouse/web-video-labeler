@@ -9,6 +9,21 @@ interface Props {
   onReset: () => void;
 }
 
+type OverrideInputAttributes<T, P> = Pick<React.InputHTMLAttributes<T>, Exclude<keyof React.InputHTMLAttributes<T>, P>>;
+interface OverrideInputValue<T> extends OverrideInputAttributes<T, 'value'> {
+  value: UserSettings[keyof UserSettings];
+}
+interface OverrideInputChecked<T> extends OverrideInputAttributes<T, 'checked'> {
+  checked: UserSettings[keyof UserSettings];
+}
+type SettingsInputProps<T> = (OverrideInputValue<T> | OverrideInputChecked<T>) & {
+  name: keyof UserSettings;
+};
+
+function SettingsInput<T>(props: SettingsInputProps<T>) {
+  return React.createElement('input', props);
+}
+
 export default class SettingsPanel extends React.Component<Props> {
   handleNumber = (evt: React.FormEvent<HTMLInputElement>) => this.props.onChange({
     [evt.currentTarget.name as any]: parseInt(evt.currentTarget.value, 10),
@@ -26,7 +41,7 @@ export default class SettingsPanel extends React.Component<Props> {
           <legend>Playback</legend>
           <label>
             Frame Skip
-            <input
+            <SettingsInput
               type="number"
               step="1"
               min="1"
@@ -37,7 +52,7 @@ export default class SettingsPanel extends React.Component<Props> {
           </label>
           <label>
             Frame Rate
-            <input
+            <SettingsInput
               type="number"
               step={1}
               min={1}
@@ -51,20 +66,32 @@ export default class SettingsPanel extends React.Component<Props> {
           <legend>Downloading</legend>
           <label>
             Save images with no labels?
-            <input
+            <SettingsInput
               type="checkbox"
-              name="saveImagesWithLabels"
+              name="saveImagesWithoutLabels"
               onChange={this.handleCheckbox}
               checked={this.props.settings.saveImagesWithoutLabels}
             />
           </label>
           <label>
             Save cropped images?
-            <input
+            <SettingsInput
               type="checkbox"
               name="saveCroppedImages"
               onChange={this.handleCheckbox}
               checked={this.props.settings.saveCroppedImages}
+            />
+          </label>
+          <label>
+            Image scale
+            <SettingsInput
+              name="savedImageScale"
+              type="number"
+              min={0.01}
+              max={1}
+              step={0.01}
+              onChange={this.handleNumber}
+              value={this.props.settings.savedImageScale}
             />
           </label>
         </fieldset>
@@ -73,7 +100,7 @@ export default class SettingsPanel extends React.Component<Props> {
           <p>These settings are used to pre-populate darknet config and training scripts</p>
           <label>
             Width
-            <input
+            <SettingsInput
               name="darknetWidth"
               type="number"
               min={1}
@@ -84,7 +111,7 @@ export default class SettingsPanel extends React.Component<Props> {
           </label>
           <label>
             Height
-            <input
+            <SettingsInput
               name="darknetHeight"
               type="number"
               min={1}
@@ -95,11 +122,15 @@ export default class SettingsPanel extends React.Component<Props> {
           </label>
           <label>
             Executable path
-            <input type="text" value={this.props.settings.darknetExecutablePath} />
+            <SettingsInput name="darknetExecutablePath" type="text" value={this.props.settings.darknetExecutablePath} />
           </label>
           <label>
             Config URL
-            <input type="text" value={this.props.settings.darknetConfigURL} />
+            <SettingsInput name="darknetConfigURL" type="text" value={this.props.settings.darknetConfigURL} />
+          </label>
+          <label>
+            Train/test split
+            <SettingsInput name="darknetTrainTestRatio" type="number" min={0} max={1} value={this.props.settings.darknetTrainTestRatio} />
           </label>
         </fieldset>
         <button onClick={this.props.onReset}>

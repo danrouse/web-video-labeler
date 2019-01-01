@@ -14,15 +14,19 @@ export function downloadDataURL(data: string, filename: string) {
 }
 
 let videoFrameToDataURLSharedCanvas: HTMLCanvasElement | undefined;
-function videoFrameToDataURL(video: HTMLVideoElement, rect?: Rect) {
+function videoFrameToDataURL(video: HTMLVideoElement, rect?: Rect, scale: number = 1) {
   videoFrameToDataURLSharedCanvas = videoFrameToDataURLSharedCanvas || document.createElement('canvas');
   const canvas = videoFrameToDataURLSharedCanvas;
   const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-  const width = rect ? rect.width : video.videoWidth;
-  const height = rect ? rect.height : video.videoHeight;
+  const { width, height, x, y } = rect || {
+    width: video.videoWidth,
+    height: video.videoHeight,
+    x: 0,
+    y: 0,
+  };
   canvas.width = width;
   canvas.height = height;
-  ctx.drawImage(video, rect ? rect.x : 0, rect ? rect.y : 0, width, height, 0, 0, width, height);
+  ctx.drawImage(video, x, y, width, height, 0, 0, width * scale, height * scale);
   return canvas.toDataURL('image/jpeg');
 }
 
@@ -33,8 +37,8 @@ async function filesToZIPFileDataURL(files: ArchiveFile[]) {
   return `data:application/octet-stream;base64,${b64}`;
 }
 
-export function downloadVideoFrame(video: HTMLVideoElement, filename: string, rect?: Rect) {
-  downloadDataURL(videoFrameToDataURL(video, rect), filename);
+export function downloadVideoFrame(video: HTMLVideoElement, filename: string, rect?: Rect, scale?: number) {
+  downloadDataURL(videoFrameToDataURL(video, rect, scale), filename);
 }
 
 export async function downloadZIPFile(files: ArchiveFile[], filename: string = 'data.zip') {

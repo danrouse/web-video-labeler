@@ -39,6 +39,7 @@ const defaultState: State = {
     skipLengthFrameRate: 24,
     saveCroppedImages: false,
     saveImagesWithoutLabels: false,
+    savedImageScale: 1,
 
     darknetWidth: 416,
     darknetHeight: 416,
@@ -112,7 +113,7 @@ export default class App extends React.Component<{}, State> {
     const time = video.currentTime;
     const frame = Math.floor(time * this.state.settings.skipLengthFrameRate);
     const filename = `_annotate_${getVideoID()}_${frame}.jpg`;
-    downloadVideoFrame(video, filename);
+    downloadVideoFrame(video, filename, undefined, this.state.settings.savedImageScale);
     if (this.state.settings.saveCroppedImages) {
       const labelCounts: { [str: string]: number } = {};
       this.state.labels.forEach((label) => {
