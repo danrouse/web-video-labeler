@@ -32,6 +32,7 @@ declare interface UserSettings {
   skipLengthFrameRate: number;
   saveCroppedImages: boolean;
   saveImagesWithoutLabels: boolean;
+  savedImageScale: number;
 
   darknetWidth: number;
   darknetHeight: number;
