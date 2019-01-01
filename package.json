@@ -8,7 +8,7 @@
     "rollup": "rollup -c",
     "tsc": "tsc -p tsconfig.json",
     "copy-static": "cpx \"src/**/*.{css,json}\" dist",
-    "crx": "crx pack dist -o dist/web-video-labeler.crx",
+    "crx": "crx pack dist -o dist/web-video-labeler.crx --zip-output dist/web-video-labeler.zip && mv dist/web-video-labeler.zip dist/web-video-labeler.xpi",
     "lint": "tslint -p tsconfig.json",
     "build": "npm-run-all --serial clean tsc copy-static rollup crx",
     "start": "npm-run-all --parallel \"tsc -- -w\" \"copy-static -- -w\" \"rollup -- -w\""
