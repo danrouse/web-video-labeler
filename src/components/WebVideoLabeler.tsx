@@ -164,7 +164,7 @@ export default class App extends React.Component<{}, State> {
 
   render() {
     return (
-      <div className="__app">
+      <div className="WebVideoLabeler">
         <LocalStorageSync
           data={this.state}
           exclude={['isLabeling']}

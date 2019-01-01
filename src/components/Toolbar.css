@@ -1,4 +1,4 @@
-.__app_toolbar {
+.Toolbar {
   position: fixed;
   z-index: 1110;
   bottom: 0;
@@ -14,7 +14,7 @@
   box-shadow: 0 0 2px rgba(0,0,0,0.3);
   text-shadow: 1px 1px 0 rgba(0,0,0,0.2);
 }
-.__app_toolbar p {
+.Toolbar p {
   margin: 0 6px;
   font-size: 12px;
 }

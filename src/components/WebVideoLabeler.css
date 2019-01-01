@@ -1,12 +1,15 @@
-.__app {
+.WebVideoLabeler {
   font-size: 16px;
 }
 
-.__app, .__app *, .__app *:before, .__app *:after {
+.WebVideoLabeler,
+.WebVideoLabeler *,
+.WebVideoLabeler *:before,
+.WebVideoLabeler *:after {
   box-sizing: border-box;
 }
 
-.__app button {
+.WebVideoLabeler button {
   border: 1px outset #ccc;
   background-color: #ccc;
   border-radius: 2px;
@@ -20,24 +23,24 @@
   text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.2);
   height: 2.2em;
 }
-  .__app button:disabled {
+  .WebVideoLabeler button:disabled {
     color: #888;
   }
-  .__app button:hover:not(:disabled) {
+  .WebVideoLabeler button:hover:not(:disabled) {
     border-color: #aaa;
     background-color: #aaa;
   }
-  .__app button:active:not(:disabled) {
+  .WebVideoLabeler button:active:not(:disabled) {
     border-style: inset;
     outline: none;
   }
-  .__app button i {
+  .WebVideoLabeler button i {
     font-size: 16px;
     vertical-align: middle;
   }
-  .__app button i + span {
+  .WebVideoLabeler button i + span {
     margin: 0 2px 0 4px;
   }
-.__app button.icon {
+.WebVideoLabeler button.icon {
   width: 2.2em;
 }

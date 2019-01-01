@@ -23,7 +23,7 @@ interface Props {
 
 export default function Toolbar(props: Props) {
   return (
-    <div className="__app_toolbar">
+    <div className="Toolbar">
       {!props.isLabeling ?
         <div style={{ flex: 1, maxWidth: '50%' }}>
           <button onClick={props.startLabeling} title="Begin Annotating Labels">
