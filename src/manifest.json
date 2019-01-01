@@ -1,11 +1,11 @@
 {
   "manifest_version": 2,
   "name": "Web Video Labeler",
-  "version": "0.1.0",
-  "description": "Label videos on the web for training machine learning systems",
+  "version": "1.0.0",
+  "description": "Label videos on the web for training image classifiers",
   "content_scripts": [{
     "matches": ["*://*.youtube.com/*"],
-    "js": ["dist/extension/injectScript.js"],
+    "js": ["extension/injectScript.js"],
     "all_frames": true
   }],
   "permissions": ["management", "downloads"],
@@ -15,13 +15,13 @@
   },
   "background": {
     "scripts": [
-      "dist/extension/liveReload.js",
-      "dist/extension/messageListener.js"
+      "extension/liveReload.js",
+      "extension/messageListener.js"
     ]
   },
   "web_accessible_resources": [
-    "dist/bundle.js",
-    "dist/bundle.js.map",
-    "dist/bundle.css"
+    "bundle.js",
+    "bundle.js.map",
+    "bundle.css"
   ]
 }
