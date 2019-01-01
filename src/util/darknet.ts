@@ -32,6 +32,9 @@ export async function labeledImagesToDarknet(
     imageFilenames.map(f => `data/${f}`),
     config.trainTestRatio,
   );
+
+  // training script moves all downloaded images into extracted data dir with labels
+  // downloaded paths are fetched using browser extension API and piped into output script
   const imagePaths: string[] = await getDownloadedPaths(imageFilenames);
   const trainScript = [
     '#!/bin/sh',

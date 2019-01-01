@@ -9,7 +9,7 @@ import LabelClassPanel from './LabelClassPanel';
 import { downloadVideoFrame, downloadZIPFile } from '../util/download';
 import { getVideoID, getYouTubeVideoElem, toggleYouTubeUI } from '../util/youtube';
 import { labeledImagesToDarknet } from '../util/darknet';
-import './App.css';
+import './WebVideoLabeler.css';
 
 interface State {
   labels: Label[];
