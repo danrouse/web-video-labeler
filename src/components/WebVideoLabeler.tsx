@@ -85,6 +85,7 @@ export default class App extends React.Component<{}, State> {
       ...settings,
     },
   })
+  handleLabelClassChange = (labelClasses: string[]) => this.setState({ labelClasses });
   toggleSettingsPanel = () => this.setState({ isSettingsPanelVisible: !this.state.isSettingsPanelVisible });
   toggleHelpPanel = () => this.setState({ isHelpPanelVisible: !this.state.isHelpPanelVisible });
   toggleLabelClassPanel = () => this.setState({ isLabelClassPanelVisible: !this.state.isLabelClassPanelVisible });
@@ -205,6 +206,7 @@ export default class App extends React.Component<{}, State> {
           <LabelClassPanel
             labelClasses={this.state.labelClasses}
             onClose={this.toggleLabelClassPanel}
+            onChange={this.handleLabelClassChange}
           />
         }
         <VideoOverlay elem={getYouTubeVideoElem()} onScaleChange={this.handleVideoScaleChange}>
