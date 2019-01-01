@@ -203,7 +203,7 @@ export default class LabelingCanvasLabel extends React.Component<Props, State> {
         {this.state.isInputExpanded &&
           <LabelClassSelector
             className="LabelingCanvasLabel__LabelClassSelector"
-            classes={this.props.classes}
+            classes={this.props.classes.filter(c => c !== str)}
             onClick={this.updateLabelClass}
             onAddClass={this.updateLabelClass}
           />
