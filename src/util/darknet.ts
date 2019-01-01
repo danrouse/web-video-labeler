@@ -1,3 +1,5 @@
+import { fetchDownloadPaths } from '../extension/messaging';
+
 interface DarknetOutputConfig {
   configURL: string;
   executablePath: string;
@@ -35,7 +37,7 @@ export async function labeledImagesToDarknet(
 
   // training script moves all downloaded images into extracted data dir with labels
   // downloaded paths are fetched using browser extension API and piped into output script
-  const imagePaths: string[] = await getDownloadedPaths(imageFilenames);
+  const imagePaths: string[] = await fetchDownloadPaths(imageFilenames);
   const trainScript = [
     '#!/bin/sh',
     `mv ${imagePaths.map(p => `"${p}"`).join(' ')} data/`,
@@ -91,13 +93,4 @@ function splitTrainTestData<T>(data: T[], ratio: number) {
   copy.sort(() => Math.random() - 0.5);
   const splitIndex = Math.floor(ratio * copy.length);
   return [copy.slice(0, splitIndex), copy.slice(splitIndex)];
-}
-
-function getDownloadedPaths(filenames: string[]) {
-  return new Promise<string[]>(resolve =>
-    chrome.runtime.sendMessage(
-      document.body.dataset.__chrome_runtime_id || '',
-      { filenames, type: 'FETCH_DOWNLOAD_PATHS' },
-      resolve,
-    ));
 }

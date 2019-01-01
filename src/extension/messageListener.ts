@@ -1,3 +1,5 @@
+import { Message } from './messaging';
+
 const getDownloadedPath = async (filename: string) =>
   new Promise(resolve =>
     chrome.downloads.search(
@@ -5,8 +7,10 @@ const getDownloadedPath = async (filename: string) =>
       ([{ filename }]) => resolve(filename)),
     );
 
-chrome.runtime.onMessageExternal.addListener((message, _, respond) => {
-  if (message.type !== 'FETCH_DOWNLOAD_PATHS') return;
-  Promise.all(message.filenames.map(getDownloadedPath)).then(paths => respond(paths));
-  return true;
+chrome.runtime.onMessageExternal.addListener((message: Message, _, respond) => {
+  switch (message.type) {
+    case 'FETCH_DOWNLOAD_PATHS':
+      Promise.all(message.filenames.map(getDownloadedPath)).then(paths => respond(paths));
+      return true;
+  }
 });
