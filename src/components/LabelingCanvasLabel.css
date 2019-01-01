@@ -10,18 +10,18 @@
 
 .LabelingCanvasLabel__resizeArea {
   position: absolute;
-  left: -8px;
-  right: -8px;
-  top: -8px;
-  bottom: -8px;
+  left: -6px;
+  right: -6px;
+  top: -6px;
+  bottom: -6px;
 }
 
 .LabelingCanvasLabel__moveArea {
   position: absolute;
-  left: 8px;
-  right: 8px;
-  top: 8px;
-  bottom: 8px;
+  left: 6px;
+  right: 6px;
+  top: 6px;
+  bottom: 6px;
   cursor: move;
 }
   .LabelingCanvasLabel:not(.LabelingCanvasLabel--isActive) .LabelingCanvasLabel__moveArea:hover {
