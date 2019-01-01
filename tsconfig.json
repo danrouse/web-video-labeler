@@ -12,6 +12,6 @@
   },
   "include": [
     "src/*.ts",
-    "src/*/messageListener.ts"
+    "src/extension/*.ts"
   ]
 }

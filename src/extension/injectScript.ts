@@ -11,4 +11,4 @@ const STYLE_URL = chrome.extension.getURL('dist/bundle.css');
 const style = document.createElement('link');
 style.setAttribute('rel', 'stylesheet');
 style.setAttribute('href', STYLE_URL);
-document.head.appendChild(style);
+document.head && document.head.appendChild(style);
