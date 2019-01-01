@@ -30,6 +30,6 @@ export default {
         'node_modules/react-dom/index.js': ['render']
       }
     }),
-    hash('.rollup-hash', [OUTPUT_CSS_PATH])
+    hash('dist/.rollup-hash', [OUTPUT_CSS_PATH])
   ]
 }
