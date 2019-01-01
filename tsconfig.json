@@ -10,8 +10,8 @@
     "jsx": "react",
     "moduleResolution": "node"
   },
-  "files": [
-    "src/interfaces.d.ts",
-    "src/main.ts"
+  "include": [
+    "src/*.ts",
+    "src/*/messageListener.ts"
   ]
 }

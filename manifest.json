@@ -5,13 +5,19 @@
   "description": "Label videos on the web for training machine learning systems",
   "content_scripts": [{
     "matches": ["*://*.youtube.com/*"],
-    "js": ["injectScript.js"],
+    "js": ["dist/extension/injectScript.js"],
     "all_frames": true
   }],
   "permissions": ["management", "downloads"],
-  "externally_connectable": { "ids": ["*"], "matches": ["*://*.youtube.com/*"] },
+  "externally_connectable": {
+    "ids": ["*"],
+    "matches": ["*://*.youtube.com/*"]
+  },
   "background": {
-    "scripts": ["liveReload.js"]
+    "scripts": [
+      "dist/extension/liveReload.js",
+      "dist/extension/messageListener.js"
+    ]
   },
   "web_accessible_resources": [
     "dist/bundle.js",
