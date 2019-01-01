@@ -8,8 +8,8 @@ function djb2(str: string) {
 
 export default function hashStringToColor(str: string) {
   const hash = djb2(str);
-  const r = (hash & 0xFF0000) >> 16;
-  const g = (hash & 0x00FF00) >> 8;
-  const b = hash & 0x0000FF;
-  return '#' + ('0' + r.toString(16)).substr(-2) + ('0' + g.toString(16)).substr(-2) + ('0' + b.toString(16)).substr(-2); // tslint:disable-line prefer-template
+  const h = hash & 0x0000FF;
+  const s = (hash & 0x00FF00) >> 8;
+  const l = (hash & 0xFF0000) >> 16;
+  return `hsl(${h}, ${30 + ((50 * s) / 256)}%, ${60 + ((30 * l) / 256)}%)`;
 }
