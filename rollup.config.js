@@ -3,7 +3,7 @@ import cjs from 'rollup-plugin-commonjs';
 import css from 'rollup-plugin-css-only';
 import replace from 'rollup-plugin-replace';
 import alias from 'rollup-plugin-alias';
-import hash from './rollup-plugin-output-hash';
+import hash from 'rollup-plugin-bundle-hash';
 import path from 'path';
 
 const OUTPUT_CSS_PATH = 'dist/bundle.css';
