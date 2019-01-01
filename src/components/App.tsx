@@ -144,7 +144,7 @@ export default class App extends React.Component<{}, State> {
         width: this.state.settings.darknetWidth,
         height: this.state.settings.darknetHeight,
         trainTestRatio: this.state.settings.darknetTrainTestRatio,
-      }
+      },
     );
     await downloadZIPFile(data, 'data.zip');
   }

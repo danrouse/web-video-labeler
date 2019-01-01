@@ -10,7 +10,8 @@
     "tsc": "tsc -p tsconfig.json",
     "copy-css": "cpx \"src/**/*.css\" dist",
     "start": "concurrently \"npm run rollup -- --watch\" \"npm run tsc -- -w\" \"npm run copy-css -- --watch\"",
-    "build": "npm run clean && npm run tsc && npm run copy-css && npm run rollup"
+    "build": "npm run clean && npm run tsc && npm run copy-css && npm run rollup",
+    "lint": "tslint -p tsconfig.json"
   },
   "author": "Dan Rouse <dan@rouse.house>",
   "license": "MIT",

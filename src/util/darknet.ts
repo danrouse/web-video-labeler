@@ -30,7 +30,7 @@ export async function labeledImagesToDarknet(
   const imageFilenames = labeledImages.map(({ filename }) => filename);
   const [trainImageFilenames, testImageFilenames] = splitTrainTestData(
     imageFilenames.map(f => `data/${f}`),
-    config.trainTestRatio
+    config.trainTestRatio,
   );
   const imagePaths: string[] = await getDownloadedPaths(imageFilenames);
   const trainScript = [
@@ -60,7 +60,7 @@ export async function labeledImagesToDarknet(
     unixPermissions: '0777',
   }].concat(
     labeledImages.map(({ filename, labels, width, height }) => ({
-      path: 'data/' + filename.replace(/\.jpg$/, '.txt'),
+      path: `data/${filename.replace(/\.jpg$/, '.txt')}`,
       data: labels.map(({ str, rect }) => [
         labelClasses.indexOf(str),
         (rect.x + (rect.width / 2)) / width, // x center
@@ -68,7 +68,7 @@ export async function labeledImagesToDarknet(
         rect.width / width, // width
         rect.height / height, // height
       ].join(' ')).join('\n'),
-    }))
+    })),
   );
 }
 
