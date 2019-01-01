@@ -36,7 +36,7 @@ export default class SettingsPanel extends React.Component<Props> {
   render() {
     return (
       <ModalDialog onClose={this.props.onClose} className="SettingsPanel">
-        <h1>Web Video Labeler Settings</h1>
+        <h1>Settings</h1>
         <fieldset>
           <legend>Playback</legend>
           <label>
@@ -97,7 +97,6 @@ export default class SettingsPanel extends React.Component<Props> {
         </fieldset>
         <fieldset>
           <legend>Darknet Output</legend>
-          <p>These settings are used to pre-populate darknet config and training scripts</p>
           <label>
             Width
             <SettingsInput
@@ -148,10 +147,16 @@ export default class SettingsPanel extends React.Component<Props> {
             />
           </label>
         </fieldset>
-        <button onClick={this.props.onReset}>
-          <i className="fas fa-trash" title="Reset Settings" />
-          <span>Reset Settings</span>
-        </button>
+        <div style={{ display: 'flex' }}>
+          <button onClick={this.props.onReset} title="Reset Settings" style={{ flex: 1 }}>
+            <i className="fas fa-trash" />
+            <span>Reset</span>
+          </button>
+          <button onClick={this.props.onClose} title="Done" style={{ flex: 3 }}>
+            <i className="fas fa-check" />
+            <span>Done</span>
+          </button>
+        </div>
       </ModalDialog>
     );
   }

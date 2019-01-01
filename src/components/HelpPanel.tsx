@@ -8,11 +8,11 @@ interface Props {
 export default function HelpPanel({ onClose }: Props) {
   return (
     <ModalDialog onClose={onClose}>
-      <h1>Web Video Labeler Help</h1>
+      <h1>Help</h1>
 
       <h2>How to Use</h2>
       <h3>Labeling Videos</h3>
-      <h3>Saving and Exporting</h3>
+      <h3>Exporting and Training</h3>
 
       <h2>About</h2>
       <p>

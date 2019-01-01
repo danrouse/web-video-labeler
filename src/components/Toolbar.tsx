@@ -56,7 +56,7 @@ export default function Toolbar(props: Props) {
       }
       {props.numLabeledImages > 0 &&
         <div style={{ margin: '0 12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <button onClick={props.downloadLabeledImages} title="Download">
+          <button onClick={props.downloadLabeledImages} title="Download Data">
             <i className="fas fa-save" />
             <span>{props.numLabeledImages}</span>
           </button>

@@ -19,6 +19,7 @@ export default class LabelClassPanel extends React.Component<Props> {
   render() {
     return (
       <ModalDialog onClose={this.props.onClose}>
+        <h1>Classes</h1>
         <LabelClassSelector
           classes={this.props.labelClasses}
           showIndex

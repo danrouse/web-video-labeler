@@ -14,8 +14,8 @@ export default class ModalDialog extends React.Component<Props> {
     return (
       <div className={`ModalDialog ${this.props.className || ''}`} onClick={this.close}>
         <div>
-          <button onClick={this.props.onClose} className="icon" style={{ float: 'right' }}>
-            <i className="fas fa-times" title="Close" />
+          <button onClick={this.props.onClose} title="Close" className="icon" style={{ float: 'right' }}>
+            <i className="fas fa-times" />
           </button>
           {this.props.children}
         </div>
