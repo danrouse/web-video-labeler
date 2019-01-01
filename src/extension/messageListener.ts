@@ -9,7 +9,7 @@ const getDownloadedPath = async (filename: string) =>
       ([{ filename }]) => resolve(filename)),
     );
 
-chrome.runtime.onMessageExternal.addListener((message: Message, _, respond) => {
+chrome.runtime.onMessage.addListener((message: Message, _, respond) => {
   switch (message.type) {
     case 'FETCH_DOWNLOAD_PATHS':
       Promise.all(message.filenames.map(getDownloadedPath)).then(paths => respond(paths));

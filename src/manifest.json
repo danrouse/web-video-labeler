@@ -9,10 +9,6 @@
     "all_frames": true
   }],
   "permissions": ["management", "downloads"],
-  "externally_connectable": {
-    "ids": ["*"],
-    "matches": ["*://*.youtube.com/*"]
-  },
   "background": {
     "scripts": [
       "extension/liveReload.js",

@@ -5,16 +5,18 @@ export type Message = {
   filenames: string[];
 };
 
-function sendMessage(message: Message) {
-  return new Promise<string[]>(resolve =>
-    chrome.runtime.sendMessage(
-      // runtime ID attached to DOM in injectScript while it's still in scope
-      document.body.dataset.__chrome_runtime_id || '',
-      message,
-      resolve,
-    ));
+// Message sender gets bound to Document from content script injector
+declare global {
+  interface Document {
+    _sendMessage: <T>(message: Message) => Promise<T>;
+  }
+}
+export function bindSendMessage(host: Document) {
+  host._sendMessage = (message: Message) =>
+    new Promise(resolve =>
+      chrome.runtime.sendMessage(chrome.runtime.id, message, resolve));
 }
 
 export function fetchDownloadPaths(filenames: string[]) {
-  return sendMessage({ filenames, type: 'FETCH_DOWNLOAD_PATHS' });
+  return document._sendMessage<string[]>({ filenames, type: 'FETCH_DOWNLOAD_PATHS' });
 }

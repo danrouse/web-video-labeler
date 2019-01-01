@@ -1,5 +1,5 @@
-// Attach runtime ID to DOM to allow message passing
-document.body.dataset.__chrome_runtime_id = chrome.runtime.id;
+import { bindSendMessage } from './messaging';
+bindSendMessage(document);
 
 // Inject compiled script and style into the page context
 const SCRIPT_URL = chrome.extension.getURL('bundle.js');
