@@ -50,3 +50,8 @@
 .ModalDialog__buttons button:last-child {
   flex: 1;
 }
+
+.ModalDialog .LabelBox {
+  padding: 12px;
+  background-color: #fefefe;
+}

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import ModalDialog from './ModalDialog';
+import LabelBox from './LabelBox';
 
 interface Props {
   onClose: () => void;
@@ -8,9 +9,8 @@ interface Props {
 export default function HelpPanel({ onClose }: Props) {
   return (
     <ModalDialog title="Help" onClose={onClose}>
-      <div style={{ padding: 12 }}>
-        <h2>Usage</h2>
-        <ul>
+      <LabelBox label="Usage">
+        <ul style={{ paddingLeft: 24, margin: 0, lineHeight: '24px' }}>
           <li>
             Visit a web page with a video on it, such as on YouTube.
             A toolbar should appear at the bottom of your screen to manage the labeling process.
@@ -43,10 +43,9 @@ export default function HelpPanel({ onClose }: Props) {
             </ul>
           </li>
         </ul>
-
-        <h2>Controls</h2>
-
-        <ul style={{ listStyle: 'none' }}>
+      </LabelBox>
+      <LabelBox label="Controls">
+        <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
           <li><button><i className="fas fa-power-off" /></button> Start/stop labeling</li>
           <li><button><i className="fas fa-eraser" /></button> Erase labels currently drawn on frame</li>
           <li><button><i className="fas fa-undo" /></button> Undo saving last frame</li>
@@ -63,8 +62,8 @@ export default function HelpPanel({ onClose }: Props) {
           </li>
           <li><button><i className="fas fa-cog" /></button> Open settings menu</li>
         </ul>
-
-        <h2>Combining multiple exports</h2>
+      </LabelBox>
+      <LabelBox label="Combining multiple exports">
         <p>
           Exports include a script, <code>combine_projects.sh</code>, which can be used to combine
           multiple sets of annotations. The first argument is the export directory to
@@ -74,8 +73,8 @@ export default function HelpPanel({ onClose }: Props) {
         <pre>
           $ ./combine_projects.sh . ../data2.zip ../data3-extracted
         </pre>
-
-        <h2>About</h2>
+      </LabelBox>
+      <LabelBox label="About">
         <p>
           Web Video Labeler is an open source browser extension written by&nbsp;
           <a href="https://github.com/danrouse" target="_blank">danrouse</a>.
@@ -86,7 +85,7 @@ export default function HelpPanel({ onClose }: Props) {
             </button>
           </a>
         </p>
-      </div>
+      </LabelBox>
     </ModalDialog>
   );
 }

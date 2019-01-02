@@ -4,9 +4,10 @@
   margin-top: 16px;
   top: 16px;
   box-shadow: 0 0 1px rgba(255, 255, 255, 0.2);
-}
-.LabelBox:not(:last-child) {
   margin-bottom: 32px;
+}
+.LabelBox:last-child {
+  margin-bottom: 12px;
 }
 
 .LabelBox__label {

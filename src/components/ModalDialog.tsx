@@ -22,7 +22,7 @@ export default class ModalDialog extends React.Component<Props> {
 
   handleKeypress = (evt: KeyboardEvent) => {
     const target = evt.target as Element;
-    const restrictedTargets = ['INPUT', 'TEXTAREA', 'SELECT', 'BUTTON', 'FORM'];
+    const restrictedTargets = ['INPUT', 'TEXTAREA', 'SELECT'];
     const isValidTarget = !target || restrictedTargets.indexOf(target.nodeName) === -1;
     if (evt.key === 'Escape' && isValidTarget) this.props.onClose();
   }
