@@ -1,5 +1,5 @@
 import * as React from 'react';
-import hashStringToColor from '../util/hashStringToColor';
+import stringToColor from '../util/stringToColor';
 import './LabelClassSelector.css';
 
 interface Props {
@@ -34,7 +34,7 @@ export default class LabelClassSelector extends React.Component<Props> {
             name={labelClass}
             onClick={this.handleClick}
             onContextMenu={this.handleContextMenu}
-            style={{ backgroundColor: hashStringToColor(labelClass) }}
+            style={{ backgroundColor: stringToColor(labelClass) }}
           >
             {this.props.showIndex && `(${index}) `}
             {labelClass}

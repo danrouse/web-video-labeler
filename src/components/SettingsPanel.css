@@ -2,34 +2,16 @@
   margin-bottom: 12px;
 }
 
-.SettingsPanel fieldset {
+.SettingsPanel__LabelBox {
   display: flex;
+  flex-direction: column;
   padding: 12px;
-  border: 1px solid #ddd;
   background-color: #fefefe;
-  position: relative;
-  margin-top: 16px;
-  top: 16px;
-  margin-bottom: 32px;
-}
-
-.SettingsPanel legend {
-  padding: 3px 6px;
-  position: absolute;
-  bottom: 100%;
-  left: -1px;
-  font-size: 10px;
-  font-weight: bold;
-  background-color: #ddd;
-  border: none;
 }
 
 .SettingsPanel label {
   display: flex;
   font-size: 13px;
-}
-
-.SettingsPanel label:not(.row) {
   flex-direction: column;
 }
 

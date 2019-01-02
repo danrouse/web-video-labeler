@@ -1,6 +1,7 @@
 import * as React from 'react';
 import LabelClassSelector from './LabelClassSelector';
-import hashStringToColor from '../util/hashStringToColor';
+import LabelBox from './LabelBox';
+import stringToColor from '../util/stringToColor';
 import './LabelingCanvasLabel.css';
 
 type LabelChangeHandler = (index: number, label?: Label) => void;
@@ -170,19 +171,19 @@ export default class LabelingCanvasLabel extends React.Component<Props, State> {
     const { workingRect: rectFromState, isActive } = this.state;
     const { scale, label: { rect: rectFromProps, str } } = this.props;
     const rect = rectFromState || rectFromProps;
-    const color = hashStringToColor(str);
+    const color = stringToColor(str);
     return (
-      <div
+      <LabelBox
         className={`LabelingCanvasLabel ${isActive ? 'LabelingCanvasLabel--isActive' : ''}`}
         style={{
-          borderColor: color,
           transform: `translateX(${rect.x * scale}px) translateY(${rect.y * scale}px)`,
           width: rect.width * scale,
           height: rect.height * scale,
-
         }}
-        ref={ref => ref && (this.ref = ref)}
+        label={str}
+        getRef={ref => ref && (this.ref = ref)}
         onContextMenu={this.removeLabel}
+        onLabelClick={() => this.setState({ isInputExpanded: !this.state.isInputExpanded })}
       >
         <div
           className="LabelingCanvasLabel__resizeArea"
@@ -194,13 +195,6 @@ export default class LabelingCanvasLabel extends React.Component<Props, State> {
           className="LabelingCanvasLabel__moveArea"
           onMouseDown={this.startMoving}
         />
-        <div
-          className="LabelingCanvasLabel__title"
-          style={{ backgroundColor: color }}
-          onClick={() => this.setState({ isInputExpanded: !this.state.isInputExpanded })}
-        >
-          {str}
-        </div>
         {this.state.isInputExpanded &&
           <LabelClassSelector
             className="LabelingCanvasLabel__LabelClassSelector"
@@ -210,7 +204,7 @@ export default class LabelingCanvasLabel extends React.Component<Props, State> {
             onAddClass={this.updateLabelClass}
           />
         }
-      </div>
+      </LabelBox>
     );
   }
 }

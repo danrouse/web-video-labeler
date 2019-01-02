@@ -80,8 +80,8 @@ export default class LabelingCanvas extends React.Component<Props, State> {
           backgroundSize: `${gridSize * scale}px ${gridSize * scale}px`,
           backgroundPosition: `${gridSize * -0.5 * scale}px ${gridSize * -0.5 * scale}px`,
           backgroundImage: `
-            linear-gradient(to right, rgba(127,127,127,0.2) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(127,127,127,0.2) 1px, transparent 1px)
+            linear-gradient(to right, rgba(85,85,85,0.2) 1px, rgba(170,170,170,0.2) 2px, transparent 2px),
+            linear-gradient(to bottom, rgba(85,85,85,0.2) 1px, rgba(170,170,170,0.2) 2px, transparent 2px)
           `,
           position: 'absolute',
           pointerEvents: 'all',

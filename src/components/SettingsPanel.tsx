@@ -1,5 +1,6 @@
 import * as React from 'react';
 import ModalDialog from './ModalDialog';
+import LabelBox from './LabelBox';
 import './SettingsPanel.css';
 
 interface Props {
@@ -9,18 +10,21 @@ interface Props {
   onReset: () => void;
 }
 
-type OverrideInputAttributes<T, P> = Pick<React.InputHTMLAttributes<T>, Exclude<keyof React.InputHTMLAttributes<T>, P>>;
-interface OverrideInputValue<T> extends OverrideInputAttributes<T, 'value'> {
+type OverrideInputAttributes<P> = Pick<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  Exclude<keyof React.InputHTMLAttributes<HTMLInputElement>, P>
+>;
+interface OverrideInputValue extends OverrideInputAttributes<'value'> {
   value: UserSettings[keyof UserSettings];
 }
-interface OverrideInputChecked<T> extends OverrideInputAttributes<T, 'checked'> {
+interface OverrideInputChecked extends OverrideInputAttributes<'checked'> {
   checked: UserSettings[keyof UserSettings];
 }
-type SettingsInputProps<T> = (OverrideInputValue<T> | OverrideInputChecked<T>) & {
+type SettingsInputProps = (OverrideInputValue | OverrideInputChecked) & {
   name: keyof UserSettings;
 };
 
-function SettingsInput<T>(props: SettingsInputProps<T>) {
+function SettingsInput(props: SettingsInputProps) {
   return React.createElement('input', props);
 }
 
@@ -38,8 +42,7 @@ export default class SettingsPanel extends React.Component<Props> {
       <ModalDialog onClose={this.props.onClose} className="SettingsPanel">
         <h1>Settings</h1>
         <form onSubmit={this.props.onClose}>
-          <fieldset>
-            <legend>Playback</legend>
+          <LabelBox label="Playback" className="SettingsPanel__LabelBox">
             <label>
               Frame Skip
               <p>How many frames to skip using playback controls</p>
@@ -64,9 +67,8 @@ export default class SettingsPanel extends React.Component<Props> {
                 onChange={this.handleNumber}
               />
             </label>
-          </fieldset>
-          <fieldset>
-            <legend>Downloading</legend>
+          </LabelBox>
+          <LabelBox label="Downloading" className="SettingsPanel__LabelBox">
             <label>
               Save images with no labels?
               <p>If there are no labels present on an image, it will not be downloaded</p>
@@ -100,9 +102,8 @@ export default class SettingsPanel extends React.Component<Props> {
                 value={this.props.settings.savedImageScale}
               />
             </label>
-          </fieldset>
-          <fieldset>
-            <legend>Darknet Output</legend>
+          </LabelBox>
+          <LabelBox label="Darknet Output" className="SettingsPanel__LabelBox">
             <label>
               Width
               <SettingsInput
@@ -155,7 +156,7 @@ export default class SettingsPanel extends React.Component<Props> {
                 value={this.props.settings.darknetTrainTestRatio}
               />
             </label>
-          </fieldset>
+          </LabelBox>
         </form>
         <div style={{ display: 'flex' }}>
           <button onClick={this.props.onReset} title="Reset Settings" style={{ flex: 1 }}>
