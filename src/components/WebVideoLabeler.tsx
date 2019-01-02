@@ -167,8 +167,6 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
   }
 
   render() {
-    const canUndo = this.state.labeledImages.length > 0 &&
-      this.state.labeledImages[this.state.labeledImages.length - 1].url === window.location.href;
     return (
       <div className="WebVideoLabeler">
         <LocalStorageSync
@@ -184,13 +182,18 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
           isLabeling={this.state.isLabeling}
           isSeeking={this.state.isSeeking}
           isLocalStorageFull={this.state.isLocalStorageFull}
-          canUndo={canUndo}
+          canUndo={
+            this.state.labeledImages.length > 0 &&
+            this.state.labeledImages[this.state.labeledImages.length - 1].url === window.location.href
+          }
+          canClear={this.state.labels.length > 0}
+          canStepBackward={this.props.video.currentTime !== 0}
 
           startLabeling={this.startLabeling}
           stopLabeling={this.stopLabeling}
           clearLabels={this.clearLabels}
-          prev={this.prev}
-          skip={this.skip}
+          stepBackward={this.prev}
+          stepForward={this.skip}
           next={this.next}
           undo={this.undo}
           downloadLabeledImages={this.downloadLabeledImages}
