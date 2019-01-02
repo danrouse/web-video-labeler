@@ -9,41 +9,28 @@ interface DarknetOutputConfig {
 }
 
 // paths to output files within zip file
-const FILENAME_TRAIN = 'train_filenames.txt';
-const FILENAME_TEST = 'test_filenames.txt';
-const FILENAME_NAMES = 'class_names.txt';
-const FILENAME_BACKUP = 'checkpoint';
-const FILENAME_DATA_CONFIG = 'darknet.cfg';
-const FILENAME_DARKNET_CONFIG = 'yolo-obj.cfg';
-const FILENAME_TRAIN_SCRIPT = 'train.sh';
+const FILENAME_TRAIN = 'obj.train';
+const FILENAME_TEST = 'obj.test';
+const FILENAME_NAMES = 'obj.names';
+const FILENAME_BACKUP = 'backup';
+const FILENAME_INDEX = 'obj.index';
+const FILENAME_NETWORK_CONFIG = 'yolo-obj.cfg';
+const FILENAME_DATA_DIR = 'data';
+const FILENAME_SCRIPT_MOVE_IMAGES = 'move_downloaded_images.sh';
+const FILENAME_SCRIPT_COMBINE_PROJECTS = 'combine_projects.sh';
+const FILENAME_SCRIPT_TRAIN = 'train.sh';
 
 export async function labeledImagesToDarknet(
   labeledImages: LabeledImage[],
   labelClasses: string[],
   config: DarknetOutputConfig,
 ): Promise<ArchiveFile[]> {
-  const dataConfig = [
-    `classes = ${labelClasses.length}`,
-    `train = ${FILENAME_TRAIN}`,
-    `valid = ${FILENAME_TEST}`,
-    `names = ${FILENAME_NAMES}`,
-    `backup = ${FILENAME_BACKUP}`,
-  ];
-
   const imageFilenames = labeledImages.map(({ filename }) => filename);
   const [trainImageFilenames, testImageFilenames] = splitTrainTestData(
-    imageFilenames.map(f => `data/${f}`),
+    imageFilenames.map(f => `${FILENAME_DATA_DIR}/${f}`),
     config.trainTestRatio,
   );
-
-  // training script moves all downloaded images into extracted data dir with labels
-  // downloaded paths are fetched using browser extension API and piped into output script
-  const imagePaths: string[] = await fetchDownloadPaths(imageFilenames);
-  const trainScript = [
-    '#!/bin/sh',
-    `mv ${imagePaths.map(p => `"${p}"`).join(' ')} data/`,
-    `${config.executablePath} detector train ${FILENAME_DATA_CONFIG} ${FILENAME_DARKNET_CONFIG}`,
-  ];
+  const downloadedImagePaths: string[] = await fetchDownloadPaths(imageFilenames);
 
   return [{
     path: FILENAME_TRAIN,
@@ -55,15 +42,23 @@ export async function labeledImagesToDarknet(
     path: FILENAME_NAMES,
     data: labelClasses.join('\n'),
   }, {
-    path: FILENAME_DATA_CONFIG,
-    data: dataConfig.join('\n'),
+    path: FILENAME_NETWORK_CONFIG,
+    data: await generateDarknetConfig(config.configURL, labelClasses.length, config.width, config.height),
   }, {
-    path: FILENAME_DARKNET_CONFIG,
-    data: await getYOLOConfig(config.configURL, labelClasses.length, config.width, config.height),
+    path: FILENAME_INDEX,
+    data: generateTrainingIndex(labelClasses.length),
   }, {
-    path: FILENAME_TRAIN_SCRIPT,
-    data: trainScript.join('\n'),
-    unixPermissions: '0777',
+    path: FILENAME_SCRIPT_MOVE_IMAGES,
+    data: generateMoveImagesScript(downloadedImagePaths),
+    unixPermissions: '755',
+  }, {
+    path: FILENAME_SCRIPT_TRAIN,
+    data: generateTrainScript(config.executablePath),
+    unixPermissions: '755',
+  }, {
+    path: FILENAME_SCRIPT_COMBINE_PROJECTS,
+    data: generateCombineProjectsScript(),
+    unixPermissions: '755',
   }].concat(
     labeledImages.map(({ filename, labels, width, height }) => ({
       path: `data/${filename.replace(/\.jpg$/, '.txt')}`,
@@ -78,15 +73,15 @@ export async function labeledImagesToDarknet(
   );
 }
 
-async function getYOLOConfig(url: string, numClasses: number, width: number, height: number) {
-  let yoloConfig = await fetch(url).then(r => r.text());
-  yoloConfig = yoloConfig.replace(/\bbatch=\d+\b/, 'batch=64');
-  yoloConfig = yoloConfig.replace(/\bsubdivisions=\d+\b/, 'subdivisions=8');
-  yoloConfig = yoloConfig.replace(/\bclasses=\d+\b/g, `classes=${numClasses}`);
-  yoloConfig = yoloConfig.replace(/\bfilters=255\b/g, `filters=${(numClasses + 5) * 3}`);
-  yoloConfig = yoloConfig.replace(/\bwidth=\d+\b/g, `width=${width}`);
-  yoloConfig = yoloConfig.replace(/\bheight=\d+\b/g, `height=${height}`);
-  return yoloConfig;
+async function generateDarknetConfig(url: string, numClasses: number, width: number, height: number) {
+  let config = await fetch(url).then(r => r.text());
+  config = config.replace(/\bbatch=\d+\b/, 'batch=64');
+  config = config.replace(/\bsubdivisions=\d+\b/, 'subdivisions=8');
+  config = config.replace(/\bclasses=\d+\b/g, `classes=${numClasses}`);
+  config = config.replace(/\bfilters=255\b/g, `filters=${(numClasses + 5) * 3}`);
+  config = config.replace(/\bwidth=\d+\b/g, `width=${width}`);
+  config = config.replace(/\bheight=\d+\b/g, `height=${height}`);
+  return config;
 }
 
 function splitTrainTestData<T>(data: T[], ratio: number) {
@@ -95,3 +90,59 @@ function splitTrainTestData<T>(data: T[], ratio: number) {
   const splitIndex = Math.floor(ratio * copy.length);
   return [copy.slice(0, splitIndex), copy.slice(splitIndex)];
 }
+
+const generateCombineProjectsScript = () => `#!/bin/sh
+if [ "$#" < 2 ]; then
+  echo "Usage: $0 base_project other_project1 ...other_projectN"
+  exit 1
+fi
+
+BASE_PROJECT=$1
+BASE_NAMES=$(cat "$BASE_PROJECT/${FILENAME_NAMES}")
+shift
+for proj in "$@"; do
+  if [[ $proj =~ \.zip$ ]]; then
+    unzip "$proj" -o /tmp/merge_project
+    move_project /tmp/merge_project
+    rm -r /tmp/merge_project
+  else
+    move_project "$proj"
+  fi
+done
+
+function move_project() {
+  if [ -d "$1" ] && [ -f "$1/${FILENAME_NETWORK_CONFIG}" ]; then
+    if [ "$(cat "$1/${FILENAME_NAMES}")" != "$BASE_NAMES" ]; then
+      echo "$1: names (${FILENAME_NAMES}) not equal, skipping"
+      return
+    fi
+    mv -uv "$1/${FILENAME_DATA_DIR}/*" "$BASE_PROJECT/${FILENAME_DATA_DIR}"
+    sort -uR "$BASE_PROJECT/${FILENAME_TRAIN}" "$1/${FILENAME_TRAIN}" > "$BASE_PROJECT/${FILENAME_TRAIN}"
+    sort -uR "$BASE_PROJECT/${FILENAME_TEST}" "$1/${FILENAME_TEST}" > "$BASE_PROJECT/${FILENAME_TEST}"
+    cat "$1/${FILENAME_SCRIPT_MOVE_IMAGES}" >> "$BASE_PROJECT/${FILENAME_SCRIPT_MOVE_IMAGES}"
+  else
+    echo "$1: invalid project"
+  fi
+}
+`;
+
+const generateTrainScript = (executablePath: string) => `#!/bin/sh
+shopt -s nullglob
+files=(${FILENAME_DATA_DIR}/*.jpg)
+if [ \${#files[@]} -eq 0 ]; then
+  ./${FILENAME_SCRIPT_MOVE_IMAGES}
+fi
+${executablePath} detector train ${FILENAME_INDEX} ${FILENAME_NETWORK_CONFIG}
+`;
+
+const generateMoveImagesScript = (imagePaths: string[]) => `#!/bin/sh
+mv ${imagePaths.map(p => `"${p}"`).join(' ')} ${FILENAME_DATA_DIR}/
+`;
+
+const generateTrainingIndex = (numClasses: number) => `
+classes = ${numClasses}
+train = ${FILENAME_TRAIN}
+valid = ${FILENAME_TEST}
+names = ${FILENAME_NAMES}
+backup = ${FILENAME_BACKUP}
+`;
