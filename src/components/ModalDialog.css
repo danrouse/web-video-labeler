@@ -7,22 +7,46 @@
   align-items: center;
   justify-content: center;
 }
-  .ModalDialog > div {
+  .ModalDialog__inner {
     min-width: 50%;
     max-width: 90%;
-    max-height: calc(100vh - 56px - 64px - 48px);
-    overflow-y: auto;
-    padding: 12px;
     background-color: white;
     background-image: linear-gradient(to top, rgba(226, 226, 226, 1) 0%, white 100%);
     border-radius: 3px;
     box-shadow: 2px 2px 6px rgba(0,0,0,0.25), inset 0 0 6px rgba(0,0,0,0.2);
   }
-  .ModalDialog > div > h1 {
-    margin: 8px 4px 12px 4px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid lightgray;
-    border-radius: 3px;
+  .ModalDialog__title {
     font-size: 14px;
     text-align: center;
+    font-weight: bold;
+    padding: 12px;
+    line-height: 32px;
+    position: relative;
   }
+    .ModalDialog__title:after {
+      content: '';
+      display: block;
+      position: absolute;
+      height: 1px;
+      left: 24px;
+      right: 24px;
+      bottom: 0;
+      background-color: lightgray;
+    }
+
+  .ModalDialog__children {
+    max-height: calc(100vh - 56px - 64px - 48px - 100px);
+    overflow-y: auto;
+    padding: 0 12px;
+    clear: both;
+  }
+
+.ModalDialog__buttons {
+  display: flex;
+  margin-top: 12px;
+
+  margin: 12px;
+}
+.ModalDialog__buttons button:last-child {
+  flex: 1;
+}

@@ -39,8 +39,21 @@ export default class SettingsPanel extends React.Component<Props> {
 
   render() {
     return (
-      <ModalDialog onClose={this.props.onClose} className="SettingsPanel">
-        <h1>Settings</h1>
+      <ModalDialog
+        title="Settings"
+        onClose={this.props.onClose}
+        className="SettingsPanel"
+        buttons={[
+          <button onClick={this.props.onReset} title="Reset Settings">
+            <i className="fas fa-trash" />
+            <span>Reset</span>
+          </button>,
+          <button onClick={this.props.onClose} title="Done">
+            <i className="fas fa-check" />
+            <span>Done</span>
+          </button>,
+        ]}
+      >
         <form onSubmit={this.props.onClose}>
           <LabelBox label="Playback" className="SettingsPanel__LabelBox">
             <label>
@@ -158,16 +171,6 @@ export default class SettingsPanel extends React.Component<Props> {
             </label>
           </LabelBox>
         </form>
-        <div style={{ display: 'flex' }}>
-          <button onClick={this.props.onReset} title="Reset Settings" style={{ flex: 1 }}>
-            <i className="fas fa-trash" />
-            <span>Reset</span>
-          </button>
-          <button onClick={this.props.onClose} title="Done" style={{ flex: 3 }}>
-            <i className="fas fa-check" />
-            <span>Done</span>
-          </button>
-        </div>
       </ModalDialog>
     );
   }

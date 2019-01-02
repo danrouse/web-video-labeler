@@ -33,25 +33,29 @@ export default class LabelClassPanel extends React.Component<Props> {
 
   render() {
     return (
-      <ModalDialog onClose={this.props.onClose}>
-        <h1>Classes</h1>
+      <ModalDialog
+        title="Classes"
+        onClose={this.props.onClose}
+        buttons={[
+          <button onClick={this.toggleAddFromList} title="Add From List">
+            <i className="fas fa-list-ol" />
+            <span>Add From List</span>
+          </button>,
+          <button onClick={this.props.onClose} title="Done">
+            <i className="fas fa-check" />
+            <span>Done</span>
+          </button>,
+        ]}
+      >
+        <p>Right click a class to remove.</p>
         <LabelClassSelector
           classes={this.props.labelClasses}
           showIndex
           onAddClass={this.addClass}
           onRightClick={this.removeClass}
         />
-        <button onClick={this.toggleAddFromList} title="Add From List">
-          <i className="fas fa-plus" />
-          <span>Add From List</span>
-        </button>
-        <button onClick={this.props.onClose} title="Done">
-          <i className="fas fa-check" />
-          <span>Done</span>
-        </button>
         {this.state.isAddFromListVisible &&
-          <ModalDialog onClose={this.toggleAddFromList}>
-            <h1>Add Classes From List</h1>
+          <ModalDialog title="Add Classes From List" onClose={this.toggleAddFromList}>
             <form onSubmit={this.addFromList} style={{ display: 'flex', flexDirection: 'column' }}>
               <textarea rows={16} defaultValue={this.props.labelClasses.join('\n')} />
               <button type="submit">Set Classes</button>
