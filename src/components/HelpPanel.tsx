@@ -24,6 +24,7 @@ export default function HelpPanel({ onClose }: Props) {
           Draw labels on top of the video using the mouse:
           <ul>
             <li>Labels can be moved and resized</li>
+            <li>Delete a label by right-clicking on it</li>
             <li>To change the label name, click on the name and select or enter a new class</li>
           </ul>
         </li>

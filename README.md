@@ -26,6 +26,7 @@ Download the latest package (`.crx` for Chrome, `.xpi` for Firefox) from the [Re
 - Click <img src="https://rawcdn.githack.com/FortAwesome/Font-Awesome/fc377a13a36717464b61c045444fea1e35c26b6d/svgs/solid/power-off.svg" width="18" height="18"  /> **LABEL** to begin labeling the video.
 - Draw labels on top of the video using the mouse:
   - Labels can be moved and resized
+  - Delete a label by right-clicking on it
   - To change the label name, click on the name and select or enter a new class
 - When the frame is fully labeled, click <img src="https://rawcdn.githack.com/FortAwesome/Font-Awesome/fc377a13a36717464b61c045444fea1e35c26b6d/svgs/solid/check.svg" width="18" height="18" /> **CONTINUE** to save the labels, download the image, and skip the video forward.
 - Once you are done, download the labels by clicking the <img src="https://rawcdn.githack.com/FortAwesome/Font-Awesome/fc377a13a36717464b61c045444fea1e35c26b6d/svgs/solid/save.svg" width="18" height="18" /> download button.
