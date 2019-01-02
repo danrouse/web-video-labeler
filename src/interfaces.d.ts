@@ -33,6 +33,7 @@ declare interface UserSettings {
   saveCroppedImages: boolean;
   saveImagesWithoutLabels: boolean;
   savedImageScale: number;
+  gridSize: number;
 
   darknetWidth: number;
   darknetHeight: number;

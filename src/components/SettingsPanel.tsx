@@ -55,7 +55,7 @@ export default class SettingsPanel extends React.Component<Props> {
         ]}
       >
         <form onSubmit={this.props.onClose}>
-          <LabelBox label="Playback" className="SettingsPanel__LabelBox">
+          <LabelBox label="Labeling" className="SettingsPanel__LabelBox">
             <label>
               Frame Skip
               <p>How many frames to skip using playback controls</p>
@@ -80,6 +80,22 @@ export default class SettingsPanel extends React.Component<Props> {
                 onChange={this.handleNumber}
               />
             </label>
+            <label>
+              Grid size
+              <p>Size of background grid, set to 0 to disable</p>
+              <div className="SettingsPanel__range">
+                <span>{this.props.settings.gridSize}</span>
+                <SettingsInput
+                  type="range"
+                  step={1}
+                  min={0}
+                  max={64}
+                  name="gridSize"
+                  value={this.props.settings.gridSize}
+                  onChange={this.handleNumber}
+                />
+              </div>
+            </label>
           </LabelBox>
           <LabelBox label="Downloading" className="SettingsPanel__LabelBox">
             <label>
@@ -103,17 +119,20 @@ export default class SettingsPanel extends React.Component<Props> {
               />
             </label>
             <label>
-              Image scale
+              Downloaded image scale
               <p>Scale to resize images to when saving, from 0 - 1</p>
-              <SettingsInput
-                name="savedImageScale"
-                type="number"
-                min={0.01}
-                max={1}
-                step={0.01}
-                onChange={this.handleNumber}
-                value={this.props.settings.savedImageScale}
-              />
+              <div className="SettingsPanel__range">
+                <span>{this.props.settings.savedImageScale}</span>
+                <SettingsInput
+                  name="savedImageScale"
+                  type="range"
+                  min={0.01}
+                  max={1}
+                  step={0.01}
+                  onChange={this.handleNumber}
+                  value={this.props.settings.savedImageScale}
+                />
+              </div>
             </label>
           </LabelBox>
           <LabelBox label="Darknet Output" className="SettingsPanel__LabelBox">
@@ -141,7 +160,7 @@ export default class SettingsPanel extends React.Component<Props> {
             </label>
             <label>
               Executable path
-              <p>Command to call <pre>darknet</pre> on your local machine</p>
+              <p>Command to call <code>darknet</code> on your local machine</p>
               <SettingsInput
                 name="darknetExecutablePath"
                 type="text"
@@ -160,14 +179,17 @@ export default class SettingsPanel extends React.Component<Props> {
             <label>
               Train/test split
               <p>Ratio of training to testing images in the output data</p>
-              <SettingsInput
-                name="darknetTrainTestRatio"
-                type="number"
-                min={0}
-                max={1}
-                step={0.01}
-                value={this.props.settings.darknetTrainTestRatio}
-              />
+              <div className="SettingsPanel__range">
+                <span>{this.props.settings.darknetTrainTestRatio}</span>
+                <SettingsInput
+                  name="darknetTrainTestRatio"
+                  type="range"
+                  min={0}
+                  max={1}
+                  step={0.01}
+                  value={this.props.settings.darknetTrainTestRatio}
+                />
+              </div>
             </label>
           </LabelBox>
         </form>

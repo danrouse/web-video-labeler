@@ -41,6 +41,7 @@ const defaultState: State = {
     saveCroppedImages: false,
     saveImagesWithoutLabels: false,
     savedImageScale: 1,
+    gridSize: 16,
     darknetWidth: 416,
     darknetHeight: 416,
     darknetExecutablePath: 'darknet',
@@ -226,12 +227,13 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
               labels={this.state.labels}
               classes={this.state.labelClasses}
               scale={this.state.videoScale}
-              onLabelsChange={this.handleLabelsChange}
+              gridSize={this.state.settings.gridSize}
               previousLabelName={
                 this.state.labels.length > 0
                   ? this.state.labels[this.state.labels.length - 1].str
                   : this.state.labelClasses[this.state.labelClasses.length - 1]
               }
+              onLabelsChange={this.handleLabelsChange}
             />
           }
         </VideoOverlay>

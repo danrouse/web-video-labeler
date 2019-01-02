@@ -25,12 +25,12 @@
     color: #555;
   }
 
-  .SettingsPanel label > input {
+  .SettingsPanel label input {
     flex: 1;
     background-color: #fff;
   }
 
-.SettingsPanel p pre {
-  display: inline-block;
-  margin: 0;
+.SettingsPanel__range {
+  display: flex;
+  align-items: center;
 }
