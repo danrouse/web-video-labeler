@@ -5,19 +5,15 @@
   "description": "Label videos on the web for training image classifiers",
   "content_scripts": [{
     "matches": ["*://*/*"],
-    "js": ["extension/injectScript.js"],
+    "js": ["bundle.js"],
+    "css": ["bundle.css"],
     "all_frames": true
   }],
   "permissions": ["management", "downloads"],
   "background": {
     "scripts": [
       "extension/liveReload.js",
-      "extension/messageListener.js"
+      "extension/messaging.bundle.js"
     ]
-  },
-  "web_accessible_resources": [
-    "bundle.js",
-    "bundle.js.map",
-    "bundle.css"
-  ]
+  }
 }
