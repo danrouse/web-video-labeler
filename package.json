@@ -14,7 +14,7 @@
     "lint": "tslint -p tsconfig.json",
     "build": "npm-run-all --serial clean tsc copy-static rollup",
     "package": "npm-run-all --parallel crx xpi",
-    "start": "npm-run-all --parallel \"tsc -- -w\" \"copy-static -- -w\" \"rollup -- -w\""
+    "start": "npm-run-all --parallel -l \"tsc -- -w\" \"copy-static -- -w\" \"rollup -- -w\""
   },
   "author": "Dan Rouse <dan@rouse.house>",
   "license": "MIT",
