@@ -1,31 +1,53 @@
-.SettingsPanel fieldset,
-.SettingsPanel legend {
-  border-radius: 3px;
-  border: 1px solid #ddd;
+.SettingsPanel form {
+  margin-bottom: 12px;
 }
 
 .SettingsPanel fieldset {
   display: flex;
-  margin-bottom: 8px;
+  padding: 12px;
+  border: 1px solid #ddd;
+  background-color: #fefefe;
+  position: relative;
+  margin-top: 16px;
+  top: 16px;
+  margin-bottom: 32px;
 }
 
 .SettingsPanel legend {
-  padding: 2px 4px;
+  padding: 3px 6px;
+  position: absolute;
+  bottom: 100%;
+  left: -1px;
   font-size: 10px;
   font-weight: bold;
-  background-color: white;
-  color: #334;
+  background-color: #ddd;
+  border: none;
 }
 
 .SettingsPanel label {
   display: flex;
-  justify-content: space-between;
-  font-size: 14px;
+  font-size: 13px;
 }
 
-  .SettingsPanel label input {
-    width: 50%;
-    min-width: 200px;
-    margin-left: 4px;
-    text-align: left;
+.SettingsPanel label:not(.row) {
+  flex-direction: column;
+}
+
+.SettingsPanel label:not(:last-child) {
+  margin-bottom: 10px;
+}
+
+  .SettingsPanel label > p {
+    font-size: 11px;
+    margin: 2px 0;
+    color: #555;
   }
+
+  .SettingsPanel label > input {
+    flex: 1;
+  }
+
+.SettingsPanel p pre {
+  display: inline-block;
+  margin: 0;
+}

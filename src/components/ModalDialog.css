@@ -10,6 +10,8 @@
   .ModalDialog > div {
     min-width: 50%;
     max-width: 90%;
+    max-height: calc(100vh - 56px - 64px - 48px);
+    overflow-y: auto;
     padding: 12px;
     background-color: white;
     background-image: linear-gradient(to top, rgba(226, 226, 226, 1) 0%, white 100%);

@@ -42,6 +42,7 @@ export default class SettingsPanel extends React.Component<Props> {
             <legend>Playback</legend>
             <label>
               Frame Skip
+              <p>How many frames to skip using playback controls</p>
               <SettingsInput
                 type="number"
                 step="1"
@@ -53,6 +54,7 @@ export default class SettingsPanel extends React.Component<Props> {
             </label>
             <label>
               Frame Rate
+              <p>Video frames per second, usually 24</p>
               <SettingsInput
                 type="number"
                 step={1}
@@ -67,6 +69,7 @@ export default class SettingsPanel extends React.Component<Props> {
             <legend>Downloading</legend>
             <label>
               Save images with no labels?
+              <p>If there are no labels present on an image, it will not be downloaded</p>
               <SettingsInput
                 type="checkbox"
                 name="saveImagesWithoutLabels"
@@ -76,6 +79,7 @@ export default class SettingsPanel extends React.Component<Props> {
             </label>
             <label>
               Save cropped images?
+              <p>When saving images, also crop and save each labeled region separately</p>
               <SettingsInput
                 type="checkbox"
                 name="saveCroppedImages"
@@ -85,6 +89,7 @@ export default class SettingsPanel extends React.Component<Props> {
             </label>
             <label>
               Image scale
+              <p>Scale to resize images to when saving, from 0 - 1</p>
               <SettingsInput
                 name="savedImageScale"
                 type="number"
@@ -122,6 +127,7 @@ export default class SettingsPanel extends React.Component<Props> {
             </label>
             <label>
               Executable path
+              <p>Command to call <pre>darknet</pre> on your local machine</p>
               <SettingsInput
                 name="darknetExecutablePath"
                 type="text"
@@ -130,6 +136,7 @@ export default class SettingsPanel extends React.Component<Props> {
             </label>
             <label>
               Config URL
+              <p>Base configuration for training and running the network</p>
               <SettingsInput
                 name="darknetConfigURL"
                 type="text"
@@ -138,6 +145,7 @@ export default class SettingsPanel extends React.Component<Props> {
             </label>
             <label>
               Train/test split
+              <p>Ratio of training to testing images in the output data</p>
               <SettingsInput
                 name="darknetTrainTestRatio"
                 type="number"
