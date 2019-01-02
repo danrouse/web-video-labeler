@@ -2,9 +2,9 @@ Label videos on the web for training image classifiers. Web Video Labeler is a b
 
 TODO: GIF screencast of app in use
 
+
 ## Compatibility
-- Browsers: **Chrome** or **Firefox** _(TODO: Publish to app stores)_
-- Websites: **YouTube**
+- Browsers: **Chrome** or **Firefox**
 - Output: **Darknet (YOLO)**
 
 
@@ -24,11 +24,3 @@ To use the extension from source,
 ## Usage
 
 `TODO` ;)
-
-
-## Planned Features
-
-- Support for videos on arbitrary websites, not just YouTube
-- Tensorflow TFRecord output format
-- Combining multiple output datasets
-- Set arbitrary class indexes
