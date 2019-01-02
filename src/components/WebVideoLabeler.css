@@ -1,7 +1,3 @@
-.WebVideoLabeler {
-  font-size: 16px;
-}
-
 .WebVideoLabeler,
 .WebVideoLabeler *,
 .WebVideoLabeler *:before,
@@ -9,38 +5,49 @@
   box-sizing: border-box;
 }
 
+.WebVideoLabeler {
+  font-size: 16px;
+}
+
+.WebVideoLabeler,
 .WebVideoLabeler button {
-  border: 1px outset #ccc;
-  background-color: #ccc;
-  border-radius: 2px;
+  text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+
+.WebVideoLabeler button {
+  height: 28px;
   margin: 2px;
   padding: 4px;
-  cursor: pointer;
+  border: 1px outset #ccc;
+  border-radius: 2px;
   font-size: 13px;
+  color: #222;
+  background-color: #ccc;
   font-weight: bold;
   text-transform: uppercase;
-  color: #222;
-  text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.2);
-  height: 2.2em;
 }
   .WebVideoLabeler button:disabled {
     color: #888;
+    background-color: #d6d8d2;
   }
   .WebVideoLabeler button:hover:not(:disabled) {
-    border-color: #aaa;
     background-color: #aaa;
+    border-color: #aaa;
+    cursor: pointer;
   }
   .WebVideoLabeler button:active:not(:disabled) {
     border-style: inset;
     outline: none;
   }
-  .WebVideoLabeler button i {
-    font-size: 16px;
-    vertical-align: middle;
-  }
-  .WebVideoLabeler button i + span {
-    margin: 0 2px 0 4px;
-  }
-.WebVideoLabeler button.icon {
-  width: 2.2em;
-}
+    .WebVideoLabeler button i {
+      display: inline-block;
+      vertical-align: middle;
+      width: 18px;
+      height: 16px;
+      text-align: center;
+      font-size: 16px;
+    }
+    .WebVideoLabeler button i + span {
+      margin: 0 2px 0 4px;
+    }

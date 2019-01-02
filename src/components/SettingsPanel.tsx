@@ -37,116 +37,118 @@ export default class SettingsPanel extends React.Component<Props> {
     return (
       <ModalDialog onClose={this.props.onClose} className="SettingsPanel">
         <h1>Settings</h1>
-        <fieldset>
-          <legend>Playback</legend>
-          <label>
-            Frame Skip
-            <SettingsInput
-              type="number"
-              step="1"
-              min="1"
-              value={this.props.settings.skipLength}
-              name="skipLength"
-              onChange={this.handleNumber}
-            />
-          </label>
-          <label>
-            Frame Rate
-            <SettingsInput
-              type="number"
-              step={1}
-              min={1}
-              value={this.props.settings.skipLengthFrameRate}
-              name="skipLengthFrameRate"
-              onChange={this.handleNumber}
-            />
-          </label>
-        </fieldset>
-        <fieldset>
-          <legend>Downloading</legend>
-          <label>
-            Save images with no labels?
-            <SettingsInput
-              type="checkbox"
-              name="saveImagesWithoutLabels"
-              onChange={this.handleCheckbox}
-              checked={this.props.settings.saveImagesWithoutLabels}
-            />
-          </label>
-          <label>
-            Save cropped images?
-            <SettingsInput
-              type="checkbox"
-              name="saveCroppedImages"
-              onChange={this.handleCheckbox}
-              checked={this.props.settings.saveCroppedImages}
-            />
-          </label>
-          <label>
-            Image scale
-            <SettingsInput
-              name="savedImageScale"
-              type="number"
-              min={0.01}
-              max={1}
-              step={0.01}
-              onChange={this.handleNumber}
-              value={this.props.settings.savedImageScale}
-            />
-          </label>
-        </fieldset>
-        <fieldset>
-          <legend>Darknet Output</legend>
-          <label>
-            Width
-            <SettingsInput
-              name="darknetWidth"
-              type="number"
-              min={1}
-              step={1}
-              value={this.props.settings.darknetWidth}
-              onChange={this.handleNumber}
-            />
-          </label>
-          <label>
-            Height
-            <SettingsInput
-              name="darknetHeight"
-              type="number"
-              min={1}
-              step={1}
-              value={this.props.settings.darknetHeight}
-              onChange={this.handleNumber}
-            />
-          </label>
-          <label>
-            Executable path
-            <SettingsInput
-              name="darknetExecutablePath"
-              type="text"
-              value={this.props.settings.darknetExecutablePath}
-            />
-          </label>
-          <label>
-            Config URL
-            <SettingsInput
-              name="darknetConfigURL"
-              type="text"
-              value={this.props.settings.darknetConfigURL}
-            />
-          </label>
-          <label>
-            Train/test split
-            <SettingsInput
-              name="darknetTrainTestRatio"
-              type="number"
-              min={0}
-              max={1}
-              step={0.01}
-              value={this.props.settings.darknetTrainTestRatio}
-            />
-          </label>
-        </fieldset>
+        <form onSubmit={this.props.onClose}>
+          <fieldset>
+            <legend>Playback</legend>
+            <label>
+              Frame Skip
+              <SettingsInput
+                type="number"
+                step="1"
+                min="1"
+                value={this.props.settings.skipLength}
+                name="skipLength"
+                onChange={this.handleNumber}
+              />
+            </label>
+            <label>
+              Frame Rate
+              <SettingsInput
+                type="number"
+                step={1}
+                min={1}
+                value={this.props.settings.skipLengthFrameRate}
+                name="skipLengthFrameRate"
+                onChange={this.handleNumber}
+              />
+            </label>
+          </fieldset>
+          <fieldset>
+            <legend>Downloading</legend>
+            <label>
+              Save images with no labels?
+              <SettingsInput
+                type="checkbox"
+                name="saveImagesWithoutLabels"
+                onChange={this.handleCheckbox}
+                checked={this.props.settings.saveImagesWithoutLabels}
+              />
+            </label>
+            <label>
+              Save cropped images?
+              <SettingsInput
+                type="checkbox"
+                name="saveCroppedImages"
+                onChange={this.handleCheckbox}
+                checked={this.props.settings.saveCroppedImages}
+              />
+            </label>
+            <label>
+              Image scale
+              <SettingsInput
+                name="savedImageScale"
+                type="number"
+                min={0.01}
+                max={1}
+                step={0.01}
+                onChange={this.handleNumber}
+                value={this.props.settings.savedImageScale}
+              />
+            </label>
+          </fieldset>
+          <fieldset>
+            <legend>Darknet Output</legend>
+            <label>
+              Width
+              <SettingsInput
+                name="darknetWidth"
+                type="number"
+                min={1}
+                step={1}
+                value={this.props.settings.darknetWidth}
+                onChange={this.handleNumber}
+              />
+            </label>
+            <label>
+              Height
+              <SettingsInput
+                name="darknetHeight"
+                type="number"
+                min={1}
+                step={1}
+                value={this.props.settings.darknetHeight}
+                onChange={this.handleNumber}
+              />
+            </label>
+            <label>
+              Executable path
+              <SettingsInput
+                name="darknetExecutablePath"
+                type="text"
+                value={this.props.settings.darknetExecutablePath}
+              />
+            </label>
+            <label>
+              Config URL
+              <SettingsInput
+                name="darknetConfigURL"
+                type="text"
+                value={this.props.settings.darknetConfigURL}
+              />
+            </label>
+            <label>
+              Train/test split
+              <SettingsInput
+                name="darknetTrainTestRatio"
+                type="number"
+                min={0}
+                max={1}
+                step={0.01}
+                value={this.props.settings.darknetTrainTestRatio}
+              />
+            </label>
+          </fieldset>
+        </form>
         <div style={{ display: 'flex' }}>
           <button onClick={this.props.onReset} title="Reset Settings" style={{ flex: 1 }}>
             <i className="fas fa-trash" />

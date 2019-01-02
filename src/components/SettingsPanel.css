@@ -1,28 +1,31 @@
-.SettingsPanel fieldset {
+.SettingsPanel fieldset,
+.SettingsPanel legend {
   border-radius: 3px;
   border: 1px solid #ddd;
+}
+
+.SettingsPanel fieldset {
   display: flex;
   margin-bottom: 8px;
 }
 
 .SettingsPanel legend {
-  border: 1px solid #ddd;
-  border-radius: 3px;
-  background-color: white;
-  color: #334;
+  padding: 2px 4px;
   font-size: 10px;
   font-weight: bold;
-  padding: 2px 4px;
+  background-color: white;
+  color: #334;
 }
 
 .SettingsPanel label {
-  font-size: 14px;
   display: flex;
   justify-content: space-between;
+  font-size: 14px;
 }
-.SettingsPanel label input {
-  margin-left: 4px;
-  width: 50%;
-  text-align: left;
-  min-width: 200px;
-}
+
+  .SettingsPanel label input {
+    width: 50%;
+    min-width: 200px;
+    margin-left: 4px;
+    text-align: left;
+  }
