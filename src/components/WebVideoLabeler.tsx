@@ -111,6 +111,11 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
     }
     this.skip();
   }
+  undo = () => {
+    const { time } = this.state.labeledImages[this.state.labeledImages.length - 1];
+    this.props.video.currentTime = time;
+    this.setState({ labeledImages: this.state.labeledImages.slice(0, -1) });
+  }
 
   downloadFrame = (): LabeledImage => {
     const time = this.props.video.currentTime;
@@ -162,6 +167,8 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
   }
 
   render() {
+    const canUndo = this.state.labeledImages.length > 0 &&
+      this.state.labeledImages[this.state.labeledImages.length - 1].url === window.location.href;
     return (
       <div className="WebVideoLabeler">
         <LocalStorageSync
@@ -177,6 +184,7 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
           isLabeling={this.state.isLabeling}
           isSeeking={this.state.isSeeking}
           isLocalStorageFull={this.state.isLocalStorageFull}
+          canUndo={canUndo}
 
           startLabeling={this.startLabeling}
           stopLabeling={this.stopLabeling}
@@ -184,6 +192,7 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
           prev={this.prev}
           skip={this.skip}
           next={this.next}
+          undo={this.undo}
           downloadLabeledImages={this.downloadLabeledImages}
           clearLabeledImages={this.clearLabeledImages}
           toggleSettingsPanel={this.toggleSettingsPanel}

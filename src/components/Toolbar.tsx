@@ -7,6 +7,7 @@ interface Props {
   isLabeling: boolean;
   isSeeking: boolean;
   isLocalStorageFull: boolean;
+  canUndo: boolean;
 
   startLabeling: () => void;
   stopLabeling: () => void;
@@ -14,6 +15,7 @@ interface Props {
   prev: () => void;
   skip: () => void;
   next: () => void;
+  undo: () => void;
   downloadLabeledImages: () => void;
   clearLabeledImages: () => void;
   toggleSettingsPanel: () => void;
@@ -34,10 +36,13 @@ export default function Toolbar(props: Props) {
         :
         <div style={{ flex: 1, maxWidth: '50%' }}>
           <button className="icon" onClick={props.stopLabeling} title="Stop">
-            <i className="fas fa-stop" />
+            <i className="fas fa-power-off" />
           </button>
           <button className="icon" onClick={props.clearLabels} title="Clear Labels">
             <i className="fas fa-eraser" />
+          </button>
+          <button className="icon" onClick={props.undo} disabled={!props.canUndo} title="Undo Last Image">
+            <i className="fas fa-undo" />
           </button>
           <button className="icon" onClick={props.prev} disabled={props.isSeeking} title="Skip Back">
             <i className="fas fa-step-backward" />
