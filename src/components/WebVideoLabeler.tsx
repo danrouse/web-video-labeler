@@ -7,7 +7,7 @@ import SettingsPanel from './SettingsPanel';
 import HelpPanel from './HelpPanel';
 import LabelClassPanel from './LabelClassPanel';
 import { downloadVideoFrame, downloadZIPFile } from '../util/download';
-import { getVideoID, getYouTubeVideoElem, toggleYouTubeUI } from '../util/youtube';
+import { getVideoID, toggleYouTubeUI } from '../util/youtube';
 import { labeledImagesToDarknet } from '../formats/darknet';
 import './WebVideoLabeler.css';
 
@@ -54,14 +54,13 @@ const defaultState: State = {
   videoScale: 1,
 };
 
-export default class App extends React.Component<{}, State> {
+export default class App extends React.Component<{ video: HTMLVideoElement }, State> {
   state = defaultState;
 
   componentWillMount() {
-    const video = getYouTubeVideoElem();
-    video.addEventListener('play', () => this.setState({ isLabeling: false }));
-    video.addEventListener('seeking', () => this.setState({ isSeeking: true }));
-    video.addEventListener('seeked', () => this.setState({ isSeeking: false }));
+    this.props.video.addEventListener('play', () => this.setState({ isLabeling: false }));
+    this.props.video.addEventListener('seeking', () => this.setState({ isSeeking: true }));
+    this.props.video.addEventListener('seeked', () => this.setState({ isSeeking: false }));
   }
 
   clearLabeledImages = () => confirm('are you sure? will delete all cached images + labels') &&
@@ -91,18 +90,18 @@ export default class App extends React.Component<{}, State> {
   toggleLabelClassPanel = () => this.setState({ isLabelClassPanelVisible: !this.state.isLabelClassPanelVisible });
 
   startLabeling = () => {
-    const wasPlayingBeforeLabeling = !getYouTubeVideoElem().paused;
-    getYouTubeVideoElem().pause();
+    const wasPlayingBeforeLabeling = !this.props.video.paused;
+    this.props.video.pause();
     toggleYouTubeUI(false);
     this.setState({ wasPlayingBeforeLabeling, isLabeling: true });
   }
   stopLabeling = () => {
     if (this.state.wasPlayingBeforeLabeling) {
-      getYouTubeVideoElem().play();
+      this.props.video.play();
     }
     this.setState({ isLabeling: false }, () => toggleYouTubeUI(true));
   }
-  seek = (dt: number) => getYouTubeVideoElem().currentTime += dt;
+  seek = (dt: number) => this.props.video.currentTime += dt;
   skip = () => this.seek(this.state.settings.skipLength / this.state.settings.skipLengthFrameRate);
   prev = () => this.seek(-this.state.settings.skipLength / this.state.settings.skipLengthFrameRate);
   next = () => {
@@ -114,19 +113,18 @@ export default class App extends React.Component<{}, State> {
   }
 
   downloadFrame = (): LabeledImage => {
-    const video = getYouTubeVideoElem();
-    const time = video.currentTime;
+    const time = this.props.video.currentTime;
     const frame = Math.floor(time * this.state.settings.skipLengthFrameRate);
     const scale = this.state.settings.savedImageScale;
     const filename = `_annotate_${getVideoID()}_${frame}.jpg`;
-    downloadVideoFrame(video, filename, undefined, scale);
+    downloadVideoFrame(this.props.video, filename, undefined, scale);
     if (this.state.settings.saveCroppedImages) {
       const labelCounts: { [str: string]: number } = {};
       this.state.labels.forEach((label) => {
         if (!labelCounts[label.str]) labelCounts[label.str] = 0;
         labelCounts[label.str] += 1;
         const croppedFilename = `_annotate_${getVideoID()}_${frame}_${label.str}-${labelCounts[label.str]}.jpg`;
-        downloadVideoFrame(video, croppedFilename, label.rect);
+        downloadVideoFrame(this.props.video, croppedFilename, label.rect);
       });
     }
     return {
@@ -143,8 +141,8 @@ export default class App extends React.Component<{}, State> {
         },
       })),
       url: window.location.href,
-      width: video.videoWidth,
-      height: video.videoHeight,
+      width: this.props.video.videoWidth,
+      height: this.props.video.videoHeight,
     };
   }
 
@@ -169,7 +167,7 @@ export default class App extends React.Component<{}, State> {
         <LocalStorageSync
           data={this.state}
           exclude={['isLabeling']}
-          localStorageKey="__chrome-youtube-labeler-data"
+          localStorageKey="WebVideoLabeler"
           onLoad={this.handleLoadState}
           onStorageFull={this.handleStorageFull}
         />
@@ -210,7 +208,7 @@ export default class App extends React.Component<{}, State> {
             onChange={this.handleLabelClassChange}
           />
         }
-        <VideoOverlay elem={getYouTubeVideoElem()} onScaleChange={this.handleVideoScaleChange}>
+        <VideoOverlay elem={this.props.video} onScaleChange={this.handleVideoScaleChange}>
           {this.state.isLabeling &&
             <LabelingCanvas
               labels={this.state.labels}

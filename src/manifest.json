@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "Label videos on the web for training image classifiers",
   "content_scripts": [{
-    "matches": ["*://*.youtube.com/*"],
+    "matches": ["*://*/*"],
     "js": ["extension/injectScript.js"],
     "all_frames": true
   }],

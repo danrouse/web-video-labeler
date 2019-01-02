@@ -1,13 +1,19 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import WebVideoLabeler from './components/WebVideoLabeler';
-import { getYouTubeVideoElem } from './util/youtube';
+
+const MAX_RETRY_ATTEMPTS = 20;
+let numRetryAttempts = 0;
 
 function initializeReactApp() {
   // wait for video element to be ready before mounting
-  const video = getYouTubeVideoElem();
+  const video = document.querySelector('video');
   if (!video || video.readyState !== 4) { // 4 === HTMLVideoElement.HAVE_ENOUGH_DATA
-    return setTimeout(initializeReactApp, 100);
+    numRetryAttempts += 1;
+    if (numRetryAttempts < MAX_RETRY_ATTEMPTS) {
+      setTimeout(initializeReactApp, 100);
+    }
+    return;
   }
 
   const headAppend = `
@@ -22,7 +28,7 @@ function initializeReactApp() {
 
   const uiContainer = document.createElement('div');
   document.body.appendChild(uiContainer);
-  ReactDOM.render(React.createElement(WebVideoLabeler), uiContainer);
+  ReactDOM.render(React.createElement(WebVideoLabeler, { video }), uiContainer);
 }
 
 initializeReactApp();

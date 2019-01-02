@@ -1,14 +1,15 @@
-export function getVideoID() {
-  const elem = document.querySelector('[video-id]') as HTMLElement;
-  return elem.getAttribute('video-id');
-}
+const isOnYouTube = () => window.location.host.match(/\.youtube\.com$/);
 
-export function getYouTubeVideoElem() {
-  return document.querySelector('video') as HTMLVideoElement;
+export function getVideoID() {
+  if (!isOnYouTube()) return;
+  const elem = document.querySelector('[video-id]');
+  return elem && elem.getAttribute('video-id');
 }
 
 export function toggleYouTubeUI(enabled = false) {
-  const container = document.getElementById('movie_player') as HTMLElement;
+  if (!isOnYouTube()) return;
+  const container = document.getElementById('movie_player');
+  if (!container) return;
   const uiElems = container.querySelectorAll('[class^="ytp-"]');
   const classMethod = !enabled ? 'add' : 'remove';
   Array.from(uiElems).forEach(e => e.classList[classMethod]('hidden'));
