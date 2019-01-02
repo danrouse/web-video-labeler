@@ -9,6 +9,7 @@ interface Props {
   onRightClick?: (str: string) => void;
   onAddClass?: (str: string) => void;
   showIndex?: boolean;
+  style?: React.CSSProperties;
 }
 
 export default class LabelClassSelector extends React.Component<Props> {
@@ -27,7 +28,7 @@ export default class LabelClassSelector extends React.Component<Props> {
 
   render() {
     return (
-      <div className={`LabelClassSelector ${this.props.className || ''}`}>
+      <div className={`LabelClassSelector ${this.props.className || ''}`} style={this.props.style}>
         {this.props.classes.map((labelClass, index) => (
           <button
             name={labelClass}

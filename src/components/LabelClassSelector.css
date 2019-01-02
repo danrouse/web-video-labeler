@@ -7,7 +7,7 @@
     border: 0;
     border-radius: 0;
     padding: 1px 4px;
-    margin: 1px;
+    margin: 0;
     cursor: pointer;
     font-size: 12px;
     overflow: hidden;
@@ -15,6 +15,9 @@
     height: auto;
     text-transform: none;
     text-align: left;
+  }
+  .LabelClassSelector > button:hover {
+    font-weight: bold;
   }
 
   .LabelClassSelector > form {
@@ -24,5 +27,5 @@
     font-size: 13px;
     border: 0;
     border-radius: 0;
-    margin: 1px;
+    margin: 0;
   }
