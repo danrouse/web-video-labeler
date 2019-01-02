@@ -2,6 +2,7 @@
   "name": "web-video-labeler",
   "version": "1.0.0",
   "description": "Label videos on the web for training image classifiers",
+  "repository": "https://github.com/danrouse/web-video-labeler",
   "main": "dist/main.js",
   "scripts": {
     "clean": "rimraf dist/*",
@@ -11,7 +12,8 @@
     "crx": "crx pack dist -o dist/web-video-labeler.crx",
     "xpi": "web-ext sign -s dist -a dist -i *.crx -i key.pem",
     "lint": "tslint -p tsconfig.json",
-    "build": "npm-run-all --serial clean tsc copy-static rollup crx xpi",
+    "build": "npm-run-all --serial clean tsc copy-static rollup",
+    "package": "npm-run-all --parallel crx xpi",
     "start": "npm-run-all --parallel \"tsc -- -w\" \"copy-static -- -w\" \"rollup -- -w\""
   },
   "author": "Dan Rouse <dan@rouse.house>",
