@@ -27,6 +27,7 @@
 
   .SettingsPanel label > input {
     flex: 1;
+    background-color: #fff;
   }
 
 .SettingsPanel p pre {

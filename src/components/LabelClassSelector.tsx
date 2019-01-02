@@ -42,6 +42,7 @@ export default class LabelClassSelector extends React.Component<Props> {
         ))}
         <form onSubmit={this.handleSubmit}>
           <input type="text" placeholder="new class" />
+          <button type="submit"><i className="fas fa-plus" /></button>
         </form>
       </div>
     );
