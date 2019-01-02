@@ -11,7 +11,7 @@ Web Video Labeler is a browser extension to step through videos and generate lab
 
 ## Installation
 
-Download the latest release archive from the [Releases page](https://github.com/danrouse/web-video-labeler/releases) - `.crx` for Chrome, `.xpi` for Firefox - and run in your browser (this should happen automatically after downloading, or you can drag-and-drop the archive onto your browser).
+Download the latest package (`.crx` for Chrome, `.xpi` for Firefox) from the [Releases page](https://github.com/danrouse/web-video-labeler/releases)  and run in your browser (this should happen automatically after downloading, or you can drag-and-drop the archive onto your browser.)
 
 ### From source
 1. `npm install && npm run build`
@@ -39,16 +39,21 @@ Download the latest release archive from the [Releases page](https://github.com/
 - <img src="https://rawcdn.githack.com/FortAwesome/Font-Awesome/fc377a13a36717464b61c045444fea1e35c26b6d/svgs/solid/power-off.svg" width="18" height="18"  /> Start/stop labeling
 - <img src="https://rawcdn.githack.com/FortAwesome/Font-Awesome/fc377a13a36717464b61c045444fea1e35c26b6d/svgs/solid/eraser.svg" width="18" height="18" /> Erase labels currently drawn on frame
 - <img src="https://rawcdn.githack.com/FortAwesome/Font-Awesome/fc377a13a36717464b61c045444fea1e35c26b6d/svgs/solid/undo.svg" width="18" height="18" /> Undo saving last frame
-- <img src="https://rawcdn.githack.com/FortAwesome/Font-Awesome/fc377a13a36717464b61c045444fea1e35c26b6d/svgs/solid/step-backward.svg" width="18" height="18" /> Step backward (change number of frames in settings)
+- <img src="https://rawcdn.githack.com/FortAwesome/Font-Awesome/fc377a13a36717464b61c045444fea1e35c26b6d/svgs/solid/step-backward.svg" width="18" height="18" /> Step backward
 - <img src="https://rawcdn.githack.com/FortAwesome/Font-Awesome/fc377a13a36717464b61c045444fea1e35c26b6d/svgs/solid/step-forward.svg" width="18" height="18" /> Step forward
 - <img src="https://rawcdn.githack.com/FortAwesome/Font-Awesome/fc377a13a36717464b61c045444fea1e35c26b6d/svgs/solid/save.svg" width="18" height="18" /> Download label annotations and scripts to use for training
-- <img src="https://rawcdn.githack.com/FortAwesome/Font-Awesome/fc377a13a36717464b61c045444fea1e35c26b6d/svgs/solid/trash.svg" width="18" height="18" /> Erases label annotation data (can't delete the actual images, since those are already downloaded)
+- <img src="https://rawcdn.githack.com/FortAwesome/Font-Awesome/fc377a13a36717464b61c045444fea1e35c26b6d/svgs/solid/trash.svg" width="18" height="18" /> Erase label annotation data
+- <img src="https://rawcdn.githack.com/FortAwesome/Font-Awesome/fc377a13a36717464b61c045444fea1e35c26b6d/svgs/solid/tags.svg" width="18" height="18" /> Open class manager, to remove or import lists of label classes
+- <img src="https://rawcdn.githack.com/FortAwesome/Font-Awesome/fc377a13a36717464b61c045444fea1e35c26b6d/svgs/solid/cog.svg" width="18" height="18" /> Open settings menu
 
 
 ### Other features
 
-- label class manager to import ordered lists of classes
-- combining multiple projects using provided script
+#### Combining multiple exports
+Exports include a script, `combine_projects.sh`, which can be used to combine multiple sets of annotations. The first argument is the export directory to merge into, followed by any number of other exports (with or without extracting the ZIP file.)
+```sh
+$ ./combine_projects.sh . ../data2.zip ../data3-extracted
+```
 
 
 ## Known issues
