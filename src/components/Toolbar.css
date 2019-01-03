@@ -11,3 +11,15 @@
   background-color: rgba(240, 240, 240, 0.8);
   box-shadow: 0 0 2px rgba(0,0,0,0.3);
 }
+
+.Toolbar__main-controls {
+  flex: 1;
+  max-width: 50%;
+}
+
+.Toolbar__download-controls {
+  margin: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

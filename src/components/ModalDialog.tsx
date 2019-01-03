@@ -32,7 +32,7 @@ export default class ModalDialog extends React.Component<Props> {
       <div className={`ModalDialog ${this.props.className || ''}`} onClick={this.close}>
         <div className="ModalDialog__inner">
           <div className="ModalDialog__title">
-            <button onClick={this.props.onClose} title="Close" className="icon" style={{ float: 'right' }}>
+            <button onClick={this.props.onClose} title="Close" className="icon">
               <i className="fas fa-times" />
             </button>
             {this.props.title}

@@ -29,14 +29,14 @@ export default function Toolbar(props: Props) {
   return (
     <div className="Toolbar">
       {!props.isLabeling ?
-        <div style={{ flex: 1, maxWidth: '50%' }}>
+        <div className="Toolbar__main-controls">
           <button onClick={props.startLabeling} title="Begin Annotating Labels">
             <i className="fas fa-power-off" />
             <span>Label</span>
           </button>
         </div>
         :
-        <div style={{ flex: 1, maxWidth: '50%' }}>
+        <div className="Toolbar__main-controls">
           <button className="icon" onClick={props.stopLabeling} title="Stop">
             <i className="fas fa-power-off" />
           </button>
@@ -66,7 +66,7 @@ export default function Toolbar(props: Props) {
       {props.isLocalStorageFull &&
         <p>local storage full</p>
       }
-      <div style={{ margin: '0 12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div className="Toolbar__download-controls">
         <button
           onClick={props.downloadLabeledImages}
           title="Download Data"
