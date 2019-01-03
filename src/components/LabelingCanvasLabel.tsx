@@ -66,10 +66,10 @@ export default class LabelingCanvasLabel extends React.Component<Props, State> {
   getAnchors(evt: React.MouseEvent) {
     if (!this.ref) return { left: false, right: false, top: false, bottom: false };
     const { x, y, width, height } = this.ref.getBoundingClientRect() as DOMRect;
-    const left = Math.abs(evt.clientX - x) < 8;
-    const right = Math.abs(evt.clientX - x - width) < 8;
-    const top = Math.abs(evt.clientY - y) < 8;
-    const bottom = Math.abs(evt.clientY - y - height) < 8;
+    const left = Math.abs(evt.clientX - x) < 12;
+    const right = Math.abs(evt.clientX - x - width) < 12;
+    const top = Math.abs(evt.clientY - y) < 12;
+    const bottom = Math.abs(evt.clientY - y - height) < 12;
     return { left, right, top, bottom };
   }
 

@@ -20,7 +20,7 @@ export default function LabelBox({ label, color, getRef, onLabelClick, children,
     >
       <div
         className="LabelBox__label"
-        style={{ backgroundColor: dstColor }}
+        style={{ backgroundColor: dstColor, cursor: onLabelClick ? 'pointer' : 'normal' }}
         onClick={onLabelClick}
       >
         {label}

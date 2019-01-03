@@ -10,10 +10,10 @@
 
 .LabelingCanvasLabel__resizeArea {
   position: absolute;
-  left: -2px;
-  right: -2px;
-  top: -2px;
-  bottom: -2px;
+  left: -6px;
+  right: -6px;
+  top: -6px;
+  bottom: -6px;
 }
 .LabelingCanvasLabel__moveArea {
   position: absolute;
