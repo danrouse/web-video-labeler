@@ -17,7 +17,7 @@
     "build": "npm-run-all --serial clean tsc copy:* \"rollup:* -- --compact\"",
     "pack": "npm-run-all --parallel pack:*",
     "watch": "npm-run-all --parallel -l \"tsc -- -w\" \"copy:* -- -v -w\" \"rollup:* -- -w\"",
-    "version": "node -p \"require('fs').writeFileSync('static/manifest.json', JSON.stringify({ ...require('./static/manifest.json'), version: require('./package.json').version }, null, 2))\" && git add static/manifest.json",
+    "version": "node -p \"JSON.stringify({ ...require('./static/manifest.json'), version: require('./package.json').version }, null, 2)\" > static/manifest.json && git add static/manifest.json",
     "start": "npm run watch"
   },
   "author": "Dan Rouse <dan@rouse.house>",
