@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Web Video Labeler",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Label videos on the web for training image classifiers",
   "content_scripts": [
     {
