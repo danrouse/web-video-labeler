@@ -6,9 +6,10 @@ import Toolbar from './Toolbar';
 import SettingsPanel from './SettingsPanel';
 import HelpPanel from './HelpPanel';
 import LabelClassPanel from './LabelClassPanel';
-import { downloadVideoFrame, downloadZIPFile } from '../util/download';
+import { downloadVideoFrame, downloadZIPFile, downloadDataURL } from '../util/download';
 import { getVideoID, toggleYouTubeUI } from '../util/youtube';
 import { labeledImagesToDarknet } from '../output/darknet';
+import { labeledImagesToPascalVOCXML } from '../output/pascal-voc-xml';
 import './WebVideoLabeler.css';
 
 interface State {
@@ -42,11 +43,10 @@ const defaultState: State = {
     saveImagesWithoutLabels: false,
     savedImageScale: 1,
     gridSize: 16,
-    darknetWidth: 416,
-    darknetHeight: 416,
+    outputFormat: 'DARKNET',
+    trainTestRatio: 0.8,
     darknetExecutablePath: 'darknet',
     darknetConfigURL: 'https://raw.githubusercontent.com/AlexeyAB/darknet/master/cfg/yolov3-tiny_obj.cfg',
-    darknetTrainTestRatio: 0.8,
   },
 
   isSeeking: false,
@@ -153,18 +153,24 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
   }
 
   downloadLabeledImages = async () => {
-    const data = await labeledImagesToDarknet(
-      this.state.labeledImages,
-      this.state.labelClasses,
-      {
-        configURL: this.state.settings.darknetConfigURL,
-        executablePath: this.state.settings.darknetExecutablePath,
-        width: this.state.settings.darknetWidth,
-        height: this.state.settings.darknetHeight,
-        trainTestRatio: this.state.settings.darknetTrainTestRatio,
-      },
-    );
-    await downloadZIPFile(data, 'data.zip');
+    if (this.state.settings.outputFormat === 'DARKNET') {
+      const data = await labeledImagesToDarknet(
+        this.state.labeledImages,
+        this.state.labelClasses,
+        {
+          configURL: this.state.settings.darknetConfigURL,
+          executablePath: this.state.settings.darknetExecutablePath,
+          trainTestRatio: this.state.settings.trainTestRatio,
+        },
+      );
+      await downloadZIPFile(data, 'data.zip');
+    } else if (this.state.settings.outputFormat === 'PASCALVOCXML') {
+      const data = await labeledImagesToPascalVOCXML(this.state.labeledImages);
+      await downloadZIPFile(data, 'data.zip');
+    } else {
+      const data = encodeURIComponent(JSON.stringify(this.state.labeledImages, null, 2));
+      downloadDataURL(`data:application/json;,${data}`, 'data.json');
+    }
   }
 
   render() {

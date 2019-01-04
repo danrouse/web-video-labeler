@@ -37,6 +37,10 @@ export default class SettingsPanel extends React.Component<Props> {
     [evt.currentTarget.name as any]: evt.currentTarget.checked,
   } as Pick<UserSettings, keyof UserSettings>)
 
+  handleRadio = (evt: React.FormEvent<HTMLInputElement>) => this.props.onChange({
+    [evt.currentTarget.name as any]: evt.currentTarget.value,
+  })
+
   render() {
     return (
       <ModalDialog
@@ -135,62 +139,80 @@ export default class SettingsPanel extends React.Component<Props> {
               </div>
             </label>
           </LabelBox>
-          <LabelBox label="Darknet Output" className="SettingsPanel__LabelBox">
+          <LabelBox label="Output" className="SettingsPanel__LabelBox">
             <label>
-              Width
-              <SettingsInput
-                name="darknetWidth"
-                type="number"
-                min={1}
-                step={1}
-                value={this.props.settings.darknetWidth}
-                onChange={this.handleNumber}
-              />
-            </label>
-            <label>
-              Height
-              <SettingsInput
-                name="darknetHeight"
-                type="number"
-                min={1}
-                step={1}
-                value={this.props.settings.darknetHeight}
-                onChange={this.handleNumber}
-              />
-            </label>
-            <label>
-              Executable path
-              <p>Command to call <code>darknet</code> on your local machine</p>
-              <SettingsInput
-                name="darknetExecutablePath"
-                type="text"
-                value={this.props.settings.darknetExecutablePath}
-              />
-            </label>
-            <label>
-              Config URL
-              <p>Base configuration for training and running the network</p>
-              <SettingsInput
-                name="darknetConfigURL"
-                type="text"
-                value={this.props.settings.darknetConfigURL}
-              />
+              Format
+              <p>Output data type</p>
+              <div className="SettingsPanel__radio-group">
+                <label>
+                  Darknet/YOLO
+                  <SettingsInput
+                    name="outputFormat"
+                    type="radio"
+                    value="DARKNET"
+                    checked={this.props.settings.outputFormat === 'DARKNET'}
+                    onChange={this.handleRadio}
+                  />
+                </label>
+                <label>
+                  Pascal VOC XML
+                  <SettingsInput
+                    name="outputFormat"
+                    type="radio"
+                    value="PASCALVOCXML"
+                    checked={this.props.settings.outputFormat === 'PASCALVOCXML'}
+                    onChange={this.handleRadio}
+                  />
+                </label>
+                <label>
+                  Raw JSON
+                  <SettingsInput
+                    name="outputFormat"
+                    type="radio"
+                    value="JSON"
+                    checked={this.props.settings.outputFormat === 'JSON'}
+                    onChange={this.handleRadio}
+                  />
+                </label>
+              </div>
             </label>
             <label>
               Train/test split
               <p>Ratio of training to testing images in the output data</p>
               <div className="SettingsPanel__range">
-                <span>{this.props.settings.darknetTrainTestRatio}</span>
+                <span>{this.props.settings.trainTestRatio}</span>
                 <SettingsInput
-                  name="darknetTrainTestRatio"
+                  name="trainTestRatio"
                   type="range"
                   min={0}
                   max={1}
                   step={0.01}
-                  value={this.props.settings.darknetTrainTestRatio}
+                  value={this.props.settings.trainTestRatio}
                 />
               </div>
             </label>
+            {this.props.settings.outputFormat === 'DARKNET' &&
+              <div>
+                <label>
+                  Executable path
+                  <p>Command to call <code>darknet</code> on your local machine</p>
+                  <SettingsInput
+                    name="darknetExecutablePath"
+                    type="text"
+                    value={this.props.settings.darknetExecutablePath}
+                  />
+                </label>
+                <label>
+                  Config URL
+                  <p>Base configuration for training and running the network</p>
+                  <SettingsInput
+                    name="darknetConfigURL"
+                    type="text"
+                    value={this.props.settings.darknetConfigURL}
+                  />
+                </label>
+              </div>
+            }
           </LabelBox>
         </form>
       </ModalDialog>

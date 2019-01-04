@@ -35,9 +35,10 @@ declare interface UserSettings {
   savedImageScale: number;
   gridSize: number;
 
-  darknetWidth: number;
-  darknetHeight: number;
+  outputFormat: OutputFormat;
+  trainTestRatio: number;
   darknetExecutablePath: string;
   darknetConfigURL: string;
-  darknetTrainTestRatio: number;
 }
+
+declare type OutputFormat = 'DARKNET' | 'PASCALVOCXML' | 'JSON';

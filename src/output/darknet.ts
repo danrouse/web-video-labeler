@@ -3,8 +3,6 @@ import { fetchDownloadPaths } from '../extension/messaging';
 interface DarknetOutputConfig {
   configURL: string;
   executablePath: string;
-  width: number;
-  height: number;
   trainTestRatio: number;
 }
 
@@ -13,7 +11,7 @@ const FILENAME_TRAIN = 'obj.train';
 const FILENAME_TEST = 'obj.test';
 const FILENAME_NAMES = 'obj.names';
 const FILENAME_BACKUP = 'backup';
-const FILENAME_INDEX = 'obj.index';
+const FILENAME_DATA_CONFIG = 'obj.index';
 const FILENAME_NETWORK_CONFIG = 'yolo-obj.cfg';
 const FILENAME_DATA_DIR = 'data';
 const FILENAME_SCRIPT_MOVE_IMAGES = 'move_downloaded_images.sh';
@@ -43,9 +41,9 @@ export async function labeledImagesToDarknet(
     data: labelClasses.join('\n'),
   }, {
     path: FILENAME_NETWORK_CONFIG,
-    data: await generateDarknetConfig(config.configURL, labelClasses.length, config.width, config.height),
+    data: await generateDarknetConfig(config.configURL, labelClasses.length),
   }, {
-    path: FILENAME_INDEX,
+    path: FILENAME_DATA_CONFIG,
     data: generateTrainingIndex(labelClasses.length),
   }, {
     path: FILENAME_SCRIPT_MOVE_IMAGES,
@@ -75,14 +73,12 @@ const labeledImageToDarknet = ({ filename, labels, width, height }: LabeledImage
   ].join(' ')).join('\n'),
 });
 
-async function generateDarknetConfig(url: string, numClasses: number, width: number, height: number) {
+async function generateDarknetConfig(url: string, numClasses: number) {
   let config = await fetch(url).then(r => r.text());
   config = config.replace(/\bbatch=\d+\b/, 'batch=64');
   config = config.replace(/\bsubdivisions=\d+\b/, 'subdivisions=8');
   config = config.replace(/\bclasses=\d+\b/g, `classes=${numClasses}`);
   config = config.replace(/\bfilters=255\b/g, `filters=${(numClasses + 5) * 3}`);
-  config = config.replace(/\bwidth=\d+\b/g, `width=${width}`);
-  config = config.replace(/\bheight=\d+\b/g, `height=${height}`);
   return config;
 }
 
@@ -134,7 +130,7 @@ files=(${FILENAME_DATA_DIR}/*.jpg)
 if [ \${#files[@]} -eq 0 ]; then
   ./${FILENAME_SCRIPT_MOVE_IMAGES}
 fi
-${executablePath} detector train ${FILENAME_INDEX} ${FILENAME_NETWORK_CONFIG}
+${executablePath} detector train ${FILENAME_DATA_CONFIG} ${FILENAME_NETWORK_CONFIG}
 `;
 
 const generateMoveImagesScript = (imagePaths: string[]) => `#!/bin/sh
