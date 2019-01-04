@@ -6,9 +6,9 @@ export async function labeledImagesToPascalVOCXML(
 ): Promise<ArchiveFile[]> {
   const imageFilenames = labeledImages.map(({ filename }) => filename);
   const downloadedImagePaths: string[] = await fetchDownloadPaths(imageFilenames);
-
-  const files = labeledImages.map((li, index) => ({
-    path: (Math.random() > trainTestRatio ? 'test/' : 'train/') + li.filename.replace(/\.jpg$/, '.xml'),
+  const sortedLabeledImages = labeledImages.slice().sort(() => Math.random() - 0.5);
+  return sortedLabeledImages.map((li, index) => ({
+    path: (index / labeledImages.length > trainTestRatio ? 'test/' : 'train/') + li.filename.replace(/\.jpg$/, '.xml'),
     data: objectToXML(
       {
         folder: downloadedImagePaths[index].replace(/\/[^\/]+$/, ''),
@@ -33,17 +33,20 @@ export async function labeledImagesToPascalVOCXML(
       'annotation',
     ),
   }));
-
-  return files;
 }
 
-function objectToXML(obj: any, root: string): string {
+function objectToXML(obj: any, tag: string, indentCount: number = 0): string {
   if (Array.isArray(obj)) {
-    return obj.map((val: any) => objectToXML(val, root)).join('');
+    return obj.map((val: any) => objectToXML(val, tag, indentCount)).join('');
   }
   let children = obj;
+  const indent = '    '.repeat(indentCount);
   if (Object.getPrototypeOf(obj) === Object.prototype) {
-    children = Object.keys(obj).map(key => objectToXML(obj[key], key)).join('');
+    children = `\n${Object.keys(obj).map(key => objectToXML(obj[key], key, indentCount + 1)).join('')}${indent}`;
+  } else if (typeof children === 'boolean') {
+    children = children ? 1 : 0;
+  } else if (children === null || children === undefined) {
+    return `${indent}<${tag} />\n`;
   }
-  return `<${root}>${children}</${root}>`;
+  return `${indent}<${tag}>${children}</${tag}>\n`;
 }
