@@ -1,13 +1,11 @@
 .LabelBox {
   border: 1px solid;
   position: relative;
-  margin-top: 16px;
-  top: 16px;
+  margin: 16px 0 28px;
   box-shadow: 0 0 1px rgba(255, 255, 255, 0.2);
-  margin-bottom: 32px;
 }
 .LabelBox:last-child {
-  margin-bottom: 12px;
+  margin-bottom: 0;
 }
 
 .LabelBox__label {

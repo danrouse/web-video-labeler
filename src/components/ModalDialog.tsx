@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import './ModalDialog.css';
 
 interface Props {
@@ -12,7 +13,12 @@ interface Props {
 export default class ModalDialog extends React.Component<Props> {
   close = (evt: React.MouseEvent) => evt.currentTarget === evt.target && this.props.onClose();
 
-  componentDidMount() {
+  componentWillMount() {
+    if (!document.getElementById('WebVideoLabeler-ModalDialogContext')) {
+      const elem = document.createElement('div');
+      elem.id = 'WebVideoLabeler-ModalDialogContext';
+      document.body.appendChild(elem);
+    }
     window.addEventListener('keydown', this.handleKeypress);
   }
 
@@ -28,8 +34,8 @@ export default class ModalDialog extends React.Component<Props> {
   }
 
   render() {
-    return (
-      <div className={`ModalDialog ${this.props.className || ''}`} onClick={this.close}>
+    return ReactDOM.createPortal(
+      <div className={`WebVideoLabeler ModalDialog ${this.props.className || ''}`} onClick={this.close}>
         <div className="ModalDialog__inner">
           <div className="ModalDialog__title">
             <button onClick={this.props.onClose} title="Close" className="icon">
@@ -46,7 +52,8 @@ export default class ModalDialog extends React.Component<Props> {
             </div>
           }
         </div>
-      </div>
+      </div>,
+      document.getElementById('WebVideoLabeler-ModalDialogContext') as HTMLElement,
     );
   }
 }

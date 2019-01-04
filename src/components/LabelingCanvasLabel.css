@@ -2,7 +2,6 @@
   position: absolute;
   z-index: 1101;
   margin: 0;
-  top: auto;
 }
   .LabelingCanvasLabel--isActive {
     z-index: 1102;

@@ -1,7 +1,3 @@
-.SettingsPanel form {
-  margin-bottom: 12px;
-}
-
 .SettingsPanel__LabelBox {
   display: flex;
   flex-direction: column;
