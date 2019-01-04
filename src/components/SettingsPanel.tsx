@@ -33,13 +33,15 @@ export default class SettingsPanel extends React.Component<Props> {
     [evt.currentTarget.name as any]: parseFloat(evt.currentTarget.value),
   } as Pick<UserSettings, keyof UserSettings>)
 
-  handleCheckbox = (evt: React.FormEvent<HTMLInputElement>) => this.props.onChange({
-    [evt.currentTarget.name as any]: evt.currentTarget.checked,
-  } as Pick<UserSettings, keyof UserSettings>)
-
-  handleRadio = (evt: React.FormEvent<HTMLInputElement>) => this.props.onChange({
-    [evt.currentTarget.name as any]: evt.currentTarget.value,
-  })
+  handleInput = (evt: React.FormEvent<HTMLInputElement>) => {
+    let value: any = evt.currentTarget.value;
+    if (evt.currentTarget.type === 'checkbox') {
+      value = evt.currentTarget.checked;
+    } else if (evt.currentTarget.type === 'number' || evt.currentTarget.type === 'range') {
+      value = parseFloat(value);
+    }
+    this.props.onChange({ [evt.currentTarget.name as any]: value });
+  }
 
   render() {
     return (
@@ -108,7 +110,7 @@ export default class SettingsPanel extends React.Component<Props> {
               <SettingsInput
                 type="checkbox"
                 name="saveImagesWithoutLabels"
-                onChange={this.handleCheckbox}
+                onChange={this.handleInput}
                 checked={this.props.settings.saveImagesWithoutLabels}
               />
             </label>
@@ -118,7 +120,7 @@ export default class SettingsPanel extends React.Component<Props> {
               <SettingsInput
                 type="checkbox"
                 name="saveCroppedImages"
-                onChange={this.handleCheckbox}
+                onChange={this.handleInput}
                 checked={this.props.settings.saveCroppedImages}
               />
             </label>
@@ -151,7 +153,7 @@ export default class SettingsPanel extends React.Component<Props> {
                     type="radio"
                     value="DARKNET"
                     checked={this.props.settings.outputFormat === 'DARKNET'}
-                    onChange={this.handleRadio}
+                    onChange={this.handleInput}
                   />
                 </label>
                 <label>
@@ -161,7 +163,7 @@ export default class SettingsPanel extends React.Component<Props> {
                     type="radio"
                     value="PASCALVOCXML"
                     checked={this.props.settings.outputFormat === 'PASCALVOCXML'}
-                    onChange={this.handleRadio}
+                    onChange={this.handleInput}
                   />
                 </label>
                 <label>
@@ -171,7 +173,7 @@ export default class SettingsPanel extends React.Component<Props> {
                     type="radio"
                     value="JSON"
                     checked={this.props.settings.outputFormat === 'JSON'}
-                    onChange={this.handleRadio}
+                    onChange={this.handleInput}
                   />
                 </label>
               </div>
@@ -188,6 +190,7 @@ export default class SettingsPanel extends React.Component<Props> {
                   max={1}
                   step={0.01}
                   value={this.props.settings.trainTestRatio}
+                  onChange={this.handleNumber}
                 />
               </div>
             </label>
@@ -200,6 +203,7 @@ export default class SettingsPanel extends React.Component<Props> {
                     name="darknetExecutablePath"
                     type="text"
                     value={this.props.settings.darknetExecutablePath}
+                    onChange={this.handleInput}
                   />
                 </label>
                 <label>
@@ -209,6 +213,7 @@ export default class SettingsPanel extends React.Component<Props> {
                     name="darknetConfigURL"
                     type="text"
                     value={this.props.settings.darknetConfigURL}
+                    onChange={this.handleInput}
                   />
                 </label>
               </div>
