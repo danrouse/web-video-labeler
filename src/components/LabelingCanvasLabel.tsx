@@ -167,6 +167,8 @@ export default class LabelingCanvasLabel extends React.Component<Props, State> {
     this.beginMoveOrResize(evt, this.resize);
   }
 
+  toggleLabelClassSelector = () => this.setState({ isInputExpanded: !this.state.isInputExpanded });
+
   render() {
     const { workingRect: rectFromState, isActive } = this.state;
     const { scale, label: { rect: rectFromProps, str } } = this.props;
@@ -183,7 +185,15 @@ export default class LabelingCanvasLabel extends React.Component<Props, State> {
         label={str}
         getRef={ref => ref && (this.ref = ref)}
         onContextMenu={this.removeLabel}
-        onLabelClick={() => this.setState({ isInputExpanded: !this.state.isInputExpanded })}
+        onLabelClick={this.toggleLabelClassSelector}
+        buttons={[
+          <button onClick={this.toggleLabelClassSelector}>
+            <i className="fas fa-pencil-alt" />
+          </button>,
+          <button onClick={this.removeLabel}>
+            <i className="fas fa-times" />
+          </button>,
+        ]}
       >
         <div
           className="LabelingCanvasLabel__resizeArea"
