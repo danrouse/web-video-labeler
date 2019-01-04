@@ -8,6 +8,7 @@ import HelpPanel from './HelpPanel';
 import LabelClassPanel from './LabelClassPanel';
 import { downloadVideoFrame, downloadZIPFile, downloadDataURL } from '../util/download';
 import { getVideoID, toggleYouTubeUI } from '../util/youtube';
+import { scaleRect } from '../util/rect';
 import { labeledImagesToDarknet } from '../output/darknet';
 import { labeledImagesToPascalVOCXML } from '../output/pascal-voc-xml';
 import './WebVideoLabeler.css';
@@ -26,6 +27,7 @@ interface State {
   isLocalStorageFull: boolean;
   wasPlayingBeforeLabeling: boolean;
   videoScale: number;
+  videoScaleWidth: number;
 }
 
 const defaultState: State = {
@@ -52,7 +54,8 @@ const defaultState: State = {
   isSeeking: false,
   isLocalStorageFull: false,
   wasPlayingBeforeLabeling: false,
-  videoScale: 1,
+  videoScale: 0,
+  videoScaleWidth: 0,
 };
 
 export default class App extends React.Component<{ video: HTMLVideoElement }, State> {
@@ -73,7 +76,19 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
 
   handleLoadState = (state: State) => this.setState(state);
   handleStorageFull = () => this.setState({ isLocalStorageFull: true });
-  handleVideoScaleChange = (videoScale: number) => this.setState({ videoScale });
+  handleVideoScaleChange = (videoScale: number) => {
+    if (!videoScale || !isFinite(videoScale)) return;
+    const videoScaleWidth = this.props.video.videoWidth;
+    let labels = this.state.labels;
+    if (this.state.videoScale && videoScaleWidth !== this.state.videoScaleWidth) {
+      const rescale = this.state.videoScale / videoScale;
+      labels = labels.map(label => ({
+        ...label,
+        rect: scaleRect(label.rect, rescale),
+      }));
+    }
+    this.setState({ labels, videoScale, videoScaleWidth });
+  }
   handleLabelsChange = (labels: Label[], callback?: () => void) => {
     const labelClasses = new Set(this.state.labelClasses);
     labels.forEach(({ name }) => name !== 'unknown' && labelClasses.add(name));
@@ -139,12 +154,7 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
       time,
       labels: this.state.labels.map(label => ({
         ...label,
-        rect: {
-          width: label.rect.width * scale,
-          height: label.rect.height * scale,
-          x: label.rect.x * scale,
-          y: label.rect.y * scale,
-        },
+        rect: scaleRect(label.rect, scale),
       })),
       url: window.location.href,
       width: this.props.video.videoWidth,

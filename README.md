@@ -55,8 +55,3 @@ Exports include a script, `combine_projects.sh`, which can be used to combine mu
 ```sh
 $ ./combine_projects.sh . ../data2.zip ../data3-extracted
 ```
-
-
-## Known issues
-
-- video quality changing can mess with scale / label position

@@ -80,3 +80,12 @@ export function resizeRect(
   height = Math.min(height, (containerRect.height / scale) - y);
   return { x, y, width, height };
 }
+
+export function scaleRect(rect: Rect, scale: number): Rect {
+  return {
+    x: rect.x * scale,
+    y: rect.y * scale,
+    width: rect.width * scale,
+    height: rect.height * scale,
+  };
+}
