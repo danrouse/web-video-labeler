@@ -14,7 +14,7 @@ export function downloadDataURL(data: string, filename: string) {
 }
 
 let videoFrameToDataURLSharedCanvas: HTMLCanvasElement | undefined;
-function videoFrameToDataURL(video: HTMLVideoElement, rect?: Rect, scale: number = 1) {
+export function videoFrameToDataURL(video: HTMLVideoElement, rect?: Rect, scale: number = 1) {
   videoFrameToDataURLSharedCanvas = videoFrameToDataURLSharedCanvas || document.createElement('canvas');
   const canvas = videoFrameToDataURLSharedCanvas;
   const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;

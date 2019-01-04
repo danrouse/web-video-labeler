@@ -19,9 +19,9 @@ export async function labeledImagesToPascalVOCXML(
         segmented: 0,
         object: li.labels.map(label => ({
           name: label.name,
-          pose: 'Unspecified',
-          truncated: 0,
-          difficult: 0,
+          pose: label.pose || 'Unspecified',
+          truncated: label.truncated ? 1 : 0,
+          difficult: label.difficult ? 1 : 0,
           bndbox: {
             xmin: label.rect.x,
             ymin: label.rect.y,

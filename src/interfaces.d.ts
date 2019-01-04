@@ -11,9 +11,7 @@ declare interface Label {
 
   subclasses?: string[];
 
-  // TODO
-  // Pascal VOC XML only
-  occluded?: boolean;
+  truncated?: boolean;
   difficult?: boolean;
   pose?: string;
 }

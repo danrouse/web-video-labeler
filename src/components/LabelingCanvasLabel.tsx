@@ -1,6 +1,7 @@
 import * as React from 'react';
 import LabelClassSelector from './LabelClassSelector';
 import LabelBox from './LabelBox';
+import LabelDetailsPanel from './LabelDetailsPanel';
 import stringToColor from '../util/stringToColor';
 import { Anchors, getAnchors, anchorsToCursor, moveRect, resizeRect } from '../util/rect';
 import './LabelingCanvasLabel.css';
@@ -25,7 +26,8 @@ interface State {
   isActive?: boolean;
   anchors: Anchors;
 
-  isInputExpanded?: boolean;
+  isClassSelectorVisible?: boolean;
+  isDetailsPanelVisible?: boolean;
 }
 
 export default class LabelingCanvasLabel extends React.Component<Props, State> {
@@ -58,7 +60,7 @@ export default class LabelingCanvasLabel extends React.Component<Props, State> {
 
   updateLabelClass = (name: string) => {
     this.props.onChange(this.props.index, { ...this.props.label, name });
-    this.setState({ isInputExpanded: false });
+    this.setState({ isClassSelectorVisible: false });
   }
 
   setResizeCursor = (evt: React.MouseEvent) =>
@@ -129,13 +131,25 @@ export default class LabelingCanvasLabel extends React.Component<Props, State> {
     this.beginMoveOrResize(evt, this.resize);
   }
 
-  toggleLabelClassSelector = () => this.setState({ isInputExpanded: !this.state.isInputExpanded });
+  toggleLabelClassSelector = () => this.setState({ isClassSelectorVisible: !this.state.isClassSelectorVisible });
+  toggleDetailsPanel = () => this.setState({ isDetailsPanelVisible: !this.state.isDetailsPanelVisible });
+
+  handleChange = (label: Label) => this.props.onChange(this.props.index, label);
 
   render() {
     const { workingRect: rectFromState, isActive } = this.state;
     const { scale, label: { rect: rectFromProps, name } } = this.props;
     const rect = rectFromState || rectFromProps;
     const color = stringToColor(name);
+    const labelClassSelector = (
+      <LabelClassSelector
+        className="LabelingCanvasLabel__LabelClassSelector"
+        style={{ borderColor: color, backgroundColor: color }}
+        classes={this.props.classes.filter(c => c !== name)}
+        onClick={this.updateLabelClass}
+        onAddClass={this.updateLabelClass}
+      />
+    );
     return (
       <LabelBox
         className={`LabelingCanvasLabel ${isActive ? 'LabelingCanvasLabel--isActive' : ''}`}
@@ -149,10 +163,10 @@ export default class LabelingCanvasLabel extends React.Component<Props, State> {
         onContextMenu={this.removeLabel}
         onLabelClick={this.toggleLabelClassSelector}
         buttons={[
-          <button onClick={this.toggleLabelClassSelector}>
+          <button key="details" onClick={this.toggleDetailsPanel} title="Edit Details">
             <i className="fas fa-pencil-alt" />
           </button>,
-          <button onClick={this.removeLabel}>
+          <button key="erase" onClick={this.removeLabel} title="Erase">
             <i className="fas fa-times" />
           </button>,
         ]}
@@ -167,13 +181,14 @@ export default class LabelingCanvasLabel extends React.Component<Props, State> {
           className="LabelingCanvasLabel__moveArea"
           onMouseDown={this.startMoving}
         />
-        {this.state.isInputExpanded &&
-          <LabelClassSelector
-            className="LabelingCanvasLabel__LabelClassSelector"
-            style={{ borderColor: color, backgroundColor: color }}
-            classes={this.props.classes.filter(c => c !== name)}
-            onClick={this.updateLabelClass}
-            onAddClass={this.updateLabelClass}
+        {this.state.isClassSelectorVisible && labelClassSelector}
+        {this.state.isDetailsPanelVisible &&
+          <LabelDetailsPanel
+            label={this.props.label}
+            onClose={this.toggleDetailsPanel}
+            onChange={this.handleChange}
+            labelClassSelector={labelClassSelector}
+            video={document.querySelector('video')}
           />
         }
       </LabelBox>
