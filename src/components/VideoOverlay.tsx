@@ -19,21 +19,30 @@ export default class VideoOverlay extends React.Component<Props, State> {
     videoScale: 1,
   };
 
+  observer?: MutationObserver;
+
   componentWillMount() {
     this.updateRect();
-    const obs = new MutationObserver(() => this.updateRect());
-    obs.observe(this.props.elem, { attributes: true, attributeFilter: ['style', 'width', 'height'] });
-    window.addEventListener('fullscreenchange', () => this.updateRect(this.props.elem));
+    this.observer = new MutationObserver(() => this.updateRect());
+    this.observer.observe(this.props.elem, { attributes: true, attributeFilter: ['style', 'width', 'height', 'src'] });
+    window.addEventListener('fullscreenchange', this.updateRect);
+    this.props.elem.addEventListener('loadeddata', this.updateRect);
   }
 
   componentWillReceiveProps(nextProps: Props) {
     if (nextProps.elem !== this.props.elem) {
-      this.updateRect(nextProps.elem);
+      this.updateRect(null, nextProps.elem);
     }
   }
 
+  componentWillUnmount() {
+    if (this.observer) this.observer.disconnect();
+    window.removeEventListener('fullscreenchange', this.updateRect);
+    this.props.elem.removeEventListener('loadeddata', this.updateRect);
+  }
+
   updateRect = throttle(
-    (elem = this.props.elem) => {
+    (_: any, elem = this.props.elem) => {
       const { videoWidth, videoHeight } = elem;
       const { x, y, width: w, height: h } = elem.getBoundingClientRect() as DOMRect;
       const widthScale = w / videoWidth;
