@@ -62,7 +62,7 @@ export default class SettingsPanel extends React.Component<Props> {
           <LabelBox label="Labeling" className="SettingsPanel__LabelBox">
             <label>
               Frame Skip
-              <p>How many frames to skip using playback controls</p>
+              <p>How many frames to skip using playback controls.</p>
               <SettingsInput
                 type="number"
                 step="1"
@@ -74,7 +74,7 @@ export default class SettingsPanel extends React.Component<Props> {
             </label>
             <label>
               Frame Rate
-              <p>Video frames per second, usually 24</p>
+              <p>Video frames per second, usually 24.</p>
               <SettingsInput
                 type="number"
                 step={1}
@@ -86,7 +86,7 @@ export default class SettingsPanel extends React.Component<Props> {
             </label>
             <label>
               Grid size
-              <p>Size of background grid, set to 0 to disable</p>
+              <p>Size of background grid, scaled to video. Set to 0 to disable.</p>
               <div className="SettingsPanel__range">
                 <span>{this.props.settings.gridSize}</span>
                 <SettingsInput
@@ -104,7 +104,7 @@ export default class SettingsPanel extends React.Component<Props> {
           <LabelBox label="Downloading" className="SettingsPanel__LabelBox">
             <label>
               Save images with no labels?
-              <p>If there are no labels present on an image, it will not be downloaded</p>
+              <p>If there are no labels present on an image, it will not be downloaded.</p>
               <SettingsInput
                 type="checkbox"
                 name="saveImagesWithoutLabels"
@@ -114,7 +114,7 @@ export default class SettingsPanel extends React.Component<Props> {
             </label>
             <label>
               Save cropped images?
-              <p>When saving images, also crop and save each labeled region separately</p>
+              <p>When saving images, also crop and save each labeled region separately.</p>
               <SettingsInput
                 type="checkbox"
                 name="saveCroppedImages"
@@ -124,7 +124,7 @@ export default class SettingsPanel extends React.Component<Props> {
             </label>
             <label>
               Downloaded image scale
-              <p>Scale to resize images to when saving, from 0 - 1</p>
+              <p>Scale to resize images to when saving, from 0 - 1.</p>
               <div className="SettingsPanel__range">
                 <span>{this.props.settings.savedImageScale}</span>
                 <SettingsInput
@@ -178,7 +178,7 @@ export default class SettingsPanel extends React.Component<Props> {
             </label>
             <label>
               Train/test split
-              <p>Ratio of training to testing images in the output data</p>
+              <p>Ratio of training to testing images in the output data.</p>
               <div className="SettingsPanel__range">
                 <span>{this.props.settings.trainTestRatio}</span>
                 <SettingsInput
@@ -195,7 +195,7 @@ export default class SettingsPanel extends React.Component<Props> {
               <div>
                 <label>
                   Executable path
-                  <p>Command to call <code>darknet</code> on your local machine</p>
+                  <p>Command to call <code>darknet</code> on your local machine.</p>
                   <SettingsInput
                     name="darknetExecutablePath"
                     type="text"
@@ -204,7 +204,7 @@ export default class SettingsPanel extends React.Component<Props> {
                 </label>
                 <label>
                   Config URL
-                  <p>Base configuration for training and running the network</p>
+                  <p>Base configuration for training and running the network.</p>
                   <SettingsInput
                     name="darknetConfigURL"
                     type="text"

@@ -84,16 +84,18 @@ export default function Toolbar(props: Props) {
           <i className="fas fa-trash" />
         </button>
       </div>
-      <button onClick={props.toggleLabelClassPanel} title="Classes">
-        <i className="fas fa-tags" />
-        <span>{props.numLabelClasses}</span>
-      </button>
-      <button className="icon" onClick={props.toggleHelpPanel} title="Help">
-        <i className="fas fa-question" />
-      </button>
-      <button className="icon" onClick={props.toggleSettingsPanel} title="Settings">
-        <i className="fas fa-cog" />
-      </button>
+      <div>
+        <button onClick={props.toggleLabelClassPanel} title="Classes">
+          <i className="fas fa-tags" />
+          <span>{props.numLabelClasses}</span>
+        </button>
+        <button className="icon" onClick={props.toggleHelpPanel} title="Help">
+          <i className="fas fa-question" />
+        </button>
+        <button className="icon" onClick={props.toggleSettingsPanel} title="Settings">
+          <i className="fas fa-cog" />
+        </button>
+      </div>
     </div>
   );
 }

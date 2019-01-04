@@ -42,7 +42,7 @@
     }
 
   .ModalDialog__children {
-    max-height: calc(100vh - 56px - 64px - 48px - 100px);
+    max-height: calc(100vh - 268px);
     overflow-y: auto;
     padding: 12px;
     clear: both;

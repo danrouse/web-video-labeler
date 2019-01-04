@@ -52,3 +52,24 @@
     .LabelBox__buttons button i {
       font-size: 10px;
     }
+
+.LabelBox label {
+  display: flex;
+  font-size: 13px;
+  flex-direction: column;
+}
+
+.LabelBox label:not(:last-child) {
+  margin-bottom: 10px;
+}
+
+  .LabelBox label > p {
+    font-size: 11px;
+    margin: 2px 0;
+    color: #555;
+  }
+
+  .LabelBox label input {
+    flex: 1;
+    background-color: #fff;
+  }

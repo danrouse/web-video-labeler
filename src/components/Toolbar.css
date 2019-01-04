@@ -7,19 +7,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 16px;
   background-color: rgba(240, 240, 240, 0.8);
   box-shadow: 0 0 2px rgba(0,0,0,0.3);
+  white-space: nowrap;
+  padding: 12px;
 }
 
-.Toolbar__main-controls {
-  flex: 1;
-  max-width: 50%;
+.Toolbar > div {
+  margin: 2px 2vw;
 }
 
-.Toolbar__download-controls {
-  margin: 0 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+@media screen and (max-width: 540px) {
+  .Toolbar {
+    flex-direction: column;
+    padding: 4px;
+  }
 }
