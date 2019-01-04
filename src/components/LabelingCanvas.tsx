@@ -19,7 +19,7 @@ interface State {
 export default class LabelingCanvas extends React.Component<Props, State> {
   static defaultProps = {
     gridSize: 16,
-    previousLabelName: 'new label',
+    previousLabelName: 'unknown',
   };
   state: State = {};
 

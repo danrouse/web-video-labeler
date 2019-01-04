@@ -14,13 +14,14 @@
     background-image: linear-gradient(to top, rgba(226, 226, 226, 1) 0%, white 100%);
     border-radius: 3px;
     box-shadow: 2px 2px 6px rgba(0,0,0,0.25), inset 0 0 6px rgba(0,0,0,0.2);
+    padding-bottom: 12px;
   }
   .ModalDialog__title {
     font-size: 14px;
     text-align: center;
     font-weight: bold;
     padding: 12px;
-    line-height: 32px;
+    line-height: 24px;
     position: relative;
   }
     .ModalDialog__title:after {
@@ -28,13 +29,17 @@
       display: block;
       position: absolute;
       height: 1px;
-      left: 24px;
-      right: 24px;
+      left: 12px;
+      right: 12px;
       bottom: 0;
       background-color: lightgray;
     }
     .ModalDialog__title > button:first-child {
       float: right;
+      margin: 0;
+      padding: 0;
+      width: 24px;
+      height: 24px;
     }
 
   .ModalDialog__children {
@@ -46,9 +51,7 @@
 
 .ModalDialog__buttons {
   display: flex;
-  margin-top: 12px;
-
-  margin: 12px;
+  padding: 0 12px;
 }
 .ModalDialog__buttons button:last-child {
   flex: 1;
