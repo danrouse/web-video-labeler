@@ -2,6 +2,7 @@ import * as React from 'react';
 import LabelClassSelector from './LabelClassSelector';
 import LabelBox from './LabelBox';
 import stringToColor from '../util/stringToColor';
+import { Anchors, getAnchors, anchorsToCursor, moveRect, resizeRect } from '../util/rect';
 import './LabelingCanvasLabel.css';
 
 type LabelChangeHandler = (index: number, label?: Label) => void;
@@ -13,13 +14,6 @@ interface Props {
   classes: string[];
   onChange: LabelChangeHandler;
   initializeWithMouseEvent?: React.MouseEvent;
-}
-
-interface Anchors {
-  left: boolean;
-  right: boolean;
-  top: boolean;
-  bottom: boolean;
 }
 
 interface State {
@@ -50,39 +44,19 @@ export default class LabelingCanvasLabel extends React.Component<Props, State> {
     }
   }
 
-  scale = (n: number) => n / this.props.scale;
-
   removeLabel = (evt: React.MouseEvent) => {
     evt.preventDefault();
     evt.stopPropagation();
     this.props.onChange(this.props.index);
   }
 
-  updateLabelClass = (str: string) => {
-    this.props.onChange(this.props.index, { ...this.props.label, str });
+  updateLabelClass = (name: string) => {
+    this.props.onChange(this.props.index, { ...this.props.label, name });
     this.setState({ isInputExpanded: false });
   }
 
-  getAnchors(evt: React.MouseEvent) {
-    if (!this.ref) return { left: false, right: false, top: false, bottom: false };
-    const { x, y, width, height } = this.ref.getBoundingClientRect() as DOMRect;
-    const left = Math.abs(evt.clientX - x) < 12;
-    const right = Math.abs(evt.clientX - x - width) < 12;
-    const top = Math.abs(evt.clientY - y) < 12;
-    const bottom = Math.abs(evt.clientY - y - height) < 12;
-    return { left, right, top, bottom };
-  }
-
-  setResizeCursor = (evt: React.MouseEvent) => {
-    const anchors = this.getAnchors(evt);
-    let cursor = '';
-    if (anchors.top) cursor += 'n';
-    if (anchors.bottom) cursor += 's';
-    if (anchors.left) cursor += 'w';
-    if (anchors.right) cursor += 'e';
-    if (cursor) cursor += '-resize';
-    this.setState({ resizeCursor: cursor });
-  }
+  setResizeCursor = (evt: React.MouseEvent) =>
+    this.setState({ resizeCursor: anchorsToCursor(getAnchors(this.ref, evt.clientX, evt.clientY)) })
 
   beginMoveOrResize = (evt: React.MouseEvent, mousemoveHandler: (evt: MouseEvent) => void) => {
     if (!this.ref || !(this.ref.parentElement instanceof HTMLElement)) return;
@@ -92,7 +66,7 @@ export default class LabelingCanvasLabel extends React.Component<Props, State> {
       mouseDownY: evt.clientY,
       isActive: true,
       containerRect: { x, y, width, height },
-      anchors: this.getAnchors(evt),
+      anchors: getAnchors(this.ref, evt.clientX, evt.clientY),
     });
     const cleanup = () => {
       window.removeEventListener('mousemove', mousemoveHandler);
@@ -112,49 +86,30 @@ export default class LabelingCanvasLabel extends React.Component<Props, State> {
   move = (evt: MouseEvent) => {
     const { mouseDownX, mouseDownY, containerRect } = this.state;
     if (!containerRect) return;
-    let { x, y, width, height } = this.props.label.rect; // tslint:disable-line prefer-const
-    x += this.scale(evt.clientX - mouseDownX);
-    y += this.scale(evt.clientY - mouseDownY);
-    // constrain to container (all sides)
-    x = Math.max(Math.min(x, this.scale(containerRect.width) - width), 0);
-    y = Math.max(Math.min(y, this.scale(containerRect.height) - height), 0);
-    this.setState({ workingRect: { x, y, width, height } });
+    this.setState({
+      workingRect: moveRect(
+        this.props.label.rect,
+        evt.clientX - mouseDownX,
+        evt.clientY - mouseDownY,
+        this.props.scale,
+        containerRect,
+      ),
+    });
   }
 
   resize = (evt: MouseEvent) => {
     const { anchors, containerRect } = this.state;
     if (!containerRect) return;
-    let { x, y, width, height } = this.props.label.rect;
-    // constrain to container (top left)
-    const x2 = Math.max(this.scale(evt.clientX - containerRect.x), 0);
-    const y2 = Math.max(this.scale(evt.clientY - containerRect.y), 0);
-    // apply based on where the resize is anchored
-    if (anchors.left) {
-      width += x - x2;
-      x = x2;
-    } else if (anchors.right) {
-      width = x2 - x;
-    }
-    if (anchors.top) {
-      height += y - y2;
-      y = y2;
-    } else if (anchors.bottom) {
-      height = y2 - y;
-    }
-    // invert coords when moving past the origin
-    if (width < 0) {
-      x += width;
-      width *= -1;
-    }
-    if (height < 0) {
-      y += height;
-      height *= -1;
-    }
-    // constrain to container (bottom right)
-    width = Math.min(width, this.scale(containerRect.width) - x);
-    height = Math.min(height, this.scale(containerRect.height) - y);
-
-    this.setState({ workingRect: { x, y, width, height } });
+    this.setState({
+      workingRect: resizeRect(
+        this.props.label.rect,
+        evt.clientX - containerRect.x,
+        evt.clientY - containerRect.y,
+        this.props.scale,
+        containerRect,
+        anchors,
+      ),
+    });
   }
 
   startMoving = (evt: React.MouseEvent) => {
