@@ -18,7 +18,7 @@ export async function labeledImagesToPascalVOCXML(
         size: { width: li.width, height: li.height, depth: 3 },
         segmented: 0,
         object: li.labels.map(label => ({
-          name: label.str,
+          name: label.name,
           pose: 'Unspecified',
           truncated: 0,
           difficult: 0,

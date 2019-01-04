@@ -37,7 +37,7 @@ export default class LabelingCanvas extends React.Component<Props, State> {
     // create a 0x0 rect at mouse and start resizing
     const { offsetX, offsetY } = this.getOffsets();
     const newLabel: Label = {
-      str: this.props.previousLabelName,
+      name: this.props.previousLabelName,
       rect: {
         x: (evt.clientX - offsetX) / this.props.scale,
         y: (evt.clientY - offsetY) / this.props.scale,

@@ -171,9 +171,9 @@ export default class LabelingCanvasLabel extends React.Component<Props, State> {
 
   render() {
     const { workingRect: rectFromState, isActive } = this.state;
-    const { scale, label: { rect: rectFromProps, str } } = this.props;
+    const { scale, label: { rect: rectFromProps, name } } = this.props;
     const rect = rectFromState || rectFromProps;
-    const color = stringToColor(str);
+    const color = stringToColor(name);
     return (
       <LabelBox
         className={`LabelingCanvasLabel ${isActive ? 'LabelingCanvasLabel--isActive' : ''}`}
@@ -182,7 +182,7 @@ export default class LabelingCanvasLabel extends React.Component<Props, State> {
           width: rect.width * scale,
           height: rect.height * scale,
         }}
-        label={str}
+        label={name}
         getRef={ref => ref && (this.ref = ref)}
         onContextMenu={this.removeLabel}
         onLabelClick={this.toggleLabelClassSelector}
@@ -209,7 +209,7 @@ export default class LabelingCanvasLabel extends React.Component<Props, State> {
           <LabelClassSelector
             className="LabelingCanvasLabel__LabelClassSelector"
             style={{ borderColor: color, backgroundColor: color }}
-            classes={this.props.classes.filter(c => c !== str)}
+            classes={this.props.classes.filter(c => c !== name)}
             onClick={this.updateLabelClass}
             onAddClass={this.updateLabelClass}
           />

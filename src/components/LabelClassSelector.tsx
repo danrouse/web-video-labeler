@@ -5,9 +5,9 @@ import './LabelClassSelector.css';
 interface Props {
   className?: string;
   classes: string[];
-  onClick?: (str: string) => void;
-  onRightClick?: (str: string) => void;
-  onAddClass?: (str: string) => void;
+  onClick?: (name: string) => void;
+  onRightClick?: (name: string) => void;
+  onAddClass?: (name: string) => void;
   style?: React.CSSProperties;
 }
 

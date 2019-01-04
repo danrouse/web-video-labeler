@@ -7,7 +7,15 @@ declare interface Rect {
 
 declare interface Label {
   rect: Rect;
-  str: string;
+  name: string;
+
+  subclasses?: string[];
+
+  // TODO
+  // Pascal VOC XML only
+  occluded?: boolean;
+  difficult?: boolean;
+  pose?: string;
 }
 
 declare interface LabeledImage {

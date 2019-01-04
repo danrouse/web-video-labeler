@@ -64,8 +64,8 @@ export async function labeledImagesToDarknet(
 
 const labeledImageToDarknet = ({ filename, labels, width, height }: LabeledImage, labelClasses: string[]) => ({
   path: `data/${filename.replace(/\.jpg$/, '.txt')}`,
-  data: labels.map(({ str, rect }) => [
-    labelClasses.indexOf(str),
+  data: labels.map(({ name, rect }) => [
+    labelClasses.indexOf(name),
     (rect.x + (rect.width / 2)) / width, // x center
     (rect.y + (rect.height / 2)) / height, // y center
     rect.width / width, // width

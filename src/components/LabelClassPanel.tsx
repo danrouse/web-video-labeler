@@ -13,12 +13,12 @@ export default class LabelClassPanel extends React.Component<Props> {
     isAddFromListVisible: false,
   };
 
-  addClass = (str: string) =>
-    this.props.labelClasses.indexOf(str) === -1 &&
-    this.props.onChange(this.props.labelClasses.concat([str]))
+  addClass = (name: string) =>
+    this.props.labelClasses.indexOf(name) === -1 &&
+    this.props.onChange(this.props.labelClasses.concat([name]))
 
-  removeClass = (str: string) =>
-    this.props.onChange(this.props.labelClasses.filter(s => s !== str))
+  removeClass = (name: string) =>
+    this.props.onChange(this.props.labelClasses.filter(s => s !== name))
 
   toggleAddFromList = () =>
     this.setState({ isAddFromListVisible: !this.state.isAddFromListVisible })

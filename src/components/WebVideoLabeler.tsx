@@ -76,7 +76,7 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
   handleVideoScaleChange = (videoScale: number) => this.setState({ videoScale });
   handleLabelsChange = (labels: Label[], callback?: () => void) => {
     const labelClasses = new Set(this.state.labelClasses);
-    labels.forEach(({ str }) => str !== 'new label' && labelClasses.add(str));
+    labels.forEach(({ name }) => name !== 'unknown' && labelClasses.add(name));
     this.setState({ labels, labelClasses: Array.from(labelClasses) }, callback);
   }
   handleSettingChange = (settings: Partial<UserSettings>) => this.setState({
@@ -125,11 +125,11 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
     const filename = `_annotate_${getVideoID()}_${frame}.jpg`;
     downloadVideoFrame(this.props.video, filename, undefined, scale);
     if (this.state.settings.saveCroppedImages) {
-      const labelCounts: { [str: string]: number } = {};
+      const labelCounts: { [name: string]: number } = {};
       this.state.labels.forEach((label) => {
-        if (!labelCounts[label.str]) labelCounts[label.str] = 0;
-        labelCounts[label.str] += 1;
-        const croppedFilename = `_annotate_${getVideoID()}_${frame}_${label.str}-${labelCounts[label.str]}.jpg`;
+        if (!labelCounts[label.name]) labelCounts[label.name] = 0;
+        labelCounts[label.name] += 1;
+        const croppedFilename = `_annotate_${getVideoID()}_${frame}_${label.name}-${labelCounts[label.name]}.jpg`;
         downloadVideoFrame(this.props.video, croppedFilename, label.rect);
       });
     }
@@ -236,7 +236,7 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
               gridSize={this.state.settings.gridSize}
               previousLabelName={
                 this.state.labels.length > 0
-                  ? this.state.labels[this.state.labels.length - 1].str
+                  ? this.state.labels[this.state.labels.length - 1].name
                   : this.state.labelClasses[this.state.labelClasses.length - 1]
               }
               onLabelsChange={this.handleLabelsChange}
