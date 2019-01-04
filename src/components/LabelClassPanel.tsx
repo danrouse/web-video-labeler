@@ -50,7 +50,6 @@ export default class LabelClassPanel extends React.Component<Props> {
         <p>Right click a class to remove.</p>
         <LabelClassSelector
           classes={this.props.labelClasses}
-          showIndex
           onAddClass={this.addClass}
           onRightClick={this.removeClass}
         />
