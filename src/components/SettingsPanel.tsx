@@ -48,11 +48,11 @@ export default class SettingsPanel extends React.Component<Props> {
         onClose={this.props.onClose}
         className="SettingsPanel"
         buttons={[
-          <button onClick={this.props.onReset} title="Reset Settings">
+          <button key="reset" onClick={this.props.onReset} title="Reset Settings">
             <i className="fas fa-trash" />
             <span>Reset</span>
           </button>,
-          <button onClick={this.props.onClose} title="Done">
+          <button key="done" onClick={this.props.onClose} title="Done">
             <i className="fas fa-check" />
             <span>Done</span>
           </button>,

@@ -94,6 +94,7 @@ export default class LabelingCanvas extends React.Component<Props, State> {
       >
         {labels.map((label, index) => (
           <LabelingCanvasLabel
+            key={[label.name, label.rect.x, label.rect.y, label.rect.width, label.rect.height].join('')}
             index={index}
             label={label}
             scale={scale}

@@ -30,6 +30,7 @@ export default class LabelClassSelector extends React.Component<Props> {
       <div className={`LabelClassSelector ${this.props.className || ''}`} style={this.props.style}>
         {this.props.classes.map(labelClass => (
           <button
+            key={labelClass}
             name={labelClass}
             onClick={this.handleClick}
             onContextMenu={this.handleContextMenu}

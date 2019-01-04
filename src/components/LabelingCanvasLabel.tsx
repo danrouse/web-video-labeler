@@ -38,10 +38,16 @@ export default class LabelingCanvasLabel extends React.Component<Props, State> {
     anchors: { left: false, right: false, top: false, bottom: false },
   };
 
+  cleanup?: (evt?: MouseEvent) => void;
+
   componentWillReceiveProps({ initializeWithMouseEvent }: Props) {
     if (initializeWithMouseEvent && initializeWithMouseEvent !== this.props.initializeWithMouseEvent) {
       this.startResizing(initializeWithMouseEvent);
     }
+  }
+
+  componentWillUnmount() {
+    if (this.cleanup) this.cleanup();
   }
 
   removeLabel = (evt: React.MouseEvent) => {
@@ -68,9 +74,10 @@ export default class LabelingCanvasLabel extends React.Component<Props, State> {
       containerRect: { x, y, width, height },
       anchors: getAnchors(this.ref, evt.clientX, evt.clientY),
     });
-    const cleanup = () => {
+    this.cleanup = (evt?: MouseEvent) => {
       window.removeEventListener('mousemove', mousemoveHandler);
-      window.removeEventListener('mouseup', cleanup);
+      if (this.cleanup) window.removeEventListener('mouseup', this.cleanup);
+      if (!evt) return;
       if (this.state.workingRect) {
         // wait until mouseup before propagating changes to parent
         this.props.onChange(this.props.index, { ...this.props.label, rect: this.state.workingRect });
@@ -78,7 +85,7 @@ export default class LabelingCanvasLabel extends React.Component<Props, State> {
       this.setState({ isActive: false, workingRect: undefined });
     };
     window.addEventListener('mousemove', mousemoveHandler);
-    window.addEventListener('mouseup', cleanup);
+    window.addEventListener('mouseup', this.cleanup);
     evt.preventDefault();
     evt.stopPropagation();
   }
