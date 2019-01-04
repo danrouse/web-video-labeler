@@ -109,10 +109,18 @@ for proj in "$@"; do
 done
 
 function move_project() {
-  if [ -d "$1" ] && [ -f "$1/${FILENAME_NETWORK_CONFIG}" ]; then
+  if [ -d "$1" ] && \
+     [ -f "$1/${FILENAME_NETWORK_CONFIG}" ] && \
+     [ -f "$1/${FILENAME_TRAIN}" ] && \
+     [ -f "$1/${FILENAME_TEST}" ] && \
+     [ -f "$1/${FILENAME_NAMES}" ]; then
     if [ "$(cat "$1/${FILENAME_NAMES}")" != "$BASE_NAMES" ]; then
-      echo "$1: names (${FILENAME_NAMES}) not equal, skipping"
-      return
+      readarray -t names_1 < $BASE_PROJECT/${FILENAME_NAMES}
+      readarray -t names_2 < $1/${FILENAME_NAMES}
+      readarray -t combined < <(sort -u $BASE_PROJECT/${FILENAME_NAMES} $1/${FILENAME_NAMES})
+      remap_classes names_1 combined "$BASE_PROJECT/${FILENAME_DATA_DIR}"
+      remap_classes names_2 combined "$1/${FILENAME_DATA_DIR}"
+      sort -u $BASE_PROJECT/${FILENAME_NAMES} $1/${FILENAME_NAMES} > $BASE_PROJECT/${FILENAME_NAMES}
     fi
     mv -uv "$1/${FILENAME_DATA_DIR}/*" "$BASE_PROJECT/${FILENAME_DATA_DIR}"
     sort -uR "$BASE_PROJECT/${FILENAME_TRAIN}" "$1/${FILENAME_TRAIN}" > "$BASE_PROJECT/${FILENAME_TRAIN}"
@@ -121,6 +129,22 @@ function move_project() {
   else
     echo "$1: invalid project"
   fi
+}
+
+function remap_classes() {
+  local -n s=$1
+  local -n d=$2
+  for si in "\${!s[@]}"; do
+    for di in "\${!d[@]}"; do
+      if [ $si = $di ]; then continue; fi
+      if [[ "\${s[$si]}" = "\${d[$di]}" ]]; then
+        for f in $3/*.txt; do
+          echo sed -i 's/^'"$si"' /'"$di"' /g' "$f"
+        done
+        break
+      fi
+    done
+  done
 }
 `;
 
