@@ -61,45 +61,51 @@ export default class SettingsPanel extends React.Component<Props> {
         ]}
       >
         <form onSubmit={this.props.onClose}>
-          <LabelBox label="Labeling" className="SettingsPanel__LabelBox">
+          <LabelBox label="Output" className="SettingsPanel__LabelBox">
             <label>
-              Frame Skip
-              <p>How many frames to skip using playback controls.</p>
+              Project Name
+              <p>Name of output data directory.</p>
               <SettingsInput
-                type="number"
-                step="1"
-                min="1"
-                value={this.props.settings.skipLength}
-                name="skipLength"
-                onChange={this.handleNumber}
+                name="projectName"
+                type="text"
+                value={this.props.settings.projectName}
+                onChange={this.handleInput}
               />
             </label>
             <label>
-              Frame Rate
-              <p>Video frames per second, usually 24.</p>
-              <SettingsInput
-                type="number"
-                step={1}
-                min={1}
-                value={this.props.settings.skipLengthFrameRate}
-                name="skipLengthFrameRate"
-                onChange={this.handleNumber}
-              />
-            </label>
-            <label>
-              Grid size
-              <p>Size of background grid, scaled to video. Set to 0 to disable.</p>
-              <div className="SettingsPanel__range">
-                <span>{this.props.settings.gridSize}</span>
-                <SettingsInput
-                  type="range"
-                  step={1}
-                  min={0}
-                  max={64}
-                  name="gridSize"
-                  value={this.props.settings.gridSize}
-                  onChange={this.handleNumber}
-                />
+              Format
+              <p>Save annotations in each of the following formats:</p>
+              <div className="SettingsPanel__radio-group">
+                <label>
+                  Darknet/YOLO
+                  <SettingsInput
+                    name="saveDarknet"
+                    type="checkbox"
+                    value={this.props.settings.saveDarknet}
+                    checked={this.props.settings.saveDarknet}
+                    onChange={this.handleInput}
+                  />
+                </label>
+                <label>
+                  Pascal VOC XML
+                  <SettingsInput
+                    name="savePascalVOCXML"
+                    type="checkbox"
+                    value={this.props.settings.savePascalVOCXML}
+                    checked={this.props.settings.savePascalVOCXML}
+                    onChange={this.handleInput}
+                  />
+                </label>
+                <label>
+                  Raw JSON
+                  <SettingsInput
+                    name="saveJSON"
+                    type="checkbox"
+                    value={this.props.settings.saveJSON}
+                    checked={this.props.settings.saveJSON}
+                    onChange={this.handleInput}
+                  />
+                </label>
               </div>
             </label>
           </LabelBox>
@@ -141,51 +147,45 @@ export default class SettingsPanel extends React.Component<Props> {
               </div>
             </label>
           </LabelBox>
-          <LabelBox label="Output" className="SettingsPanel__LabelBox">
+          <LabelBox label="Labeling" className="SettingsPanel__LabelBox">
             <label>
-              Project Name
-              <p>Name of output project. Saving additional data to the same project will combine label classes.</p>
+              Frame Skip
+              <p>How many frames to skip using playback controls.</p>
               <SettingsInput
-                name="projectName"
-                type="text"
-                value={this.props.settings.projectName}
-                onChange={this.handleInput}
+                type="number"
+                step="1"
+                min="1"
+                value={this.props.settings.skipLength}
+                name="skipLength"
+                onChange={this.handleNumber}
               />
             </label>
             <label>
-              Format
-              <p>Output formats</p>
-              <div className="SettingsPanel__radio-group">
-                <label>
-                  Darknet/YOLO
-                  <SettingsInput
-                    name="saveDarknet"
-                    type="checkbox"
-                    value={this.props.settings.saveDarknet}
-                    checked={this.props.settings.saveDarknet}
-                    onChange={this.handleInput}
-                  />
-                </label>
-                <label>
-                  Pascal VOC XML
-                  <SettingsInput
-                    name="savePascalVOCXML"
-                    type="checkbox"
-                    value={this.props.settings.savePascalVOCXML}
-                    checked={this.props.settings.savePascalVOCXML}
-                    onChange={this.handleInput}
-                  />
-                </label>
-                <label>
-                  Raw JSON
-                  <SettingsInput
-                    name="saveJSON"
-                    type="checkbox"
-                    value={this.props.settings.saveJSON}
-                    checked={this.props.settings.saveJSON}
-                    onChange={this.handleInput}
-                  />
-                </label>
+              Frame Rate
+              <p>Video frames per second, usually 24.</p>
+              <SettingsInput
+                type="number"
+                step={1}
+                min={1}
+                value={this.props.settings.skipLengthFrameRate}
+                name="skipLengthFrameRate"
+                onChange={this.handleNumber}
+              />
+            </label>
+            <label>
+              Grid size
+              <p>Size of background grid, scaled to video. Set to 0 to disable.</p>
+              <div className="SettingsPanel__range">
+                <span>{this.props.settings.gridSize}</span>
+                <SettingsInput
+                  type="range"
+                  step={1}
+                  min={0}
+                  max={64}
+                  name="gridSize"
+                  value={this.props.settings.gridSize}
+                  onChange={this.handleNumber}
+                />
               </div>
             </label>
           </LabelBox>

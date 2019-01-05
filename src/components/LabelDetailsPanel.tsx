@@ -51,7 +51,7 @@ export default class LabelDetailsPanel extends React.Component<Props> {
             <img src={videoFrameToDataURL(this.props.video, this.props.label.rect)} style={{ display: 'block' }} />
           }
         </LabelBox>
-        <LabelBox label="Pascal VOC XML output only">
+        <LabelBox label="Pascal VOC XML output">
           <label>
             <input
               type="checkbox"
@@ -80,7 +80,7 @@ export default class LabelDetailsPanel extends React.Component<Props> {
             />
           </label>
         </LabelBox>
-        <LabelBox label="Unused">
+        <LabelBox label="JSON output">
           <label>
             Subclasses
             <textarea

@@ -14,6 +14,11 @@ import { labeledImageToDarknet } from '../output/darknet';
 import { labeledImageToPascalVOCXML } from '../output/pascal-voc-xml';
 import './WebVideoLabeler.css';
 
+interface UndoableAction {
+  filenames: string[];
+  time: number;
+}
+
 interface State {
   labels: Label[];
   labelClasses: string[];
@@ -21,7 +26,7 @@ interface State {
   isSettingsPanelVisible: boolean;
   isHelpPanelVisible: boolean;
   isLabelClassPanelVisible: boolean;
-  downloadedFiles: string[][];
+  undoableActions: UndoableAction[];
   settings: UserSettings;
 
   isSeeking: boolean;
@@ -37,7 +42,7 @@ const defaultState: State = {
   isSettingsPanelVisible: false,
   isHelpPanelVisible: false,
   isLabelClassPanelVisible: false,
-  downloadedFiles: [],
+  undoableActions: [],
   settings: {
     skipLength: 10,
     skipLengthFrameRate: 24,
@@ -116,9 +121,9 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
   seek = (dt: number) => this.props.video.currentTime += dt;
   skip = () => this.seek(this.state.settings.skipLength / this.state.settings.skipLengthFrameRate);
   prev = () => this.seek(-this.state.settings.skipLength / this.state.settings.skipLengthFrameRate);
-  next = () => {
+  next = async () => {
     if (this.state.settings.saveImagesWithoutLabels || this.state.labels.length > 0) {
-      this.downloadFrame();
+      await this.downloadFrame();
     }
     this.skip();
   }
@@ -144,51 +149,57 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
       height: this.props.video.videoHeight,
     };
 
-    download(videoFrameToDataURL(this.props.video, undefined, scale), filename);
+    await download(videoFrameToDataURL(this.props.video, undefined, scale), filename);
 
     if (this.state.settings.saveCroppedImages) {
       const labelCounts: { [name: string]: number } = {};
-      this.state.labels.forEach((label) => {
+      for (const label of this.state.labels) {
         if (!labelCounts[label.name]) labelCounts[label.name] = 0;
         labelCounts[label.name] += 1;
         const croppedFilename = `${filenameBase}_${label.name}-${labelCounts[label.name]}.jpg`;
-        download(videoFrameToDataURL(this.props.video, label.rect), croppedFilename);
+        await download(videoFrameToDataURL(this.props.video, label.rect), croppedFilename);
         filenames.push(croppedFilename);
-      });
+      }
     }
 
     if (this.state.settings.saveDarknet) {
       const data = labeledImageToDarknet(labeledImage);
-      download(`data:text/plain;,${data.data}`, data.path);
+      await download(`data:text/plain;,${data.data}`, data.path);
       filenames.push(data.path);
 
       const prepareScriptFilename = 'prepare_darknet_training_data.py';
       if (!(await getAbsolutePath(prepareScriptFilename))) {
-        download(chrome.extension.getURL(prepareScriptFilename), prepareScriptFilename);
+        await download(chrome.extension.getURL(prepareScriptFilename), prepareScriptFilename);
         filenames.push(prepareScriptFilename);
       }
     }
 
     if (this.state.settings.savePascalVOCXML) {
       const data = await labeledImageToPascalVOCXML(labeledImage);
-      download(`data:text/plain;,${data.data}`, data.path);
+      await download(`data:text/plain;,${data.data}`, data.path);
       filenames.push(data.path);
     }
 
     if (this.state.settings.saveJSON) {
       const data = JSON.stringify(labeledImage, null, 2);
-      const path = filename.replace(/\.jpg$/, '.json');
-      download(`data:text/plain;,${data}`, path);
+      const path = `${filenameBase}.json`;
+      await download(`data:text/plain;,${data}`, path);
       filenames.push(path);
     }
 
-    this.setState({ downloadedFiles: this.state.downloadedFiles.concat([filenames]) });
+    this.setState({
+      undoableActions: this.state.undoableActions.concat([{
+        filenames,
+        time: this.props.video.currentTime,
+      }]),
+    });
   }
 
   undo = async () => {
-    const filesToDelete = this.state.downloadedFiles[this.state.downloadedFiles.length - 1];
-    await Promise.all(filesToDelete.map(f => deleteDownload(f)));
-    this.setState({ downloadedFiles: this.state.downloadedFiles.slice(0, -1) });
+    const action = this.state.undoableActions[this.state.undoableActions.length - 1];
+    await Promise.all(action.filenames.map(f => deleteDownload(f)));
+    this.props.video.currentTime = action.time;
+    this.setState({ undoableActions: this.state.undoableActions.slice(0, -1) });
   }
 
   render() {
@@ -205,7 +216,7 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
           isSeeking={this.state.isSeeking}
           canClear={this.state.labels.length > 0}
           canStepBackward={this.props.video.currentTime !== 0}
-          canUndo={this.state.downloadedFiles.length > 0}
+          canUndo={this.state.undoableActions.length > 0}
 
           startLabeling={this.startLabeling}
           stopLabeling={this.stopLabeling}
