@@ -72,7 +72,7 @@ export default function Toolbar(props: Props) {
           title="Download Data"
           disabled={props.numLabeledImages === 0}
         >
-          <i className="fas fa-save" />
+          <i className="fas fa-download" />
           <span>{props.numLabeledImages}</span>
         </button>
         <button

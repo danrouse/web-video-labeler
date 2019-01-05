@@ -29,7 +29,7 @@ Download the latest package (`.crx` for Chrome, `.xpi` for Firefox) from the [Re
   - Delete a label by right-clicking on it
   - To change the label name, click on the name and select or enter a new class
 - When the frame is fully labeled, click <img src="https://rawcdn.githack.com/FortAwesome/Font-Awesome/fc377a13a36717464b61c045444fea1e35c26b6d/svgs/solid/check.svg" width="18" height="18" /> **CONTINUE** to save the labels, download the image, and skip the video forward.
-- Once you are done, download the labels by clicking the <img src="https://rawcdn.githack.com/FortAwesome/Font-Awesome/fc377a13a36717464b61c045444fea1e35c26b6d/svgs/solid/save.svg" width="18" height="18" /> download button.
+- Once you are done, download the labels by clicking the <img src="https://rawcdn.githack.com/FortAwesome/Font-Awesome/fc377a13a36717464b61c045444fea1e35c26b6d/svgs/solid/download.svg" width="18" height="18" /> download button.
 - Extract the archive use the accompanying scripts to use the data:
   - `move_downloaded_images.sh` relocates downloaded images to the annotations data dir
   - `train.sh` calls the training binary (will move downloaded images if not already)
@@ -42,7 +42,7 @@ Download the latest package (`.crx` for Chrome, `.xpi` for Firefox) from the [Re
 - <img src="https://rawcdn.githack.com/FortAwesome/Font-Awesome/fc377a13a36717464b61c045444fea1e35c26b6d/svgs/solid/undo.svg" width="18" height="18" /> Undo saving last frame
 - <img src="https://rawcdn.githack.com/FortAwesome/Font-Awesome/fc377a13a36717464b61c045444fea1e35c26b6d/svgs/solid/step-backward.svg" width="18" height="18" /> Step backward
 - <img src="https://rawcdn.githack.com/FortAwesome/Font-Awesome/fc377a13a36717464b61c045444fea1e35c26b6d/svgs/solid/step-forward.svg" width="18" height="18" /> Step forward
-- <img src="https://rawcdn.githack.com/FortAwesome/Font-Awesome/fc377a13a36717464b61c045444fea1e35c26b6d/svgs/solid/save.svg" width="18" height="18" /> Download label annotations and scripts to use for training
+- <img src="https://rawcdn.githack.com/FortAwesome/Font-Awesome/fc377a13a36717464b61c045444fea1e35c26b6d/svgs/solid/download.svg" width="18" height="18" /> Download label annotations and scripts to use for training
 - <img src="https://rawcdn.githack.com/FortAwesome/Font-Awesome/fc377a13a36717464b61c045444fea1e35c26b6d/svgs/solid/trash.svg" width="18" height="18" /> Erase label annotation data
 - <img src="https://rawcdn.githack.com/FortAwesome/Font-Awesome/fc377a13a36717464b61c045444fea1e35c26b6d/svgs/solid/tags.svg" width="18" height="18" /> Open class manager, to remove or import lists of label classes
 - <img src="https://rawcdn.githack.com/FortAwesome/Font-Awesome/fc377a13a36717464b61c045444fea1e35c26b6d/svgs/solid/cog.svg" width="18" height="18" /> Open settings menu

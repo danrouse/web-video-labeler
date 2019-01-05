@@ -33,7 +33,7 @@ export default function HelpPanel({ onClose }: Props) {
           </li>
           <li>
             Once you are done, download the labels by clicking the
-            <button><i className="fas fa-save" /></button> download button.
+            <button><i className="fas fa-download" /></button> download button.
           </li>
           <li>
             Extract the archive use the accompanying scripts to use the data:
@@ -52,7 +52,7 @@ export default function HelpPanel({ onClose }: Props) {
           <li><button><i className="fas fa-step-backward" /></button> Step backward</li>
           <li><button><i className="fas fa-step-forward" /></button> Step forward</li>
           <li>
-            <button><i className="fas fa-save" /></button> Download
+            <button><i className="fas fa-download" /></button> Download
             label annotations and scripts to use for training
           </li>
           <li><button><i className="fas fa-trash" /></button> Erase label annotation data</li>
