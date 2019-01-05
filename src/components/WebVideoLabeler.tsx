@@ -217,6 +217,10 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
           canClear={this.state.labels.length > 0}
           canStepBackward={this.props.video.currentTime !== 0}
           canUndo={this.state.undoableActions.length > 0}
+          canContinue={
+            this.state.settings.saveImagesWithoutLabels ||
+            this.state.labels.length > 0
+          }
 
           startLabeling={this.startLabeling}
           stopLabeling={this.stopLabeling}

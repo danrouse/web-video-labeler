@@ -7,6 +7,7 @@ interface Props {
   canClear: boolean;
   canStepBackward: boolean;
   canUndo: boolean;
+  canContinue: boolean;
 
   startLabeling: () => void;
   stopLabeling: () => void;
@@ -42,17 +43,17 @@ export default function Toolbar(props: Props) {
             className="icon"
             onClick={props.stepBackward}
             disabled={props.isSeeking || !props.canStepBackward}
-            title="Skip Back"
+            title="Step Back"
           >
             <i className="fas fa-step-backward" />
           </button>
-          <button className="icon" onClick={props.stepForward} disabled={props.isSeeking} title="Skip Ahead">
+          <button className="icon" onClick={props.stepForward} disabled={props.isSeeking} title="Step Forward">
             <i className="fas fa-step-forward" />
           </button>
           <button className="icon" onClick={props.undo} disabled={!props.canUndo} title="Undo">
             <i className="fas fa-undo" />
           </button>
-          <button onClick={props.next} disabled={props.isSeeking} title="Next">
+          <button onClick={props.next} disabled={props.isSeeking || !props.canContinue} title="Save and Continue">
             <i className="fas fa-check" />
             <span>Next</span>
           </button>
