@@ -26,5 +26,8 @@
       "extension/liveReload.js",
       "extension/messaging.bundle.js"
     ]
-  }
+  },
+  "web_accessible_resources": [
+    "prepare_darknet_training_data.py"
+  ]
 }

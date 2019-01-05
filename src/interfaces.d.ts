@@ -39,12 +39,9 @@ declare interface UserSettings {
   saveCroppedImages: boolean;
   saveImagesWithoutLabels: boolean;
   savedImageScale: number;
+  saveDarknet: boolean;
+  savePascalVOCXML: boolean;
+  saveJSON: boolean;
   gridSize: number;
-
-  outputFormat: OutputFormat;
-  trainTestRatio: number;
-  darknetExecutablePath: string;
-  darknetConfigURL: string;
+  projectName: string;
 }
-
-declare type OutputFormat = 'DARKNET' | 'PASCALVOCXML' | 'JSON';

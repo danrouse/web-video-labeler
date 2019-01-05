@@ -7,7 +7,7 @@ interface Props<T> {
   localStorageKey: string;
   data: T;
   onLoad: LocalStorageLoadHandler<T>;
-  onStorageFull: LocalStorageQuotaExceededHandler;
+  onStorageFull?: LocalStorageQuotaExceededHandler;
   exclude: string[];
 }
 
@@ -48,7 +48,7 @@ export default class LocalStorageSync<T> extends React.Component<Props<T>, State
     } catch (exc) {
       if (exc instanceof DOMException && exc.code === DOMException.QUOTA_EXCEEDED_ERR) {
         if (!this.state.hasReportedFailure) {
-          this.props.onStorageFull();
+          if (this.props.onStorageFull) this.props.onStorageFull();
           this.setState({ hasReportedFailure: true });
         }
       } else {

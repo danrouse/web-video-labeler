@@ -1,19 +1,14 @@
-import { fetchDownloadPaths } from '../extension/messaging';
+import { getAbsoluteDownloadPath } from '../extension/messaging';
 
-export async function labeledImagesToPascalVOCXML(
-  labeledImages: LabeledImage[],
-  trainTestRatio: number = 0.8,
-): Promise<ArchiveFile[]> {
-  const imageFilenames = labeledImages.map(({ filename }) => filename);
-  const downloadedImagePaths: string[] = await fetchDownloadPaths(imageFilenames);
-  const sortedLabeledImages = labeledImages.slice().sort(() => Math.random() - 0.5);
-  return sortedLabeledImages.map((li, index) => ({
-    path: (index / labeledImages.length > trainTestRatio ? 'test/' : 'train/') + li.filename.replace(/\.jpg$/, '.xml'),
+export const labeledImageToPascalVOCXML = async (li: LabeledImage): Promise<ArchiveFile> => {
+  const absPath = await getAbsoluteDownloadPath(li.filename);
+  return {
+    path: li.filename.replace(/\.jpg$/, '.xml'),
     data: objectToXML(
       {
-        folder: downloadedImagePaths[index].replace(/\/[^\/]+$/, ''),
+        folder: absPath ? absPath.replace(/\/[^\/]+$/, '') : '',
         filename: li.filename,
-        path: downloadedImagePaths[index],
+        path: absPath,
         source: { database: 'Unknown' },
         size: { width: li.width, height: li.height, depth: 3 },
         segmented: 0,
@@ -32,8 +27,8 @@ export async function labeledImagesToPascalVOCXML(
       },
       'annotation',
     ),
-  }));
-}
+  };
+};
 
 function objectToXML(obj: any, tag: string, indentCount: number = 0): string {
   if (Array.isArray(obj)) {

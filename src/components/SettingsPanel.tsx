@@ -143,81 +143,51 @@ export default class SettingsPanel extends React.Component<Props> {
           </LabelBox>
           <LabelBox label="Output" className="SettingsPanel__LabelBox">
             <label>
+              Project Name
+              <p>Name of output project. Saving additional data to the same project will combine label classes.</p>
+              <SettingsInput
+                name="projectName"
+                type="text"
+                value={this.props.settings.projectName}
+                onChange={this.handleInput}
+              />
+            </label>
+            <label>
               Format
-              <p>Output data type</p>
+              <p>Output formats</p>
               <div className="SettingsPanel__radio-group">
                 <label>
                   Darknet/YOLO
                   <SettingsInput
-                    name="outputFormat"
-                    type="radio"
-                    value="DARKNET"
-                    checked={this.props.settings.outputFormat === 'DARKNET'}
+                    name="saveDarknet"
+                    type="checkbox"
+                    value={this.props.settings.saveDarknet}
+                    checked={this.props.settings.saveDarknet}
                     onChange={this.handleInput}
                   />
                 </label>
                 <label>
                   Pascal VOC XML
                   <SettingsInput
-                    name="outputFormat"
-                    type="radio"
-                    value="PASCALVOCXML"
-                    checked={this.props.settings.outputFormat === 'PASCALVOCXML'}
+                    name="savePascalVOCXML"
+                    type="checkbox"
+                    value={this.props.settings.savePascalVOCXML}
+                    checked={this.props.settings.savePascalVOCXML}
                     onChange={this.handleInput}
                   />
                 </label>
                 <label>
                   Raw JSON
                   <SettingsInput
-                    name="outputFormat"
-                    type="radio"
-                    value="JSON"
-                    checked={this.props.settings.outputFormat === 'JSON'}
+                    name="saveJSON"
+                    type="checkbox"
+                    value={this.props.settings.saveJSON}
+                    checked={this.props.settings.saveJSON}
                     onChange={this.handleInput}
                   />
                 </label>
               </div>
             </label>
-            <label>
-              Train/test split
-              <p>Ratio of training to testing images in the output data.</p>
-              <div className="SettingsPanel__range">
-                <span>{this.props.settings.trainTestRatio}</span>
-                <SettingsInput
-                  name="trainTestRatio"
-                  type="range"
-                  min={0}
-                  max={1}
-                  step={0.01}
-                  value={this.props.settings.trainTestRatio}
-                  onChange={this.handleNumber}
-                />
-              </div>
-            </label>
-            {this.props.settings.outputFormat === 'DARKNET' &&
-              <div>
-                <label>
-                  Executable path
-                  <p>Command to call <code>darknet</code> on your local machine.</p>
-                  <SettingsInput
-                    name="darknetExecutablePath"
-                    type="text"
-                    value={this.props.settings.darknetExecutablePath}
-                    onChange={this.handleInput}
-                  />
-                </label>
-                <label>
-                  Config URL
-                  <p>Base configuration for training and running the network.</p>
-                  <SettingsInput
-                    name="darknetConfigURL"
-                    type="text"
-                    value={this.props.settings.darknetConfigURL}
-                    onChange={this.handleInput}
-                  />
-                </label>
-              </div>
-            }
           </LabelBox>
         </form>
       </ModalDialog>

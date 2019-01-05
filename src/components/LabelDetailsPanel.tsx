@@ -2,7 +2,7 @@ import * as React from 'react';
 import ModalDialog from './ModalDialog';
 import LabelBox from './LabelBox';
 import LabelClassSelector from './LabelClassSelector';
-import { videoFrameToDataURL } from '../util/download';
+import videoFrameToDataURL from '../util/videoFrameToDataURL';
 
 interface Props {
   label: Label;

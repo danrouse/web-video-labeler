@@ -6,16 +6,16 @@ import Toolbar from './Toolbar';
 import SettingsPanel from './SettingsPanel';
 import HelpPanel from './HelpPanel';
 import LabelClassPanel from './LabelClassPanel';
-import { downloadVideoFrame, downloadZIPFile, downloadDataURL } from '../util/download';
+import videoFrameToDataURL from '../util/videoFrameToDataURL';
 import { getVideoID, toggleYouTubeUI } from '../util/youtube';
 import { scaleRect } from '../util/rect';
-import { labeledImagesToDarknet } from '../output/darknet';
-import { labeledImagesToPascalVOCXML } from '../output/pascal-voc-xml';
+import { getAbsoluteDownloadPath, download } from '../extension/messaging';
+import { labeledImageToDarknet } from '../output/darknet';
+import { labeledImageToPascalVOCXML } from '../output/pascal-voc-xml';
 import './WebVideoLabeler.css';
 
 interface State {
   labels: Label[];
-  labeledImages: LabeledImage[];
   labelClasses: string[];
   isLabeling: boolean;
   isSettingsPanelVisible: boolean;
@@ -24,7 +24,6 @@ interface State {
   settings: UserSettings;
 
   isSeeking: boolean;
-  isLocalStorageFull: boolean;
   wasPlayingBeforeLabeling: boolean;
   videoScale: number;
   videoScaleWidth: number;
@@ -32,7 +31,6 @@ interface State {
 
 const defaultState: State = {
   labels: [],
-  labeledImages: [],
   labelClasses: [],
   isLabeling: false,
   isSettingsPanelVisible: false,
@@ -44,15 +42,14 @@ const defaultState: State = {
     saveCroppedImages: false,
     saveImagesWithoutLabels: false,
     savedImageScale: 1,
+    saveDarknet: true,
+    savePascalVOCXML: true,
+    saveJSON: false,
     gridSize: 16,
-    outputFormat: 'DARKNET',
-    trainTestRatio: 0.8,
-    darknetExecutablePath: 'darknet',
-    darknetConfigURL: 'https://raw.githubusercontent.com/AlexeyAB/darknet/master/cfg/yolov3-tiny_obj.cfg',
+    projectName: 'data',
   },
 
   isSeeking: false,
-  isLocalStorageFull: false,
   wasPlayingBeforeLabeling: false,
   videoScale: 0,
   videoScaleWidth: 0,
@@ -67,15 +64,12 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
     this.props.video.addEventListener('seeked', () => this.setState({ isSeeking: false }));
   }
 
-  clearLabeledImages = () => confirm('are you sure? will delete all cached images + labels') &&
-    this.setState({ labeledImages: [] })
   resetSettings = () => confirm('are you sure you want to reset all settings?') &&
     this.setState({ settings: defaultState.settings })
   clearLabels = () => this.setState({ labels: [] });
   clearLabelClasses = () => this.setState({ labelClasses: [] });
 
   handleLoadState = (state: State) => this.setState(state);
-  handleStorageFull = () => this.setState({ isLocalStorageFull: true });
   handleVideoScaleChange = (videoScale: number) => {
     if (!videoScale || !isFinite(videoScale)) return;
     const videoScaleWidth = this.props.video.videoWidth;
@@ -94,7 +88,7 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
     labels.forEach(({ name }) => name !== 'unknown' && labelClasses.add(name));
     this.setState({ labels, labelClasses: Array.from(labelClasses) }, callback);
   }
-  handleSettingChange = (settings: Partial<UserSettings>) => this.setState({
+  handleSettingsChange = (settings: Partial<UserSettings>) => this.setState({
     settings: {
       ...this.state.settings,
       ...settings,
@@ -122,33 +116,19 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
   prev = () => this.seek(-this.state.settings.skipLength / this.state.settings.skipLengthFrameRate);
   next = () => {
     if (this.state.settings.saveImagesWithoutLabels || this.state.labels.length > 0) {
-      const labeledImage = this.downloadFrame();
-      this.setState({ labeledImages: this.state.labeledImages.concat([labeledImage]) });
+      this.downloadFrame();
     }
     this.skip();
   }
-  undo = () => {
-    const { time } = this.state.labeledImages[this.state.labeledImages.length - 1];
-    this.props.video.currentTime = time;
-    this.setState({ labeledImages: this.state.labeledImages.slice(0, -1) });
-  }
 
-  downloadFrame = (): LabeledImage => {
+  downloadFrame = async () => {
     const time = this.props.video.currentTime;
     const frame = Math.floor(time * this.state.settings.skipLengthFrameRate);
     const scale = this.state.settings.savedImageScale;
-    const filename = `_annotate_${getVideoID()}_${frame}.jpg`;
-    downloadVideoFrame(this.props.video, filename, undefined, scale);
-    if (this.state.settings.saveCroppedImages) {
-      const labelCounts: { [name: string]: number } = {};
-      this.state.labels.forEach((label) => {
-        if (!labelCounts[label.name]) labelCounts[label.name] = 0;
-        labelCounts[label.name] += 1;
-        const croppedFilename = `_annotate_${getVideoID()}_${frame}_${label.name}-${labelCounts[label.name]}.jpg`;
-        downloadVideoFrame(this.props.video, croppedFilename, label.rect);
-      });
-    }
-    return {
+    const filenameBase = `${this.state.settings.projectName}/${getVideoID()}_${frame}`;
+    const filename = `${filenameBase}.jpg`;
+
+    const labeledImage = {
       filename,
       frame,
       time,
@@ -160,26 +140,37 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
       width: this.props.video.videoWidth,
       height: this.props.video.videoHeight,
     };
-  }
 
-  downloadLabeledImages = async () => {
-    if (this.state.settings.outputFormat === 'DARKNET') {
-      const data = await labeledImagesToDarknet(
-        this.state.labeledImages,
-        this.state.labelClasses,
-        {
-          configURL: this.state.settings.darknetConfigURL,
-          executablePath: this.state.settings.darknetExecutablePath,
-          trainTestRatio: this.state.settings.trainTestRatio,
-        },
-      );
-      await downloadZIPFile(data, 'data.zip');
-    } else if (this.state.settings.outputFormat === 'PASCALVOCXML') {
-      const data = await labeledImagesToPascalVOCXML(this.state.labeledImages);
-      await downloadZIPFile(data, 'data.zip');
-    } else {
-      const data = encodeURIComponent(JSON.stringify(this.state.labeledImages, null, 2));
-      downloadDataURL(`data:application/json;,${data}`, 'data.json');
+    download(videoFrameToDataURL(this.props.video, undefined, scale), filename);
+
+    if (this.state.settings.saveCroppedImages) {
+      const labelCounts: { [name: string]: number } = {};
+      this.state.labels.forEach((label) => {
+        if (!labelCounts[label.name]) labelCounts[label.name] = 0;
+        labelCounts[label.name] += 1;
+        const croppedFilename = `${filenameBase}_${label.name}-${labelCounts[label.name]}.jpg`;
+        download(videoFrameToDataURL(this.props.video, label.rect), croppedFilename);
+      });
+    }
+
+    if (this.state.settings.saveDarknet) {
+      const data = labeledImageToDarknet(labeledImage);
+      download(`data:text/plain;,${data.data}`, data.path);
+
+      const prepareScriptFilename = 'prepare_darknet_training_data.py';
+      if (!await getAbsoluteDownloadPath(prepareScriptFilename)) {
+        download(chrome.extension.getURL(prepareScriptFilename), prepareScriptFilename);
+      }
+    }
+
+    if (this.state.settings.savePascalVOCXML) {
+      const data = await labeledImageToPascalVOCXML(labeledImage);
+      download(`data:text/plain;,${data.data}`, data.path);
+    }
+
+    if (this.state.settings.saveJSON) {
+      const data = JSON.stringify(labeledImage, null, 2);
+      download(`data:text/plain;,${data}`, filename.replace(/\.jpg$/, '.json'));
     }
   }
 
@@ -191,18 +182,10 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
           exclude={['isLabeling']}
           localStorageKey="WebVideoLabeler"
           onLoad={this.handleLoadState}
-          onStorageFull={this.handleStorageFull}
         />
         <Toolbar
-          numLabeledImages={this.state.labeledImages.length}
-          numLabelClasses={this.state.labelClasses.length}
           isLabeling={this.state.isLabeling}
           isSeeking={this.state.isSeeking}
-          isLocalStorageFull={this.state.isLocalStorageFull}
-          canUndo={
-            this.state.labeledImages.length > 0 &&
-            this.state.labeledImages[this.state.labeledImages.length - 1].url === window.location.href
-          }
           canClear={this.state.labels.length > 0}
           canStepBackward={this.props.video.currentTime !== 0}
 
@@ -212,9 +195,6 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
           stepBackward={this.prev}
           stepForward={this.skip}
           next={this.next}
-          undo={this.undo}
-          downloadLabeledImages={this.downloadLabeledImages}
-          clearLabeledImages={this.clearLabeledImages}
           toggleSettingsPanel={this.toggleSettingsPanel}
           toggleHelpPanel={this.toggleHelpPanel}
           toggleLabelClassPanel={this.toggleLabelClassPanel}
@@ -222,7 +202,7 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
         {this.state.isSettingsPanelVisible &&
           <SettingsPanel
             settings={this.state.settings}
-            onChange={this.handleSettingChange}
+            onChange={this.handleSettingsChange}
             onClose={this.toggleSettingsPanel}
             onReset={this.resetSettings}
           />
