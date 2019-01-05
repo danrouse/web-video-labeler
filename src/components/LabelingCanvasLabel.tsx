@@ -7,6 +7,7 @@ import { Anchors, getAnchors, anchorsToCursor, moveRect, resizeRect } from '../u
 import './LabelingCanvasLabel.css';
 
 type LabelChangeHandler = (index: number, label?: Label) => void;
+type LabelCloneHandler = (label: Label) => void;
 
 interface Props {
   index: number;
@@ -14,6 +15,7 @@ interface Props {
   scale: number;
   classes: string[];
   onChange: LabelChangeHandler;
+  onClone: LabelCloneHandler;
   initializeWithMouseEvent?: React.MouseEvent;
 }
 
@@ -40,22 +42,25 @@ export default class LabelingCanvasLabel extends React.Component<Props, State> {
     anchors: { left: false, right: false, top: false, bottom: false },
   };
 
-  cleanup?: (evt?: MouseEvent) => void;
-
   componentWillReceiveProps({ initializeWithMouseEvent }: Props) {
     if (initializeWithMouseEvent && initializeWithMouseEvent !== this.props.initializeWithMouseEvent) {
       this.startResizing(initializeWithMouseEvent);
     }
   }
 
-  componentWillUnmount() {
-    if (this.cleanup) this.cleanup();
-  }
-
   removeLabel = (evt: React.MouseEvent) => {
     evt.preventDefault();
     evt.stopPropagation();
     this.props.onChange(this.props.index);
+  }
+
+  cloneLabel = () => {
+    if (!this.ref || !(this.ref.parentElement instanceof HTMLElement)) return;
+    const clonedLabel: Label = {
+      ...this.props.label,
+      rect: moveRect(this.props.label.rect, 6, 6, 1, this.ref.parentElement.getBoundingClientRect() as DOMRect),
+    };
+    this.props.onClone(clonedLabel);
   }
 
   updateLabelClass = (name: string) => {
@@ -76,18 +81,15 @@ export default class LabelingCanvasLabel extends React.Component<Props, State> {
       containerRect: { x, y, width, height },
       anchors: getAnchors(this.ref, evt.clientX, evt.clientY),
     });
-    this.cleanup = (evt?: MouseEvent) => {
+    const cleanup = () => {
       window.removeEventListener('mousemove', mousemoveHandler);
-      if (this.cleanup) window.removeEventListener('mouseup', this.cleanup);
-      if (!evt) return;
+      window.removeEventListener('mouseup', cleanup);
       if (this.state.workingRect) {
-        // wait until mouseup before propagating changes to parent
         this.props.onChange(this.props.index, { ...this.props.label, rect: this.state.workingRect });
       }
-      this.setState({ isActive: false, workingRect: undefined });
     };
     window.addEventListener('mousemove', mousemoveHandler);
-    window.addEventListener('mouseup', this.cleanup);
+    window.addEventListener('mouseup', cleanup);
     evt.preventDefault();
     evt.stopPropagation();
   }
@@ -165,6 +167,9 @@ export default class LabelingCanvasLabel extends React.Component<Props, State> {
         buttons={[
           <button key="details" onClick={this.toggleDetailsPanel} title="Edit Details">
             <i className="fas fa-pencil-alt" />
+          </button>,
+          <button key="clone" onClick={this.cloneLabel} title="Clone">
+            <i className="fas fa-clone" />
           </button>,
           <button key="erase" onClick={this.removeLabel} title="Erase">
             <i className="fas fa-times" />

@@ -71,6 +71,9 @@ export default class LabelingCanvas extends React.Component<Props, State> {
     onLabelsChange(nextLabels);
   }
 
+  handleLabelClone = (label: Label) =>
+    this.props.onLabelsChange(this.props.labels.concat([label]))
+
   render() {
     const { gridSize, scale, labels } = this.props;
     return (
@@ -100,6 +103,7 @@ export default class LabelingCanvas extends React.Component<Props, State> {
             scale={scale}
             classes={this.props.classes}
             onChange={this.handleLabelChange}
+            onClone={this.handleLabelClone}
             initializeWithMouseEvent={index === labels.length - 1 ? this.state.initializeLabelMouseEvent : undefined}
           />
         ))}

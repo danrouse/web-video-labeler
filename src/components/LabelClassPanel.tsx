@@ -37,11 +37,11 @@ export default class LabelClassPanel extends React.Component<Props> {
         title="Classes"
         onClose={this.props.onClose}
         buttons={[
-          <button onClick={this.toggleAddFromList} title="Add From List">
+          <button key="add-from-list" onClick={this.toggleAddFromList} title="Add From List">
             <i className="fas fa-list-ol" />
             <span>Add From List</span>
           </button>,
-          <button onClick={this.props.onClose} title="Done">
+          <button key="done" onClick={this.props.onClose} title="Done">
             <i className="fas fa-check" />
             <span>Done</span>
           </button>,
