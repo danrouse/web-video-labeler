@@ -1,7 +1,7 @@
-import { getAbsoluteDownloadPath } from '../extension/messaging';
+import { getAbsolutePath } from '../extension/downloads';
 
 export const labeledImageToPascalVOCXML = async (li: LabeledImage): Promise<ArchiveFile> => {
-  const absPath = await getAbsoluteDownloadPath(li.filename);
+  const absPath = await getAbsolutePath(li.filename);
   return {
     path: li.filename.replace(/\.jpg$/, '.xml'),
     data: objectToXML(

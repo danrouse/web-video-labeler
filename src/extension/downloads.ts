@@ -5,6 +5,9 @@ export type Message = {
   type: 'DOWNLOAD';
   url: string;
   filename: string;
+} | {
+  type: 'DELETE_DOWNLOAD';
+  filename: string;
 };
 
 const DOWNLOAD_PREFIX = 'web-video-labeler/';
@@ -16,16 +19,24 @@ const sendMessage = <T>(message: Message) =>
 export const download = (url: string, filename: string) =>
   sendMessage<void>({ url, filename, type: 'DOWNLOAD' });
 
-export const getAbsoluteDownloadPath = (filename: string) =>
+export const getAbsolutePath = (filename: string) =>
   sendMessage<string>({ filename, type: 'FETCH_DOWNLOAD_PATH' });
+
+export const deleteDownload = (filename: string) =>
+  sendMessage<boolean>({ filename, type: 'DELETE_DOWNLOAD' });
+
+function findDownload(path: string): Promise<chrome.downloads.DownloadItem | null> {
+  return new Promise(resolve =>
+    chrome.downloads.search(
+      { filenameRegex: `${DOWNLOAD_PREFIX}${path}$`, exists: true, limit: 1 },
+      ([match]) => resolve(match),
+    ));
+}
 
 function messageHandler(message: Message, _: chrome.runtime.MessageSender, respond: (response: any) => void) {
   switch (message.type) {
     case 'FETCH_DOWNLOAD_PATH':
-      chrome.downloads.search(
-        { filenameRegex: `${DOWNLOAD_PREFIX}${message.filename}$`, limit: 1 },
-        ([match]) => respond(match && match.exists ? match.filename : ''),
-      );
+      findDownload(message.filename).then(match => respond(match ? match.filename : ''));
       return true;
     case 'DOWNLOAD':
       chrome.downloads.download(
@@ -35,6 +46,15 @@ function messageHandler(message: Message, _: chrome.runtime.MessageSender, respo
         },
         respond,
       );
+      return true;
+    case 'DELETE_DOWNLOAD':
+      findDownload(message.filename).then((match) => {
+        console.log('fd', message.filename, match);
+        if (!match) return respond(false);
+        chrome.downloads.removeFile(match.id, () =>
+          chrome.downloads.erase({ id: match.id }, () =>
+            respond(true)));
+      });
       return true;
   }
 }

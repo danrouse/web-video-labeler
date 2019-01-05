@@ -7,7 +7,7 @@
   "scripts": {
     "tsc": "tsc -p tsconfig.json --preserveWatchOutput",
     "rollup:main": "rollup -c",
-    "rollup:background": "rollup dist/extension/messaging.js --file dist/extension/messaging.bundle.js --format iife -n messaging",
+    "rollup:background": "rollup dist/extension/downloads.js --file dist/extension/downloads.bundle.js --format iife -n downloads",
     "copy:static": "cpx \"static/**/*\" dist",
     "copy:css": "cpx \"src/**/*.css\" dist",
     "pack:crx": "crx pack dist -o dist/web-video-labeler.crx",

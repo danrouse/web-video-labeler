@@ -9,7 +9,7 @@ import LabelClassPanel from './LabelClassPanel';
 import videoFrameToDataURL from '../util/videoFrameToDataURL';
 import { getVideoID, toggleYouTubeUI } from '../util/youtube';
 import { scaleRect } from '../util/rect';
-import { getAbsoluteDownloadPath, download } from '../extension/messaging';
+import { getAbsolutePath, download, deleteDownload } from '../extension/downloads';
 import { labeledImageToDarknet } from '../output/darknet';
 import { labeledImageToPascalVOCXML } from '../output/pascal-voc-xml';
 import './WebVideoLabeler.css';
@@ -21,6 +21,7 @@ interface State {
   isSettingsPanelVisible: boolean;
   isHelpPanelVisible: boolean;
   isLabelClassPanelVisible: boolean;
+  downloadedFiles: string[][];
   settings: UserSettings;
 
   isSeeking: boolean;
@@ -36,6 +37,7 @@ const defaultState: State = {
   isSettingsPanelVisible: false,
   isHelpPanelVisible: false,
   isLabelClassPanelVisible: false,
+  downloadedFiles: [],
   settings: {
     skipLength: 10,
     skipLengthFrameRate: 24,
@@ -127,6 +129,7 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
     const scale = this.state.settings.savedImageScale;
     const filenameBase = `${this.state.settings.projectName}/${getVideoID()}_${frame}`;
     const filename = `${filenameBase}.jpg`;
+    const filenames = [filename];
 
     const labeledImage = {
       filename,
@@ -150,28 +153,42 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
         labelCounts[label.name] += 1;
         const croppedFilename = `${filenameBase}_${label.name}-${labelCounts[label.name]}.jpg`;
         download(videoFrameToDataURL(this.props.video, label.rect), croppedFilename);
+        filenames.push(croppedFilename);
       });
     }
 
     if (this.state.settings.saveDarknet) {
       const data = labeledImageToDarknet(labeledImage);
       download(`data:text/plain;,${data.data}`, data.path);
+      filenames.push(data.path);
 
       const prepareScriptFilename = 'prepare_darknet_training_data.py';
-      if (!await getAbsoluteDownloadPath(prepareScriptFilename)) {
+      if (!(await getAbsolutePath(prepareScriptFilename))) {
         download(chrome.extension.getURL(prepareScriptFilename), prepareScriptFilename);
+        filenames.push(prepareScriptFilename);
       }
     }
 
     if (this.state.settings.savePascalVOCXML) {
       const data = await labeledImageToPascalVOCXML(labeledImage);
       download(`data:text/plain;,${data.data}`, data.path);
+      filenames.push(data.path);
     }
 
     if (this.state.settings.saveJSON) {
       const data = JSON.stringify(labeledImage, null, 2);
-      download(`data:text/plain;,${data}`, filename.replace(/\.jpg$/, '.json'));
+      const path = filename.replace(/\.jpg$/, '.json');
+      download(`data:text/plain;,${data}`, path);
+      filenames.push(path);
     }
+
+    this.setState({ downloadedFiles: this.state.downloadedFiles.concat([filenames]) });
+  }
+
+  undo = async () => {
+    const filesToDelete = this.state.downloadedFiles[this.state.downloadedFiles.length - 1];
+    await Promise.all(filesToDelete.map(f => deleteDownload(f)));
+    this.setState({ downloadedFiles: this.state.downloadedFiles.slice(0, -1) });
   }
 
   render() {
@@ -188,6 +205,7 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
           isSeeking={this.state.isSeeking}
           canClear={this.state.labels.length > 0}
           canStepBackward={this.props.video.currentTime !== 0}
+          canUndo={this.state.downloadedFiles.length > 0}
 
           startLabeling={this.startLabeling}
           stopLabeling={this.stopLabeling}
@@ -195,6 +213,7 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
           stepBackward={this.prev}
           stepForward={this.skip}
           next={this.next}
+          undo={this.undo}
           toggleSettingsPanel={this.toggleSettingsPanel}
           toggleHelpPanel={this.toggleHelpPanel}
           toggleLabelClassPanel={this.toggleLabelClassPanel}

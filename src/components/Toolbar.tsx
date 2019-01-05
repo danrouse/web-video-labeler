@@ -6,6 +6,7 @@ interface Props {
   isSeeking: boolean;
   canClear: boolean;
   canStepBackward: boolean;
+  canUndo: boolean;
 
   startLabeling: () => void;
   stopLabeling: () => void;
@@ -13,6 +14,7 @@ interface Props {
   stepBackward: () => void;
   stepForward: () => void;
   next: () => void;
+  undo: () => void;
   toggleSettingsPanel: () => void;
   toggleHelpPanel: () => void;
   toggleLabelClassPanel: () => void;
@@ -46,6 +48,9 @@ export default function Toolbar(props: Props) {
           </button>
           <button className="icon" onClick={props.stepForward} disabled={props.isSeeking} title="Skip Ahead">
             <i className="fas fa-step-forward" />
+          </button>
+          <button className="icon" onClick={props.undo} disabled={!props.canUndo} title="Undo">
+            <i className="fas fa-undo" />
           </button>
           <button onClick={props.next} disabled={props.isSeeking} title="Next">
             <i className="fas fa-check" />
