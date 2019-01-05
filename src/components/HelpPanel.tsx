@@ -28,19 +28,12 @@ export default function HelpPanel({ onClose }: Props) {
             </ul>
           </li>
           <li>
-            When the frame is fully labeled, click <button><i className="fas fa-check" /> Continue</button>
-            to save the labels, download the image, and skip the video forward.
+            When the frame is fully labeled, click <button><i className="fas fa-check" /> Next</button>
+            to download the image and labels, and to skip the video forward.
           </li>
           <li>
-            Once you are done, download the labels by clicking the
-            <button><i className="fas fa-download" /></button> download button.
-          </li>
-          <li>
-            Extract the archive use the accompanying scripts to use the data:
-            <ul>
-              <li><code>move_downloaded_images.sh</code> relocates downloaded images to the annotations data dir</li>
-              <li><code>train.sh</code> calls the training binary (will move downloaded images if not already)</li>
-            </ul>
+            <em>Darknet output</em>: after all of the data is saved, run the downloaded script
+            <code>prepare_darknet_training_data.py</code> to prepare the dataset with class IDs.
           </li>
         </ul>
       </LabelBox>
@@ -51,28 +44,8 @@ export default function HelpPanel({ onClose }: Props) {
           <li><button><i className="fas fa-undo" /></button> Undo saving last frame</li>
           <li><button><i className="fas fa-step-backward" /></button> Step backward</li>
           <li><button><i className="fas fa-step-forward" /></button> Step forward</li>
-          <li>
-            <button><i className="fas fa-download" /></button> Download
-            label annotations and scripts to use for training
-          </li>
-          <li><button><i className="fas fa-trash" /></button> Erase label annotation data</li>
-          <li>
-            <button><i className="fas fa-tags" /></button> Open
-            class manager, to remove or import lists of label classes
-          </li>
           <li><button><i className="fas fa-cog" /></button> Open settings menu</li>
         </ul>
-      </LabelBox>
-      <LabelBox label="Combining multiple exports">
-        <p>
-          Exports include a script, <code>combine_projects.sh</code>, which can be used to combine
-          multiple sets of annotations. The first argument is the export directory to
-          merge into, followed by any number of other exports (with or without
-          extracting the ZIP file.)
-        </p>
-        <pre>
-          $ ./combine_projects.sh . ../data2.zip ../data3-extracted
-        </pre>
       </LabelBox>
       <LabelBox label="About">
         <p>
