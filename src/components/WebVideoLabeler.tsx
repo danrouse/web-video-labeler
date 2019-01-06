@@ -12,6 +12,8 @@ import { scaleRect } from '../util/rect';
 import { getAbsolutePath, download, deleteDownload } from '../extension/downloads';
 import { labeledImageToDarknet } from '../output/darknet';
 import { labeledImageToPascalVOCXML } from '../output/pascal-voc-xml';
+import { VideoCorrelationTracker } from 'dlib-correlation-tracker-js';
+
 import './WebVideoLabeler.css';
 
 interface UndoableAction {
@@ -64,11 +66,38 @@ const defaultState: State = {
 
 export default class App extends React.Component<{ video: HTMLVideoElement }, State> {
   state = defaultState;
+  trackers: VideoCorrelationTracker[] = [];
+
+  updateTracker() {
+    this.state.labels.forEach((label, i) => {
+      if (!this.trackers[i]) {
+        this.trackers[i] = new VideoCorrelationTracker(this.props.video, label.rect);
+      } else {
+        this.trackers[i].update(label.rect);
+      }
+    });
+  }
+  updateTrackedRect = () => {
+    const labels = this.state.labels.map((label, i) => {
+      if (!this.trackers[i]) return label;
+      const rect = this.trackers[i].prediction;
+      return {
+        ...label,
+        rect,
+      };
+    });
+    this.setState({ labels });
+  }
 
   componentWillMount() {
     this.props.video.addEventListener('play', () => this.setState({ isLabeling: false }));
     this.props.video.addEventListener('seeking', () => this.setState({ isSeeking: true }));
-    this.props.video.addEventListener('seeked', () => this.setState({ isSeeking: false }));
+    this.props.video.addEventListener('seeked', () => this.setState(
+      { isSeeking: false }, () => this.updateTrackedRect()));
+  }
+
+  componentWillUnmount() {
+    VideoCorrelationTracker.freeMemory();
   }
 
   resetSettings = () => confirm('are you sure you want to reset all settings?') &&
@@ -87,6 +116,7 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
         ...label,
         rect: scaleRect(label.rect, rescale),
       }));
+      VideoCorrelationTracker.reserveMemory(this.props.video);
     }
     this.setState({ labels, videoScale, videoScaleWidth });
   }
@@ -94,6 +124,11 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
     const labelClasses = new Set(this.state.labelClasses);
     labels.forEach(({ name }) => name !== 'unknown' && labelClasses.add(name));
     this.setState({ labels, labelClasses: Array.from(labelClasses) }, callback);
+    if (labels.length < this.trackers.length) {
+      for (let i = labels.length; i < this.trackers.length; i += 1) {
+        delete this.trackers[i];
+      }
+    }
   }
   handleSettingsChange = (settings: Partial<UserSettings>) => this.setState({
     settings: {
@@ -111,6 +146,7 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
     this.props.video.pause();
     toggleYouTubeUI(false);
     this.setState({ wasPlayingBeforeLabeling, isLabeling: true });
+    this.updateTracker();
   }
   stopLabeling = () => {
     if (this.state.wasPlayingBeforeLabeling) {
@@ -122,10 +158,11 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
   skip = () => this.seek(this.state.settings.skipLength / this.state.settings.skipLengthFrameRate);
   prev = () => this.seek(-this.state.settings.skipLength / this.state.settings.skipLengthFrameRate);
   next = async () => {
+    this.updateTracker();
+    this.skip();
     if (this.state.settings.saveImagesWithoutLabels || this.state.labels.length > 0) {
       await this.downloadFrame();
     }
-    this.skip();
   }
 
   downloadFrame = async () => {

@@ -43,6 +43,7 @@
     "web-ext": "^2.9.3"
   },
   "dependencies": {
+    "dlib-correlation-tracker-js": "file:../dlib-correlation-tracker-js",
     "react": "^16.6.3",
     "react-dom": "^16.6.3"
   }
