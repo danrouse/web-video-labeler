@@ -101,14 +101,63 @@ export default class SettingsPanel extends React.Component<Props> {
                   <SettingsInput
                     name="saveJSON"
                     type="checkbox"
-                    value={this.props.settings.saveJSON}
                     checked={this.props.settings.saveJSON}
                     onChange={this.handleInput}
                   />
                 </label>
               </div>
             </label>
+            <label>
+              Save to S3?
+              <p>Images and annotations will be saved to S3 instead of downloaded to your device.</p>
+              <SettingsInput
+                name="saveToS3"
+                type="checkbox"
+                checked={this.props.settings.saveToS3}
+                onChange={this.handleInput}
+              />
+            </label>
           </LabelBox>
+          {this.props.settings.saveToS3 &&
+            <LabelBox label="AWS Settings">
+              <label>
+                AWS Region
+                <SettingsInput
+                  name="s3AWSRegion"
+                  type="text"
+                  value={this.props.settings.s3AWSRegion}
+                  onChange={this.handleInput}
+                />
+              </label>
+              <label>
+                Access Key ID
+                <SettingsInput
+                  name="s3AWSAccessKeyID"
+                  type="text"
+                  value={this.props.settings.s3AWSAccessKeyID}
+                  onChange={this.handleInput}
+                />
+              </label>
+              <label>
+                Secret Access Key
+                <SettingsInput
+                  name="s3AWSSecretAccessKey"
+                  type="text"
+                  value={this.props.settings.s3AWSSecretAccessKey}
+                  onChange={this.handleInput}
+                />
+              </label>
+              <label>
+                S3 Bucket
+                <SettingsInput
+                  name="s3AWSBucket"
+                  type="text"
+                  value={this.props.settings.s3AWSBucket}
+                  onChange={this.handleInput}
+                />
+              </label>
+            </LabelBox>
+          }
           <LabelBox label="Downloading" className="SettingsPanel__LabelBox">
             <label>
               Use correlation tracker?

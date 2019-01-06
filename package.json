@@ -7,7 +7,7 @@
   "scripts": {
     "tsc": "tsc -p tsconfig.json --preserveWatchOutput",
     "rollup:main": "rollup -c",
-    "rollup:background": "rollup dist/extension/downloads.js --file dist/extension/downloads.bundle.js --format iife -n downloads",
+    "rollup:background": "rollup dist/downloads/chrome.js --file dist/downloads/chrome.bundle.js --format iife -n downloads",
     "copy:static": "cpx \"static/**/*\" dist",
     "copy:css": "cpx \"src/**/*.css\" dist",
     "copy:dlib": "cpx \"node_modules/dlib-correlation-tracker-js/dist/binding-browser.wasm\" dist",

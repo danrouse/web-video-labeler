@@ -43,6 +43,13 @@ declare interface UserSettings {
   saveDarknet: boolean;
   savePascalVOCXML: boolean;
   saveJSON: boolean;
+
   gridSize: number;
   projectName: string;
+
+  saveToS3: boolean;
+  s3AWSRegion: string;
+  s3AWSAccessKeyID: string;
+  s3AWSSecretAccessKey: string;
+  s3AWSBucket: string;
 }

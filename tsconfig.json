@@ -12,6 +12,7 @@
   },
   "include": [
     "src/*.ts",
-    "src/extension/*.ts"
+    "src/extension/liveReload.ts",
+    "src/downloads/chrome.ts"
   ]
 }

@@ -9,11 +9,10 @@ import LabelClassPanel from './LabelClassPanel';
 import videoFrameToDataURL from '../util/videoFrameToDataURL';
 import { getVideoID, toggleYouTubeUI } from '../util/youtube';
 import { scaleRect } from '../util/rect';
-import { getAbsolutePath, download, deleteDownload } from '../extension/downloads';
+import { getAbsolutePath, download, deleteDownload } from '../downloads';
 import { labeledImageToDarknet } from '../output/darknet';
 import { labeledImageToPascalVOCXML } from '../output/pascal-voc-xml';
-import { VideoCorrelationTracker } from 'dlib-correlation-tracker-js';
-
+import { VideoCorrelationTracker } from 'dlib-correlation-tracker-js/lib-browser';
 import './WebVideoLabeler.css';
 
 interface UndoableAction {
@@ -55,6 +54,11 @@ const defaultState: State = {
     saveDarknet: true,
     savePascalVOCXML: true,
     saveJSON: false,
+    saveToS3: false,
+    s3AWSRegion: 'us-east-1',
+    s3AWSAccessKeyID: '',
+    s3AWSSecretAccessKey: '',
+    s3AWSBucket: 'web-video-labeler',
     gridSize: 16,
     projectName: 'data',
   },
@@ -159,9 +163,7 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
     const frame = Math.floor(time * this.state.settings.skipLengthFrameRate);
     const filenameBase = `${this.state.settings.projectName}/${getVideoID()}_${frame}`;
     const filename = `${filenameBase}.jpg`;
-    const filenames = [filename];
-
-    const labeledImage = {
+    const labeledImage: LabeledImage = {
       filename,
       frame,
       time,
@@ -173,56 +175,70 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
       width: this.props.video.videoWidth,
       height: this.props.video.videoHeight,
     };
+    const images = await this.downloadImages(filename);
+    const data = await this.downloadData(labeledImage);
+    this.setState({
+      undoableActions: this.state.undoableActions.concat([{
+        filenames: [...images, ...data],
+        time: this.props.video.currentTime,
+      }]),
+    });
+  }
 
-    await download(videoFrameToDataURL(this.props.video, undefined, this.state.settings.savedImageScale), filename);
+  downloadImages = async (filename: string) => {
+    const filenames = [filename];
+    await download(
+      videoFrameToDataURL(this.props.video, undefined, this.state.settings.savedImageScale),
+      filename,
+      this.state.settings,
+    );
 
     if (this.state.settings.saveCroppedImages) {
       const labelCounts: { [name: string]: number } = {};
       for (const label of this.state.labels) {
         if (!labelCounts[label.name]) labelCounts[label.name] = 0;
         labelCounts[label.name] += 1;
-        const croppedFilename = `${filenameBase}_${label.name}-${labelCounts[label.name]}.jpg`;
-        await download(videoFrameToDataURL(this.props.video, label.rect), croppedFilename);
+        const croppedFilename = filename.replace(/\.jpg$/, `_${label.name}-${labelCounts[label.name]}.jpg`);
+        await download(videoFrameToDataURL(this.props.video, label.rect), croppedFilename, this.state.settings);
         filenames.push(croppedFilename);
       }
     }
 
+    return filenames;
+  }
+
+  downloadData = async (labeledImage: LabeledImage) => {
+    const filenames = [];
     if (this.state.settings.saveDarknet) {
       const data = labeledImageToDarknet(labeledImage);
-      await download(`data:text/plain;,${data.data}`, data.path);
+      await download(`data:text/plain;,${data.data}`, data.path, this.state.settings);
       filenames.push(data.path);
 
       const prepareScriptFilename = 'prepare_darknet_training_data.py';
-      if (!(await getAbsolutePath(prepareScriptFilename))) {
-        await download(chrome.extension.getURL(prepareScriptFilename), prepareScriptFilename);
+      if (!(await getAbsolutePath(prepareScriptFilename, this.state.settings))) {
+        await download(chrome.extension.getURL(prepareScriptFilename), prepareScriptFilename, this.state.settings);
         filenames.push(prepareScriptFilename);
       }
     }
 
     if (this.state.settings.savePascalVOCXML) {
-      const data = await labeledImageToPascalVOCXML(labeledImage);
-      await download(`data:text/plain;,${data.data}`, data.path);
+      const data = await labeledImageToPascalVOCXML(labeledImage, this.state.settings);
+      await download(`data:text/plain;,${data.data}`, data.path, this.state.settings);
       filenames.push(data.path);
     }
 
     if (this.state.settings.saveJSON) {
       const data = JSON.stringify(labeledImage, null, 2);
-      const path = `${filenameBase}.json`;
-      await download(`data:text/plain;,${data}`, path);
+      const path = labeledImage.filename.replace(/\.jpg$/, '.json');
+      await download(`data:text/plain;,${data}`, path, this.state.settings);
       filenames.push(path);
     }
-
-    this.setState({
-      undoableActions: this.state.undoableActions.concat([{
-        filenames,
-        time: this.props.video.currentTime,
-      }]),
-    });
+    return filenames;
   }
 
   undo = async () => {
     const action = this.state.undoableActions[this.state.undoableActions.length - 1];
-    await Promise.all(action.filenames.map(f => deleteDownload(f)));
+    await Promise.all(action.filenames.map(f => deleteDownload(f, this.state.settings)));
     this.props.video.currentTime = action.time;
     this.setState({ undoableActions: this.state.undoableActions.slice(0, -1) });
   }

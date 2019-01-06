@@ -24,7 +24,7 @@
   "background": {
     "scripts": [
       "extension/liveReload.js",
-      "extension/downloads.bundle.js"
+      "downloads/chrome.bundle.js"
     ]
   },
   "web_accessible_resources": [
