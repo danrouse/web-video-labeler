@@ -12,13 +12,13 @@ class Random {
 
 const memo: { [key: string]: string } = {};
 
-export default function hashStringToColor(str: string) {
+export default function stringToColor(str: string) {
   if (memo[str]) return memo[str];
   Random.seed(str);
   const h = Math.floor(Random.next * 256);
   const s = Math.floor(Random.next * 256);
   const l = Math.floor(Random.next * 256);
-  const color = `hsl(${h}, ${30 + ((50 * s) / 256)}%, ${60 + ((30 * l) / 256)}%)`;
+  const color = `hsl(${h}, ${50 + ((50 * s) / 256)}%, ${60 + ((30 * l) / 256)}%)`;
   memo[str] = color;
   return color;
 }
