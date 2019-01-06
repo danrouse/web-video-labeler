@@ -46,6 +46,7 @@
   .WebVideoLabeler button:disabled {
     color: #888;
     background-color: #d6d8d2;
+    transition: none;
   }
   .WebVideoLabeler button:hover:not(:disabled) {
     cursor: pointer;
