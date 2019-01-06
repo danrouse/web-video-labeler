@@ -22,7 +22,7 @@ export default {
     alias({
       jszip: path.join(__dirname, './node_modules/jszip/dist/jszip.js')
     }),
-    resolve({ web: true }),
+    resolve({ web: true, browser: true }),
     css({ output: OUTPUT_CSS_PATH }),
     cjs({
       namedExports: {

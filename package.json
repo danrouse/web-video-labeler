@@ -10,6 +10,7 @@
     "rollup:background": "rollup dist/extension/downloads.js --file dist/extension/downloads.bundle.js --format iife -n downloads",
     "copy:static": "cpx \"static/**/*\" dist",
     "copy:css": "cpx \"src/**/*.css\" dist",
+    "copy:dlib": "cpx \"node_modules/dlib-correlation-tracker-js/dist/binding-browser.wasm\" dist",
     "pack:crx": "crx pack dist -o dist/web-video-labeler.crx",
     "pack:xpi": "web-ext sign -s dist -a dist -i *.crx -i key.pem",
     "lint": "tslint -p tsconfig.json",
