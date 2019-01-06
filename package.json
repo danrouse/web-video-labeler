@@ -1,6 +1,6 @@
 {
   "name": "web-video-labeler",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Label videos on the web for training image classifiers",
   "repository": "https://github.com/danrouse/web-video-labeler",
   "main": "dist/main.js",
