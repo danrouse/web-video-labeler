@@ -85,7 +85,6 @@ export default class SettingsPanel extends React.Component<Props> {
                   <SettingsInput
                     name="saveDarknet"
                     type="checkbox"
-                    value={this.props.settings.saveDarknet}
                     checked={this.props.settings.saveDarknet}
                     onChange={this.handleInput}
                   />
@@ -95,7 +94,6 @@ export default class SettingsPanel extends React.Component<Props> {
                   <SettingsInput
                     name="savePascalVOCXML"
                     type="checkbox"
-                    value={this.props.settings.savePascalVOCXML}
                     checked={this.props.settings.savePascalVOCXML}
                     onChange={this.handleInput}
                   />

@@ -7,19 +7,21 @@
 .SettingsPanel__range {
   display: flex;
   align-items: center;
+  border-color: inherit;
 }
 
 .SettingsPanel__radio-group {
   display: flex;
   justify-content: space-around;
   text-align: center;
+  border-color: inherit;
 }
 
 .SettingsPanel .SettingsPanel__radio-group label {
   align-items: center;
 }
 
-/* puke in my own mouth a bit at this css specificity battle */
+/* TODO: puke in my own mouth a bit at this css specificity battle */
 .SettingsPanel__inline.SettingsPanel__inline.SettingsPanel__inline {
   display: flex;
   flex-direction: row;

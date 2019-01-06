@@ -31,7 +31,7 @@
       left: 12px;
       right: 12px;
       bottom: 0;
-      background-color: lightgray;
+      background-color: var(--light-blue);
     }
     .ModalDialog__title > button:first-child {
       float: right;
@@ -62,7 +62,7 @@
     left: 12px;
     right: 12px;
     top: 0;
-    background-color: lightgray;
+    background-color: var(--light-blue);
   }
 .ModalDialog__buttons button:last-child {
   flex: 1;
