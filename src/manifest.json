@@ -1,0 +1,32 @@
+{
+  "manifest_version": 2,
+  "name": "Web Video Labeler",
+  "permissions": [
+    "activeTab",
+    "declarativeContent"
+  ],
+  "optional_permissions": [
+    "downloads"
+  ],
+  "background": {
+    "scripts": [
+      "background.js",
+      "downloads/chrome.bundle.js"
+    ]
+  },
+  "web_accessible_resources": [
+    "prepare_darknet_training_data.py",
+    "binding-browser.wasm"
+  ],
+  "icons": {
+    "16": "icon-16.png",
+    "48": "icon-48.png",
+    "128": "icon-128.png"
+  },
+  "page_action": {
+    "default_icon": {
+      "19": "icon-inactive-19.png",
+      "38": "icon-inactive-38.png"
+    }
+  }
+}

@@ -26,7 +26,7 @@ export default {
     cjs({
       namedExports: {
         'node_modules/react/index.js': ['Children', 'Component', 'PropTypes', 'createElement'],
-        'node_modules/react-dom/index.js': ['render', 'createPortal'],
+        'node_modules/react-dom/index.js': ['render', 'createPortal', 'unmountComponentAtNode'],
       }
     }),
     hash('dist/.rollup-hash', [OUTPUT_CSS_PATH])

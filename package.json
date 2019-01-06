@@ -3,6 +3,7 @@
   "version": "0.0.6",
   "description": "Label videos on the web for training image classifiers",
   "repository": "https://github.com/danrouse/web-video-labeler",
+  "homepage": "https://github.com/danrouse/web-video-labeler",
   "main": "dist/main.js",
   "scripts": {
     "tsc": "tsc -p tsconfig.json --preserveWatchOutput",
@@ -11,6 +12,7 @@
     "copy:static": "cpx \"static/**/*\" dist",
     "copy:css": "cpx \"src/**/*.css\" dist",
     "copy:dlib": "cpx \"node_modules/dlib-correlation-tracker-js/dist/binding-browser.wasm\" dist",
+    "copy:manifest": "node prepare-manifest.js",
     "pack:crx": "crx pack dist -o dist/web-video-labeler.crx",
     "pack:xpi": "web-ext sign -s dist -a dist -i *.crx -i key.pem",
     "lint": "tslint -p tsconfig.json",
@@ -18,7 +20,7 @@
     "build": "NODE_ENV=production npm-run-all --serial clean tsc copy:* \"rollup:* -- --compact\"",
     "pack": "npm run copy:static && npm-run-all --parallel pack:*",
     "watch": "npm-run-all --parallel -l \"tsc -- -w\" \"copy:* -- -v -w\" \"rollup:* -- -w\"",
-    "version": "node -p \"require('fs').writeFileSync('static/manifest.json', JSON.stringify({ ...require('./static/manifest.json'), version: require('./package.json').version }, null, 2))\" && git add static/manifest.json",
+    "version": "npm run copy:manifest && git add dist/manifest.json",
     "start": "npm run watch"
   },
   "author": "Dan Rouse <dan@rouse.house>",

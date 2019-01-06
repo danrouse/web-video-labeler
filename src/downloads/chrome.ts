@@ -26,6 +26,16 @@ export const deleteDownload = (filename: string) =>
   sendMessage<boolean>({ filename, type: 'DELETE_DOWNLOAD' });
 
 if (chrome.extension.getBackgroundPage && chrome.extension.getBackgroundPage() === window) {
+  const permission = () =>
+    new Promise((resolve, reject) =>
+      chrome.permissions.request(
+        { permissions: ['downloads'] },
+        (hasPerm) => {
+          if (!hasPerm) return reject('permission denied');
+          resolve();
+        },
+      ));
+
   function findDownload(path: string): Promise<chrome.downloads.DownloadItem | null> {
     return new Promise(resolve =>
       chrome.downloads.search(
@@ -37,24 +47,27 @@ if (chrome.extension.getBackgroundPage && chrome.extension.getBackgroundPage() =
   function messageHandler(message: Message, _: chrome.runtime.MessageSender, respond: (response: any) => void) {
     switch (message.type) {
       case 'FETCH_DOWNLOAD_PATH':
-        findDownload(message.filename).then(match => respond(match ? match.filename : ''));
+        permission().then(() =>
+          findDownload(message.filename).then(match => respond(match ? match.filename : '')));
         return true;
       case 'DOWNLOAD':
-        chrome.downloads.download(
-          {
-            url: message.url,
-            filename: DOWNLOAD_PREFIX + message.filename,
-          },
-          respond,
-        );
+        permission().then(() =>
+          chrome.downloads.download(
+            {
+              url: message.url,
+              filename: DOWNLOAD_PREFIX + message.filename,
+            },
+            respond,
+          ));
         return true;
       case 'DELETE_DOWNLOAD':
-        findDownload(message.filename).then((match) => {
-          if (!match) return respond(false);
-          chrome.downloads.removeFile(match.id, () =>
-            chrome.downloads.erase({ id: match.id }, () =>
-              respond(true)));
-        });
+        permission().then(() =>
+          findDownload(message.filename).then((match) => {
+            if (!match) return respond(false);
+            chrome.downloads.removeFile(match.id, () =>
+              chrome.downloads.erase({ id: match.id }, () =>
+                respond(true)));
+          }));
         return true;
     }
   }
