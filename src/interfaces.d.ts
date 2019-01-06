@@ -36,6 +36,7 @@ declare interface ArchiveFile {
 declare interface UserSettings {
   skipLength: number;
   skipLengthFrameRate: number;
+  useCorrelationTracker: boolean;
   saveCroppedImages: boolean;
   saveImagesWithoutLabels: boolean;
   savedImageScale: number;

@@ -48,6 +48,7 @@ const defaultState: State = {
   settings: {
     skipLength: 10,
     skipLengthFrameRate: 24,
+    useCorrelationTracker: true,
     saveCroppedImages: false,
     saveImagesWithoutLabels: false,
     savedImageScale: 1,
@@ -68,32 +69,11 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
   state = defaultState;
   trackers: VideoCorrelationTracker[] = [];
 
-  updateTracker() {
-    this.state.labels.forEach((label, i) => {
-      if (!this.trackers[i]) {
-        this.trackers[i] = new VideoCorrelationTracker(this.props.video, label.rect);
-      } else {
-        this.trackers[i].update(label.rect);
-      }
-    });
-  }
-  updateTrackedRect = () => {
-    const labels = this.state.labels.map((label, i) => {
-      if (!this.trackers[i]) return label;
-      const rect = this.trackers[i].prediction;
-      return {
-        ...label,
-        rect,
-      };
-    });
-    this.setState({ labels });
-  }
-
   componentWillMount() {
     this.props.video.addEventListener('play', () => this.setState({ isLabeling: false }));
     this.props.video.addEventListener('seeking', () => this.setState({ isSeeking: true }));
     this.props.video.addEventListener('seeked', () => this.setState(
-      { isSeeking: false }, () => this.updateTrackedRect()));
+      { isSeeking: false }, () => this.moveLabelsToTrackerPredictions()));
   }
 
   componentWillUnmount() {
@@ -116,7 +96,9 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
         ...label,
         rect: scaleRect(label.rect, rescale),
       }));
-      VideoCorrelationTracker.reserveMemory(this.props.video);
+      if (this.state.settings.useCorrelationTracker) {
+        VideoCorrelationTracker.reserveMemory(this.props.video);
+      }
     }
     this.setState({ labels, videoScale, videoScaleWidth });
   }
@@ -130,12 +112,17 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
       }
     }
   }
-  handleSettingsChange = (settings: Partial<UserSettings>) => this.setState({
-    settings: {
-      ...this.state.settings,
-      ...settings,
-    },
-  })
+  handleSettingsChange = (settings: Partial<UserSettings>) => {
+    if (settings.useCorrelationTracker === false) {
+      VideoCorrelationTracker.freeMemory();
+    }
+    this.setState({
+      settings: {
+        ...this.state.settings,
+        ...settings,
+      },
+    });
+  }
   handleLabelClassChange = (labelClasses: string[]) => this.setState({ labelClasses });
   toggleSettingsPanel = () => this.setState({ isSettingsPanelVisible: !this.state.isSettingsPanelVisible });
   toggleHelpPanel = () => this.setState({ isHelpPanelVisible: !this.state.isHelpPanelVisible });
@@ -146,7 +133,7 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
     this.props.video.pause();
     toggleYouTubeUI(false);
     this.setState({ wasPlayingBeforeLabeling, isLabeling: true });
-    this.updateTracker();
+    this.updateTrackers();
   }
   stopLabeling = () => {
     if (this.state.wasPlayingBeforeLabeling) {
@@ -154,11 +141,13 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
     }
     this.setState({ isLabeling: false }, () => toggleYouTubeUI(true));
   }
-  seek = (dt: number) => this.props.video.currentTime += dt;
+  seek = (dt: number) => {
+    this.updateTrackers();
+    this.props.video.currentTime += dt;
+  }
   skip = () => this.seek(this.state.settings.skipLength / this.state.settings.skipLengthFrameRate);
   prev = () => this.seek(-this.state.settings.skipLength / this.state.settings.skipLengthFrameRate);
   next = async () => {
-    this.updateTracker();
     this.skip();
     if (this.state.settings.saveImagesWithoutLabels || this.state.labels.length > 0) {
       await this.downloadFrame();
@@ -168,7 +157,6 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
   downloadFrame = async () => {
     const time = this.props.video.currentTime;
     const frame = Math.floor(time * this.state.settings.skipLengthFrameRate);
-    const scale = this.state.settings.savedImageScale;
     const filenameBase = `${this.state.settings.projectName}/${getVideoID()}_${frame}`;
     const filename = `${filenameBase}.jpg`;
     const filenames = [filename];
@@ -179,14 +167,14 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
       time,
       labels: this.state.labels.map(label => ({
         ...label,
-        rect: scaleRect(label.rect, scale),
+        rect: scaleRect(label.rect, this.state.settings.savedImageScale),
       })),
       url: window.location.href,
       width: this.props.video.videoWidth,
       height: this.props.video.videoHeight,
     };
 
-    await download(videoFrameToDataURL(this.props.video, undefined, scale), filename);
+    await download(videoFrameToDataURL(this.props.video, undefined, this.state.settings.savedImageScale), filename);
 
     if (this.state.settings.saveCroppedImages) {
       const labelCounts: { [name: string]: number } = {};
@@ -237,6 +225,30 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
     await Promise.all(action.filenames.map(f => deleteDownload(f)));
     this.props.video.currentTime = action.time;
     this.setState({ undoableActions: this.state.undoableActions.slice(0, -1) });
+  }
+
+  updateTrackers() {
+    if (!this.state.settings.useCorrelationTracker) return;
+    this.state.labels.forEach((label, i) => {
+      if (!this.trackers[i]) {
+        this.trackers[i] = new VideoCorrelationTracker(this.props.video, label.rect);
+      } else {
+        this.trackers[i].update(label.rect);
+      }
+    });
+  }
+
+  moveLabelsToTrackerPredictions = () => {
+    if (!this.state.settings.useCorrelationTracker) return;
+    const labels = this.state.labels.map((label, i) => {
+      if (!this.trackers[i]) return label;
+      const rect = this.trackers[i].prediction;
+      return {
+        ...label,
+        rect,
+      };
+    });
+    this.setState({ labels });
   }
 
   render() {

@@ -111,6 +111,16 @@ export default class SettingsPanel extends React.Component<Props> {
           </LabelBox>
           <LabelBox label="Downloading" className="SettingsPanel__LabelBox">
             <label>
+              Use correlation tracker?
+              <p>Predicts moving objects and moves labels automatically.</p>
+              <SettingsInput
+                name="useCorrelationTracker"
+                type="checkbox"
+                checked={this.props.settings.useCorrelationTracker}
+                onChange={this.handleInput}
+              />
+            </label>
+            <label>
               Save images with no labels?
               <p>If there are no labels present on an image, it will not be downloaded.</p>
               <SettingsInput
