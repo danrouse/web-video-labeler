@@ -74,7 +74,10 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
   trackers: VideoCorrelationTracker[] = [];
 
   componentWillMount() {
-    this.props.video.addEventListener('play', () => this.setState({ isLabeling: false }));
+    this.props.video.addEventListener('play', () => {
+      this.setState({ isLabeling: false });
+      toggleYouTubeUI(true);
+    });
     this.props.video.addEventListener('seeking', () => this.setState({ isSeeking: true }));
     this.props.video.addEventListener('seeked', () => this.setState(
       { isSeeking: false }, () => this.moveLabelsToTrackerPredictions()));
