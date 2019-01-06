@@ -60,7 +60,7 @@ const defaultState: State = {
     s3AWSSecretAccessKey: '',
     s3AWSBucket: 'web-video-labeler',
     gridSize: 16,
-    projectName: 'data',
+    outputDirName: 'data',
   },
 
   isSeeking: false,
@@ -164,7 +164,7 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
   downloadFrame = async () => {
     const time = this.props.video.currentTime;
     const frame = Math.floor(time * this.state.settings.skipLengthFrameRate);
-    const filenameBase = `${this.state.settings.projectName}/${getVideoID()}_${frame}`;
+    const filenameBase = `${this.state.settings.outputDirName}/${getVideoID()}_${frame}`;
     const filename = `${filenameBase}.jpg`;
     const labeledImage: LabeledImage = {
       filename,
@@ -252,7 +252,14 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
       if (!this.trackers[i]) {
         this.trackers[i] = new VideoCorrelationTracker(this.props.video, label.rect);
       } else {
-        this.trackers[i].update(label.rect);
+        const prediction = this.trackers[i].prediction;
+        const isUnchangedPrediction = (
+          prediction.x === label.rect.x &&
+          prediction.y === label.rect.y &&
+          prediction.width === label.rect.width &&
+          prediction.height === label.rect.height
+        );
+        if (!isUnchangedPrediction) this.trackers[i].update(label.rect);
       }
     });
   }

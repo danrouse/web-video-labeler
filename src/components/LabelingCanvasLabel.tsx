@@ -159,6 +159,7 @@ export default class LabelingCanvasLabel extends React.Component<Props, State> {
           transform: `translateX(${rect.x * scale}px) translateY(${rect.y * scale}px)`,
           width: rect.width * scale,
           height: rect.height * scale,
+          borderStyle: rectFromState ? 'dashed' : 'solid',
         }}
         label={name}
         getRef={ref => ref && (this.ref = ref)}

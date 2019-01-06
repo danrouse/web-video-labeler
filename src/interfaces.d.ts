@@ -45,7 +45,7 @@ declare interface UserSettings {
   saveJSON: boolean;
 
   gridSize: number;
-  projectName: string;
+  outputDirName: string;
 
   saveToS3: boolean;
   s3AWSRegion: string;

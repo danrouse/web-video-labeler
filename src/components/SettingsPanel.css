@@ -18,3 +18,17 @@
 .SettingsPanel .SettingsPanel__radio-group label {
   align-items: center;
 }
+
+/* puke in my own mouth a bit at this css specificity battle */
+.SettingsPanel__inline.SettingsPanel__inline.SettingsPanel__inline {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.SettingsPanel__inline.SettingsPanel__inline.SettingsPanel__inline > div {
+  flex: 1;
+}
+.SettingsPanel__inline.SettingsPanel__inline.SettingsPanel__inline > input,
+.SettingsPanel__inline.SettingsPanel__inline.SettingsPanel__inline > .SettingsPanel__range {
+  flex: none;
+}

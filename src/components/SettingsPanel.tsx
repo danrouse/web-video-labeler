@@ -63,21 +63,25 @@ export default class SettingsPanel extends React.Component<Props> {
         <form onSubmit={this.props.onClose}>
           <LabelBox label="Output" className="SettingsPanel__LabelBox">
             <label>
-              Project Name
-              <p>Name of output data directory.</p>
+              Output Directory Name
+              <p>
+                Name of output data directory.<br />
+                When saving locally, this will be nested underneath <code>Downloads/web-video-labeler</code>.<br />
+                When saving to S3, this will be prefixed to object keys.
+              </p>
               <SettingsInput
-                name="projectName"
+                name="outputDirName"
                 type="text"
-                value={this.props.settings.projectName}
+                value={this.props.settings.outputDirName}
                 onChange={this.handleInput}
               />
             </label>
             <label>
-              Format
+              Output Format
               <p>Save annotations in each of the following formats:</p>
               <div className="SettingsPanel__radio-group">
                 <label>
-                  Darknet/YOLO
+                  Darknet (YOLO)
                   <SettingsInput
                     name="saveDarknet"
                     type="checkbox"
@@ -107,9 +111,11 @@ export default class SettingsPanel extends React.Component<Props> {
                 </label>
               </div>
             </label>
-            <label>
-              Save to S3?
-              <p>Images and annotations will be saved to S3 instead of downloaded to your device.</p>
+            <label className="SettingsPanel__inline">
+              <div>
+                Save to S3?
+                <p>Images and annotations will be saved to S3 instead of downloaded to your device.</p>
+              </div>
               <SettingsInput
                 name="saveToS3"
                 type="checkbox"
@@ -159,9 +165,11 @@ export default class SettingsPanel extends React.Component<Props> {
             </LabelBox>
           }
           <LabelBox label="Downloading" className="SettingsPanel__LabelBox">
-            <label>
-              Use correlation tracker?
-              <p>Predicts moving objects and moves labels automatically.</p>
+            <label className="SettingsPanel__inline">
+              <div>
+                Use object tracker?
+                <p>Predicts moving objects and moves labels automatically.</p>
+              </div>
               <SettingsInput
                 name="useCorrelationTracker"
                 type="checkbox"
@@ -169,9 +177,11 @@ export default class SettingsPanel extends React.Component<Props> {
                 onChange={this.handleInput}
               />
             </label>
-            <label>
-              Save images with no labels?
-              <p>If there are no labels present on an image, it will not be downloaded.</p>
+            <label className="SettingsPanel__inline">
+              <div>
+                Save images with no labels?
+                <p>If there are no labels present on an image, it will not be downloaded.</p>
+              </div>
               <SettingsInput
                 type="checkbox"
                 name="saveImagesWithoutLabels"
@@ -179,9 +189,11 @@ export default class SettingsPanel extends React.Component<Props> {
                 checked={this.props.settings.saveImagesWithoutLabels}
               />
             </label>
-            <label>
-              Save cropped images?
-              <p>When saving images, also crop and save each labeled region separately.</p>
+            <label className="SettingsPanel__inline">
+              <div>
+                Save cropped images?
+                <p>When saving images, also crop and save each labeled region separately.</p>
+              </div>
               <SettingsInput
                 type="checkbox"
                 name="saveCroppedImages"
@@ -189,9 +201,11 @@ export default class SettingsPanel extends React.Component<Props> {
                 checked={this.props.settings.saveCroppedImages}
               />
             </label>
-            <label>
-              Downloaded image scale
-              <p>Scale to resize images to when saving, from 0 - 1.</p>
+            <label className="SettingsPanel__inline">
+              <div>
+                Downloaded image scale
+                <p>Scale to resize images to when saving, from 0 - 1.</p>
+              </div>
               <div className="SettingsPanel__range">
                 <span>{this.props.settings.savedImageScale}</span>
                 <SettingsInput
@@ -207,9 +221,11 @@ export default class SettingsPanel extends React.Component<Props> {
             </label>
           </LabelBox>
           <LabelBox label="Labeling" className="SettingsPanel__LabelBox">
-            <label>
-              Frame Skip
-              <p>How many frames to skip using playback controls.</p>
+            <label className="SettingsPanel__inline">
+              <div>
+                Frame Skip
+                <p>How many frames to skip using playback controls.</p>
+              </div>
               <SettingsInput
                 type="number"
                 step="1"
@@ -219,9 +235,11 @@ export default class SettingsPanel extends React.Component<Props> {
                 onChange={this.handleNumber}
               />
             </label>
-            <label>
-              Frame Rate
-              <p>Video frames per second, usually 24.</p>
+            <label className="SettingsPanel__inline">
+              <div>
+                Frame Rate
+                <p>Video frames per second, usually 24.</p>
+              </div>
               <SettingsInput
                 type="number"
                 step={1}
@@ -231,9 +249,11 @@ export default class SettingsPanel extends React.Component<Props> {
                 onChange={this.handleNumber}
               />
             </label>
-            <label>
-              Grid size
-              <p>Size of background grid, scaled to video. Set to 0 to disable.</p>
+            <label className="SettingsPanel__inline">
+              <div>
+                Grid size
+                <p>Size of background grid, scaled to video. Set to 0 to disable.</p>
+              </div>
               <div className="SettingsPanel__range">
                 <span>{this.props.settings.gridSize}</span>
                 <SettingsInput

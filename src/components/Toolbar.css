@@ -4,22 +4,37 @@
   bottom: 0;
   left: 0;
   right: 0;
+  white-space: nowrap;
+  display: flex;
+  justify-content: center;
+}
+
+.Toolbar__inner {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: rgba(240, 240, 240, 0.8);
-  box-shadow: 0 0 2px rgba(0,0,0,0.3);
-  white-space: nowrap;
+  /* box-shadow: 0 0 2px rgba(0,0,0,0.3); */
+  border: 1px solid var(--main-blue);
+  border-bottom: none;
   padding: 12px;
 }
 
-.Toolbar > div {
-  margin: 2px 2vw;
+.Toolbar__inner:after {
+  content: 'Web Video Labeler';
+  display: block;
+  position: absolute;
+  bottom: 100%;
+  left: -1px;
+  background-color: var(--main-blue);
+  padding: 3px;
+  font-weight: bold;
+  font-size: 10px;
 }
 
 @media screen and (max-width: 540px) {
-  .Toolbar {
+  .Toolbar__inner {
     flex-direction: column;
-    padding: 4px;
   }
 }

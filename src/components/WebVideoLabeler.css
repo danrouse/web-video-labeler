@@ -10,6 +10,8 @@
 .WebVideoLabeler {
   font-family: Roboto, Arial, sans-serif;
   font-size: 14px;
+  --main-blue: rgb(85, 199, 231);
+  --main-red: rgb(207, 18, 18);
 }
 
 .WebVideoLabeler,
@@ -17,31 +19,49 @@
   text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.3);
 }
 
+@keyframes button-hover {
+
+}
+@keyframes button-hover-inner {
+  from { transform: scale(0); }
+  to { transform: scale(1); }
+}
 
 .WebVideoLabeler button {
-  height: 28px;
+  height: 30px;
   margin: 2px;
-  padding: 4px;
-  border: 1px outset #ccc;
-  border-radius: 2px;
+  padding: 5px;
+  border: none;
+  border-radius: 1px;
   font-size: 13px;
   color: #222;
-  background-color: #ccc;
+  background-color: var(--main-blue);
   font-weight: bold;
   text-transform: uppercase;
+  position: relative;
+  transition: all 0.16s ease-out;
 }
   .WebVideoLabeler button:disabled {
     color: #888;
     background-color: #d6d8d2;
   }
   .WebVideoLabeler button:hover:not(:disabled) {
-    background-color: #aaa;
-    border-color: #aaa;
     cursor: pointer;
+    background-color: rgb(149, 223, 243);
+    animation: button-hover 0.16s ease-out 1;
   }
+    .WebVideoLabeler button:hover:not(:disabled):before {
+      content: '';
+      display: block;
+      position: absolute;
+      left: 0; top: 0; right: 0; bottom: 0;
+      border: 2px solid var(--main-blue);
+      border-radius: 1px;
+      animation: button-hover-inner 0.2s ease-out 1;
+    }
   .WebVideoLabeler button:active:not(:disabled) {
-    border-style: inset;
     outline: none;
+    color: var(--main-red);
   }
     .WebVideoLabeler button i {
       display: inline-block;
