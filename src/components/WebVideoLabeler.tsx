@@ -241,7 +241,7 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
 
   undo = async () => {
     const action = this.state.undoableActions[this.state.undoableActions.length - 1];
-    await Promise.all(action.filenames.map(f => deleteDownload(f, this.state.settings)));
+    for (const f of action.filenames) await deleteDownload(f, this.state.settings);
     this.props.video.currentTime = action.time;
     this.setState({ undoableActions: this.state.undoableActions.slice(0, -1) });
   }
