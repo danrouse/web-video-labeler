@@ -14,11 +14,17 @@
   --light-blue: rgb(149, 223, 243);
   --ultra-light-blue: rgb(207, 243, 252);
   --main-red: rgb(207, 18, 18);
+
+  --text-color: #222;
+  --text-light-color: #555;
+  --text-disabled-color: #888;
 }
 
 .WebVideoLabeler,
-.WebVideoLabeler button {
+.WebVideoLabeler button
+.WebVideoLabeler input {
   text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.3);
+  color: var(--text-color);
 }
 
 @keyframes button-hover {
@@ -28,6 +34,28 @@
   from { transform: scale(0); }
   to { transform: scale(1); }
 }
+@keyframes button-hover-contents {
+  0% { transform: scale(1); }
+  25% { transform: scale(0.95); }
+  75% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+  /* 0% { transform: rotateZ(0); transform-origin: bottom; }
+  25% { transform: rotateZ(-15deg); }
+  75% { transform: rotateZ(15deg); }
+  0% { transform: rotateZ(0deg); } */
+  /* 0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(100%);
+  }
+  50.01% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(0);
+  } */
+}
 
 .WebVideoLabeler button {
   height: 30px;
@@ -36,22 +64,25 @@
   border: none;
   border-radius: 1px;
   font-size: 13px;
-  color: #222;
   background-color: var(--main-blue);
   font-weight: bold;
   text-transform: uppercase;
   position: relative;
-  transition: all 0.16s ease-out;
+  transition: background-color 0.16s ease-out;
 }
   .WebVideoLabeler button:disabled {
-    color: #888;
+    color: var(--text-disabled-color);
     background-color: #d6d8d2;
     transition: none;
+  }
+  .WebVideoLabeler button:focus {
+    outline: 2px dashed var(--light-blue);
   }
   .WebVideoLabeler button:hover:not(:disabled) {
     cursor: pointer;
     background-color: var(--light-blue);
     animation: button-hover 0.16s ease-out 1;
+    overflow: hidden;
   }
     .WebVideoLabeler button:hover:not(:disabled):before {
       content: '';
@@ -61,6 +92,11 @@
       border: 2px solid var(--main-blue);
       border-radius: 1px;
       animation: button-hover-inner 0.2s ease-out 1;
+    }
+    .WebVideoLabeler button:hover:not(:disabled) i,
+    .WebVideoLabeler button:hover:not(:disabled) span {
+      display: inline-block;
+      animation: button-hover-contents 0.25s ease-in-out 1;
     }
   .WebVideoLabeler button:active:not(:disabled) {
     outline: none;

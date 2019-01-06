@@ -67,7 +67,7 @@
   .LabelBox label p {
     font-size: 11px;
     margin: 2px 0;
-    color: #555;
+    color: var(--text-light-color);
   }
 
   .LabelBox label input:not([type="checkbox"]) {
