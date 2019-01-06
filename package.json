@@ -18,9 +18,9 @@
     "lint": "tslint -p tsconfig.json",
     "clean": "rimraf dist/*",
     "build": "NODE_ENV=production npm-run-all --serial clean tsc copy:* \"rollup:* -- --compact\"",
-    "pack": "npm run copy:static && npm-run-all --parallel pack:*",
+    "pack": "npm run copy:manifest && npm-run-all --parallel pack:*",
     "watch": "npm-run-all --parallel -l \"tsc -- -w\" \"copy:* -- -v -w\" \"rollup:* -- -w\"",
-    "version": "npm run copy:manifest && git add dist/manifest.json",
+    "version": "npm run copy:manifest",
     "start": "npm run watch"
   },
   "author": "Dan Rouse <dan@rouse.house>",
