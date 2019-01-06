@@ -1,15 +1,18 @@
+const activeIcon = { 19: 'icons/icon-active-19.png', 38: 'icons/icon-active-38.png' };
+const inactiveIcon = { 19: 'icons/icon-inactive-19.png', 38: 'icons/icon-inactive-38.png' };
+
 chrome.pageAction.onClicked.addListener((tab) => {
   if (!tab.id) return;
   chrome.tabs.executeScript(tab.id as number, { code: 'document.getElementById("WebVideoLabeler")' }, ([elem]) => {
     if (elem) {
       chrome.pageAction.setIcon({
-        path: { 19: 'icon-inactive-19.png', 38: 'icon-inactive-38.png' },
+        path: inactiveIcon,
         tabId: tab.id as number,
       });
     } else {
       chrome.tabs.insertCSS(tab.id as number, { file: 'bundle.css' });
       chrome.pageAction.setIcon({
-        path: { 19: 'icon-active-19.png', 38: 'icon-active-38.png' },
+        path: activeIcon,
         tabId: tab.id as number,
       });
     }
