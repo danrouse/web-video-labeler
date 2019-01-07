@@ -11,7 +11,7 @@
   "background": {
     "scripts": [
       "background.js",
-      "downloads/chrome.bundle.js"
+      "downloads-chrome.bundle.js"
     ]
   },
   "web_accessible_resources": [

@@ -1,6 +1,8 @@
 const package = require('./package.json');
 const manifest = require('./src/manifest.json');
 
+// only request management permissions in development
+// (for live-reloading the extension)
 const permissions = manifest.permissions;
 if (process.env.NODE_ENV === 'development') {
   permissions.push('management');
