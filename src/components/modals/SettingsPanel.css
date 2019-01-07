@@ -13,12 +13,14 @@
 .SettingsPanel__radio-group {
   display: flex;
   justify-content: space-around;
-  text-align: center;
+  /* text-align: center; */
   border-color: inherit;
 }
 
 .SettingsPanel .SettingsPanel__radio-group label {
+  flex-direction: row-reverse;
   align-items: center;
+  margin-bottom: 0 !important;
 }
 
 /* TODO: puke in my own mouth a bit at this css specificity battle */

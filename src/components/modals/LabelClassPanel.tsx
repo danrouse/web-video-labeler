@@ -1,6 +1,6 @@
 import * as React from 'react';
-import ModalDialog from './ModalDialog';
-import LabelClassSelector from './LabelClassSelector';
+import ModalDialog from '../ModalDialog';
+import LabelClassSelector from '../LabelClassSelector';
 
 interface Props {
   labelClasses: string[];

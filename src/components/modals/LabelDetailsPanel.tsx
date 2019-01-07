@@ -1,8 +1,8 @@
 import * as React from 'react';
-import ModalDialog from './ModalDialog';
-import LabelBox from './LabelBox';
-import LabelClassSelector from './LabelClassSelector';
-import videoFrameToDataURL from '../util/videoFrameToDataURL';
+import ModalDialog from '../ModalDialog';
+import LabelBox from '../LabelBox';
+import LabelClassSelector from '../LabelClassSelector';
+import videoFrameToDataURL from '../../util/videoFrameToDataURL';
 
 interface Props {
   label: Label;
@@ -52,26 +52,26 @@ export default class LabelDetailsPanel extends React.Component<Props> {
           }
         </LabelBox>
         <LabelBox label="Pascal VOC XML output">
-          <label>
+          <label className="SettingsPanel__inline">
+            <div>Occluded</div>
             <input
               type="checkbox"
-              checked={this.props.label.truncated}
+              checked={this.props.label.truncated || false}
               name="occluded"
               onChange={this.handleInput}
             />
-            Occluded
           </label>
-          <label>
+          <label className="SettingsPanel__inline">
+            <div>Difficult</div>
             <input
               type="checkbox"
-              checked={this.props.label.difficult}
+              checked={this.props.label.difficult || false}
               name="difficult"
               onChange={this.handleInput}
             />
-            Difficult
           </label>
-          <label>
-            Pose
+          <label className="SettingsPanel__inline">
+            <div>Pose</div>
             <input
               type="text"
               value={this.props.label.pose}

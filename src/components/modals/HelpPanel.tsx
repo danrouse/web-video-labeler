@@ -1,6 +1,6 @@
 import * as React from 'react';
-import ModalDialog from './ModalDialog';
-import LabelBox from './LabelBox';
+import ModalDialog from '../ModalDialog';
+import LabelBox from '../LabelBox';
 
 interface Props {
   onClose: () => void;

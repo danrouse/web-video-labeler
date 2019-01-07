@@ -1,6 +1,6 @@
 import * as React from 'react';
-import ModalDialog from './ModalDialog';
-import LabelBox from './LabelBox';
+import ModalDialog from '../ModalDialog';
+import LabelBox from '../LabelBox';
 import './SettingsPanel.css';
 
 interface Props {
@@ -77,7 +77,7 @@ export default class SettingsPanel extends React.Component<Props> {
               />
             </label>
             <label>
-              Output Format
+              Output Formats
               <p>Save annotations in each of the following formats:</p>
               <div className="SettingsPanel__radio-group">
                 <label>

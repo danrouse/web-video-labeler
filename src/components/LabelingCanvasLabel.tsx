@@ -1,7 +1,7 @@
 import * as React from 'react';
 import LabelClassSelector from './LabelClassSelector';
 import LabelBox from './LabelBox';
-import LabelDetailsPanel from './LabelDetailsPanel';
+import LabelDetailsPanel from './modals/LabelDetailsPanel';
 import stringToColor from '../util/stringToColor';
 import { Anchors, getAnchors, anchorsToCursor, moveRect, resizeRect } from '../util/rect';
 import './LabelingCanvasLabel.css';
