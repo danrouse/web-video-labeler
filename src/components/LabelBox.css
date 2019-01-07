@@ -43,14 +43,26 @@
     display: block;
     text-indent: -1px;
   }
-  .LabelBox__buttons button:active:not(:disabled) {
+  .LabelBox__buttons button:focus {
+    outline: none;
     border: none;
   }
+  .LabelBox__buttons button:active:not(:disabled),
   .LabelBox__buttons button:hover:not(:disabled) {
+    outline: none;
+    border: none;
     background-color: rgba(0,0,0,0.5);
   }
     .LabelBox__buttons button i {
       font-size: 10px;
+      -webkit-text-stroke: 1px var(--text-color);
+    }
+    .LabelBox__buttons button:hover:not(:disabled) i {
+      -webkit-text-stroke-width: 0px;
+      animation: none;
+    }
+    .LabelBox__buttons button:hover:not(:disabled):before {
+      display: none;
     }
 
 .LabelBox label {
@@ -61,7 +73,7 @@
 }
 
 .LabelBox label:not(:last-child) {
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
   .LabelBox label p {

@@ -79,8 +79,8 @@ export default class VideoOverlay extends React.Component<Props, State> {
           top: y,
           pointerEvents: 'none',
           position: 'absolute',
-          zIndex: 1100,
-        }}
+          zIndex: 'var(--z-video-overlay)',
+        } as any}
       >
         {this.props.children}
       </div>

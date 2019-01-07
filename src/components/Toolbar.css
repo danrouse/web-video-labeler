@@ -1,6 +1,6 @@
 .Toolbar {
   position: fixed;
-  z-index: 1110;
+  z-index: var(--z-toolbar);
   bottom: 0;
   left: 0;
   right: 0;
@@ -15,7 +15,7 @@
   align-items: center;
   justify-content: center;
   background-color: rgba(240, 240, 240, 0.8);
-  /* box-shadow: 0 0 2px rgba(0,0,0,0.3); */
+  box-shadow: 0 0 2px rgba(0,0,0,0.3);
   border: 1px solid var(--main-blue);
   border-bottom: none;
   padding: 12px;
@@ -28,13 +28,7 @@
   bottom: 100%;
   left: -1px;
   background-color: var(--main-blue);
-  padding: 3px;
+  padding: 3px 4px;
   font-weight: bold;
   font-size: 10px;
-}
-
-@media screen and (max-width: 540px) {
-  .Toolbar__inner {
-    flex-direction: column;
-  }
 }

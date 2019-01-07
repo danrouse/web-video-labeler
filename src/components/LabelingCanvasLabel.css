@@ -1,10 +1,10 @@
 .LabelBox.LabelingCanvasLabel {
   position: absolute;
-  z-index: 1101;
+  z-index: var(--z-labeling-canvas-label);
   margin: 0;
 }
   .LabelingCanvasLabel--isActive {
-    z-index: 1102;
+    z-index: var(--z-labeling-canvas-label-active);
   }
 
 .LabelingCanvasLabel__resizeArea {

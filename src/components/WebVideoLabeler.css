@@ -8,21 +8,29 @@
 }
 
 .WebVideoLabeler {
-  font-family: Roboto, Arial, sans-serif;
   font-size: 14px;
+
   --main-blue: rgb(85, 199, 231);
   --light-blue: rgb(149, 223, 243);
   --ultra-light-blue: rgb(207, 243, 252);
   --main-red: rgb(207, 18, 18);
 
   --text-color: #222;
-  --text-light-color: #555;
+  --text-light-color: #666;
   --text-disabled-color: #888;
+
+  --z-video-overlay: 1100;
+  --z-labeling-canvas-label: 1101;
+  --z-labeling-canvas-label-active: 1102;
+  --z-modal-dialog: 1109;
+  --z-toolbar: 1110;
 }
 
 .WebVideoLabeler,
-.WebVideoLabeler button
-.WebVideoLabeler input {
+.WebVideoLabeler button,
+.WebVideoLabeler input,
+.WebVideoLabeler textarea {
+  font-family: Roboto, Arial, sans-serif;
   text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.3);
   color: var(--text-color);
 }
@@ -114,16 +122,18 @@
       margin: 0 2px 0 4px;
     }
 
-.WebVideoLabeler input {
+
+.WebVideoLabeler input,
+.WebVideoLabeler textarea {
   background-color: #fff;
   padding: 3px;
-  font-family: inherit;
   border: 2px solid var(--main-blue);
   border-color: inherit;
   border-radius: 1px;
   transition: background-color .16s ease-out;
 }
-.WebVideoLabeler input:focus {
+.WebVideoLabeler input:focus,
+.WebVideoLabeler textarea:focus {
   border-color: transparent;
   outline: none;
   background-color: var(--ultra-light-blue);
@@ -134,12 +144,9 @@
   -webkit-appearance: none;
   width: 16px;
   height: 16px;
-  background-color: #fff;
-  border: 2px solid var(--main-blue);
-  border-color: inherit;
-  border-radius: 1px;
   padding: 0;
   font-size: 12px;
+  cursor: pointer;
 }
 
 .WebVideoLabeler input[type="checkbox"]:focus {
@@ -155,6 +162,7 @@
   font-weight: 900;
   content: '\f00c';
 }
+
 
 .WebVideoLabeler input[type="range"] {
   -webkit-appearance: none;
