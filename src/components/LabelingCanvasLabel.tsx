@@ -30,6 +30,7 @@ interface State {
 
   isClassSelectorVisible?: boolean;
   isDetailsPanelVisible?: boolean;
+  isShiftKeyDown?: boolean;
 }
 
 export default class LabelingCanvasLabel extends React.Component<Props, State> {
@@ -41,6 +42,21 @@ export default class LabelingCanvasLabel extends React.Component<Props, State> {
     mouseDownY: 0,
     anchors: { left: false, right: false, top: false, bottom: false },
   };
+
+  handleKeyDown = (evt: KeyboardEvent) => {
+    if (evt.key === 'Shift') this.setState({ isShiftKeyDown: true });
+  }
+  handleKeyUp = (evt: KeyboardEvent) => {
+    if (evt.key === 'Shift') this.setState({ isShiftKeyDown: false });
+  }
+  componentDidMount() {
+    window.addEventListener('keydown', this.handleKeyDown);
+    window.addEventListener('keyup', this.handleKeyUp);
+  }
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.handleKeyDown);
+    window.removeEventListener('keyup', this.handleKeyUp);
+  }
 
   componentWillReceiveProps({ initializeWithMouseEvent }: Props) {
     if (initializeWithMouseEvent && initializeWithMouseEvent !== this.props.initializeWithMouseEvent) {
@@ -58,7 +74,13 @@ export default class LabelingCanvasLabel extends React.Component<Props, State> {
     if (!this.ref || !(this.ref.parentElement instanceof HTMLElement)) return;
     const clonedLabel: Label = {
       ...this.props.label,
-      rect: moveRect(this.props.label.rect, 6, 6, 1, this.ref.parentElement.getBoundingClientRect() as DOMRect),
+      rect: moveRect(
+        this.props.label.rect,
+        6 / this.props.scale,
+        6 / this.props.scale,
+        this.ref.parentElement.getBoundingClientRect().width,
+        this.ref.parentElement.getBoundingClientRect().height,
+      ),
     };
     this.props.onClone(clonedLabel);
   }
@@ -97,13 +119,22 @@ export default class LabelingCanvasLabel extends React.Component<Props, State> {
   move = (evt: MouseEvent) => {
     const { mouseDownX, mouseDownY, containerRect } = this.state;
     if (!containerRect) return;
+    let x2 = evt.clientX - mouseDownX;
+    let y2 = evt.clientY - mouseDownY;
+    if (this.state.isShiftKeyDown) {
+      if (Math.abs(x2) > Math.abs(y2)) {
+        y2 = 0;
+      } else {
+        x2 = 0;
+      }
+    }
     this.setState({
       workingRect: moveRect(
         this.props.label.rect,
-        evt.clientX - mouseDownX,
-        evt.clientY - mouseDownY,
-        this.props.scale,
-        containerRect,
+        x2 / this.props.scale,
+        y2 / this.props.scale,
+        containerRect.width / this.props.scale,
+        containerRect.height / this.props.scale,
       ),
     });
   }
@@ -114,11 +145,12 @@ export default class LabelingCanvasLabel extends React.Component<Props, State> {
     this.setState({
       workingRect: resizeRect(
         this.props.label.rect,
-        evt.clientX - containerRect.x,
-        evt.clientY - containerRect.y,
-        this.props.scale,
-        containerRect,
+        (evt.clientX - containerRect.x) / this.props.scale,
+        (evt.clientY - containerRect.y) / this.props.scale,
+        containerRect.width / this.props.scale,
+        containerRect.height / this.props.scale,
         anchors,
+        this.state.isShiftKeyDown,
       ),
     });
   }

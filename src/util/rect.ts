@@ -29,42 +29,44 @@ export function moveRect(
   rect: Rect,
   dx: number,
   dy: number,
-  scale: number,
-  containerRect: Rect,
+  xMax: number,
+  yMax: number,
 ): Rect {
   let { x, y, width, height } = rect; // tslint:disable-line prefer-const
-  x += dx / scale;
-  y += dy / scale;
+  x += dx;
+  y += dy;
   // constrain to container (all sides)
-  x = Math.max(Math.min(x, (containerRect.width / scale) - width), 0);
-  y = Math.max(Math.min(y, (containerRect.height / scale) - height), 0);
+  x = Math.max(Math.min(x, xMax - width), 0);
+  y = Math.max(Math.min(y, yMax - height), 0);
   return { x, y, width, height };
 }
 
 export function resizeRect(
   rect: Rect,
-  dx: number,
-  dy: number,
-  scale: number,
-  containerRect: Rect,
+  x2: number,
+  y2: number,
+  xMax: number,
+  yMax: number,
   anchors: Anchors,
+  restrictAspectRatio: boolean = false,
 ): Rect {
   let { x, y, width, height } = rect;
+  const ratio = width / height;
   // constrain to container (top left)
-  const x2 = Math.max(dx / scale, 0);
-  const y2 = Math.max(dy / scale, 0);
+  const x2_ = Math.max(x2, 0); // tslint:disable-line
+  const y2_ = Math.max(y2, 0); // tslint:disable-line
   // apply based on where the resize is anchored
   if (anchors.left) {
-    width += x - x2;
-    x = x2;
+    width += x - x2_;
+    x = x2_;
   } else if (anchors.right) {
-    width = x2 - x;
+    width = x2_ - x;
   }
   if (anchors.top) {
-    height += y - y2;
-    y = y2;
+    height += y - y2_;
+    y = y2_;
   } else if (anchors.bottom) {
-    height = y2 - y;
+    height = y2_ - y;
   }
   // invert coords when moving past the origin
   if (width < 0) {
@@ -76,8 +78,22 @@ export function resizeRect(
     height *= -1;
   }
   // constrain to container (bottom right)
-  width = Math.min(width, (containerRect.width / scale) - x);
-  height = Math.min(height, (containerRect.height / scale) - y);
+  width = Math.min(width, xMax - x);
+  height = Math.min(height, yMax - y);
+
+  if (restrictAspectRatio && (anchors.left || anchors.right) && (anchors.top || anchors.bottom)) {
+    if (width / height > ratio) {
+      if (x !== rect.x) {
+        x -= (height / ratio) - width;
+      }
+      width = height / ratio;
+    } else if (width / height < ratio) {
+      if (y !== rect.y) {
+        y -= (width / ratio) - height;
+      }
+      height = width / ratio;
+    }
+  }
   return { x, y, width, height };
 }
 
