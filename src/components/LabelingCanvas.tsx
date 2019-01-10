@@ -58,16 +58,8 @@ export default class LabelingCanvas extends React.Component<Props, State> {
 
   handleLabelChange = (index: number, label?: Label) => {
     const { labels, onLabelsChange } = this.props;
-    let nextLabels;
-    if (label) {
-      nextLabels = [
-        ...labels.slice(0, index),
-        label,
-        ...labels.slice((index || 0) + 1),
-      ];
-    } else {
-      nextLabels = labels.filter((_, i) => i !== index);
-    }
+    let nextLabels = labels.filter((_, i) => i !== index);
+    if (label) nextLabels = nextLabels.concat([label]);
     onLabelsChange(nextLabels);
   }
 
