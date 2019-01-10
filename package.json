@@ -34,7 +34,7 @@
     "lint": "tslint -p tsconfig.json",
     "clean": "rimraf dist/*",
     "watch:manifest": "chokidar package.json src/manifest.json prepare-manifest.js -c \"npm run generate:manifest\"",
-    "watch": "npm-run-all --parallel -l \"tsc -- -w\" \"copy:* -- -v -w\" generate:* watch:manifest \"rollup:* -- -w\"",
+    "watch": "tsc && npm-run-all --parallel -l \"tsc -- -w\" \"copy:* -- -v -w\" generate:* watch:manifest \"rollup:* -- -w\"",
     "start": "npm run watch"
   },
   "author": "Dan Rouse <dan@rouse.house>",
