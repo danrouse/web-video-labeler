@@ -9,6 +9,7 @@ const inlined = css.replace(/src:url\(([^)])+\)[^;}]*[;}]/g, (m) => {
   const data = fs.readFileSync(path.join(FONTAWESOME_PATH, 'css', filename));
   return 'src:url(data:application/font-woff;charset=utf-8;base64,' +
     data.toString('base64') +
+    ')' +
     m[m.length - 1];
 });
 
