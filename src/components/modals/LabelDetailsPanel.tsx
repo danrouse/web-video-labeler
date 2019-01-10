@@ -57,7 +57,7 @@ export default class LabelDetailsPanel extends React.Component<Props> {
             <input
               type="checkbox"
               checked={this.props.label.truncated || false}
-              name="occluded"
+              name="truncated"
               onChange={this.handleInput}
             />
           </label>
