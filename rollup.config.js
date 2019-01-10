@@ -29,6 +29,6 @@ export default {
         'node_modules/react-dom/index.js': ['render', 'createPortal', 'unmountComponentAtNode'],
       }
     }),
-    hash('dist/.rollup-hash', [OUTPUT_CSS_PATH])
+    hash('dist/.rollup-hash', [OUTPUT_CSS_PATH, 'dist/background.js'])
   ]
 }

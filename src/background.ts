@@ -15,39 +15,60 @@ chrome.runtime.onInstalled.addListener(() => {
 const activeIcon = { 19: 'icons/icon-active-19.png', 38: 'icons/icon-active-38.png' };
 const inactiveIcon = { 19: 'icons/icon-inactive-19.png', 38: 'icons/icon-inactive-38.png' };
 function destroyApplicationInstance(tabId: number) {
-  chrome.pageAction.setIcon({
-    tabId,
-    path: inactiveIcon,
+  return new Promise((resolve) => {
+    chrome.pageAction.setIcon({
+      tabId,
+      path: inactiveIcon,
+    });
+    const destroyInstance = {
+      code: `document.getElementById('${SINGLETON_ELEMENT_ID}').dispatchEvent(new Event('unmount'))`,
+    };
+    chrome.tabs.executeScript(tabId, destroyInstance, () => resolve());
   });
-  const destroyInstance = { code: `document.body.removeChild(document.getElementById('${SINGLETON_ELEMENT_ID}'))` };
-  chrome.tabs.executeScript(tabId, destroyInstance);
 }
 function createApplicationInstance(tabId: number) {
-  chrome.tabs.insertCSS(tabId, { file: 'fontawesome.inline.min.css' });
-  chrome.tabs.insertCSS(tabId, { file: 'bundle.css' });
-  chrome.pageAction.setIcon({
-    tabId,
-    path: activeIcon,
+  return new Promise((resolve) => {
+    chrome.tabs.insertCSS(tabId, { file: 'fontawesome.inline.min.css' });
+    chrome.tabs.insertCSS(tabId, { file: 'bundle.css' });
+    chrome.pageAction.setIcon({
+      tabId,
+      path: activeIcon,
+    });
+    chrome.tabs.executeScript(tabId, { file: 'bundle.js' }, () => resolve());
   });
-  chrome.tabs.executeScript(tabId, { file: 'bundle.js' });
 }
 
+const tabHasInstance = (tabId: number) => new Promise(resolve =>
+  chrome.tabs.executeScript(
+    tabId,
+    { code: `document.getElementById('${SINGLETON_ELEMENT_ID}')` },
+    existingInstance => resolve(!!(existingInstance && existingInstance[0])),
+  ));
+
 // toggle creating/destroying application instance when page action is clicked
-chrome.pageAction.onClicked.addListener((tab) => {
+chrome.pageAction.onClicked.addListener(async (tab) => {
   if (!tab.id) return;
-  const findExistingInstance = { code: `document.getElementById('${SINGLETON_ELEMENT_ID}')` };
-  chrome.tabs.executeScript(tab.id, findExistingInstance, ([existingInstance]) =>
-    (existingInstance ? destroyApplicationInstance : createApplicationInstance)(tab.id as number));
+  (await tabHasInstance(tab.id) ? destroyApplicationInstance : createApplicationInstance)(tab.id as number);
 });
 
 // live reloading (only active in development: hash file not included in build)
 const hashFileURL = chrome.runtime.getURL('.rollup-hash');
 if (hashFileURL) {
-  function reload() {
+  async function reload() {
     chrome.tabs.query(
-      { active: true, currentWindow: true },
-      ([activeTab]) => {
-        if (activeTab && typeof activeTab.id === 'number') chrome.tabs.reload(activeTab.id);
+      {},
+      async (tabs) => {
+        for (const tab of tabs) {
+          if (
+            tab &&
+            typeof tab.id === 'number' &&
+            (tab.url || '').startsWith('http') &&
+            await tabHasInstance(tab.id)
+          ) {
+            await destroyApplicationInstance(tab.id);
+            await createApplicationInstance(tab.id);
+          }
+        }
         chrome.runtime.reload();
       },
     );
@@ -58,7 +79,7 @@ if (hashFileURL) {
     if (lastHash && hash !== lastHash) {
       reload();
     } else {
-      setTimeout(() => watchChanges(url, hash), 100);
+      setTimeout(() => watchChanges(url, hash), 1000);
     }
   }
 

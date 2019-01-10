@@ -5,6 +5,7 @@ const manifest = require('./src/manifest.json');
 // (for live-reloading the extension)
 const permissions = manifest.permissions;
 if (process.env.NODE_ENV === 'development') {
+  permissions.push('<all_urls>');
   permissions.push('management');
 }
 

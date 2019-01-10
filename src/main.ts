@@ -13,6 +13,12 @@ function initializeReactApp() {
   uiContainer.id = 'WebVideoLabeler';
   document.body.appendChild(uiContainer);
   ReactDOM.render(React.createElement(WebVideoLabeler, { video }), uiContainer);
+
+  // allow the browser to request an unmount
+  uiContainer.addEventListener('unmount' as any, () => {
+    ReactDOM.unmountComponentAtNode(uiContainer);
+    document.body.removeChild(uiContainer);
+  });
 }
 
 initializeReactApp();
