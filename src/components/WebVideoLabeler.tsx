@@ -155,10 +155,10 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
   skip = () => this.seek(this.state.settings.skipLength / this.state.settings.skipLengthFrameRate);
   prev = () => this.seek(-this.state.settings.skipLength / this.state.settings.skipLengthFrameRate);
   next = async () => {
-    this.skip();
     if (this.state.settings.saveImagesWithoutLabels || this.state.labels.length > 0) {
       await this.downloadFrame();
     }
+    this.skip();
   }
 
   downloadFrame = async () => {
@@ -202,7 +202,11 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
         if (!labelCounts[label.name]) labelCounts[label.name] = 0;
         labelCounts[label.name] += 1;
         const croppedFilename = filename.replace(/\.jpg$/, `_${label.name}-${labelCounts[label.name]}.jpg`);
-        await download(videoFrameToDataURL(this.props.video, label.rect), croppedFilename, this.state.settings);
+        await download(
+          videoFrameToDataURL(this.props.video, label.rect),
+          croppedFilename,
+          this.state.settings,
+        );
         filenames.push(croppedFilename);
       }
     }
@@ -212,6 +216,7 @@ export default class App extends React.Component<{ video: HTMLVideoElement }, St
 
   downloadData = async (labeledImage: LabeledImage) => {
     const filenames = [];
+    if (!labeledImage.labels.length) return [];
     if (this.state.settings.saveDarknet) {
       const data = labeledImageToDarknet(labeledImage);
       await download(`data:text/plain;,${data.data}`, data.path, this.state.settings);
